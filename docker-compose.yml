@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bbb-frontend
+    ports:
+      - '4200:80' # Angular app on port 4200
+    restart: unless-stopped
+    networks:
+      - frontend-network
+
+networks:
+  frontend-network:
+    driver: bridge
