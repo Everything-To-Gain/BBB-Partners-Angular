@@ -13,7 +13,7 @@ export class AccreditationFormService {
   private http = inject(HttpClient);
 
   submitAccreditationForm(formData: any) {
-    return this.http.post(`${this.apiUrl}/application/submit`, formData);
+    return this.http.post(`${this.apiUrl}/application/submit-form`, formData);
   }
 
   getVisualData(searchTerm?: string): Observable<ApiResponse<TobItem[]>> {
