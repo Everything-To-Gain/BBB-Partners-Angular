@@ -1,5 +1,5 @@
 import { Component, input } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideShield, lucideCircleCheck } from '@ng-icons/lucide';
 import { HlmCardImports } from '@spartan-ng/helm/card';
@@ -10,7 +10,16 @@ import { HlmLabel } from '@spartan-ng/helm/label';
 
 @Component({
   selector: 'app-agreement-section',
-  imports: [NgIcon, HlmCardImports, HlmFormField, HlmInput, HlmError, HlmCheckbox, HlmLabel],
+  imports: [
+    ReactiveFormsModule,
+    NgIcon,
+    HlmCardImports,
+    HlmFormField,
+    HlmInput,
+    HlmError,
+    HlmCheckbox,
+    HlmLabel,
+  ],
   providers: [provideIcons({ lucideShield, lucideCircleCheck })],
   templateUrl: './agreement-section.component.html',
 })

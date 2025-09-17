@@ -78,9 +78,12 @@
           <button
             hlmBtn
             type="submit"
+            [disabled]="isSubmitting()"
             class="bg-primary hover:bg-primary/90 w-full sm:w-auto order-1 sm:order-2"
           >
-            Submit Application
+            @if (isSubmitting()) {
+            <ng-icon hlm name="lucideLoader" class="animate-spin mr-2" />
+            Submitting... } @else { Submit Application }
           </button>
           }
         </div>

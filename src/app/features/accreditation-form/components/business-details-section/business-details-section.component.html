@@ -1,4 +1,4 @@
-<div class="space-y-4 sm:space-y-6">
+<div [formGroup]="form()" class="space-y-4 sm:space-y-6">
   <div hlmCard>
     <div hlmCardHeader>
       <div hlmCardTitle class="text-lg sm:text-xl text-primary">Business Details & Licensing</div>
@@ -17,63 +17,113 @@
         ></textarea>
         <hlm-error>Business description is required</hlm-error>
       </hlm-form-field>
-      <!-- this will be changed to combo box later -->
-      <hlm-form-field>
-        <label hlmLabel>Business Types/Services *</label>
-        <input
-          hlmInput
-          placeholder="Roofing, Gutter Installation, Waterproofing"
-          formControlName="businessTypes"
-        />
-        <hlm-error>Business types are required</hlm-error>
-      </hlm-form-field>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
         <hlm-form-field>
-          <label hlmLabel>EIN (Employer Identification Number) *</label>
+          <label hlmLabel>EIN (Employer Identification Number)</label>
           <input hlmInput placeholder="12-3456789" formControlName="ein" />
-          <hlm-error>EIN is required</hlm-error>
         </hlm-form-field>
         <hlm-form-field>
-          <label hlmLabel>SSN (Social Security Number) *</label>
+          <label hlmLabel>SSN (Social Security Number)</label>
           <input hlmInput placeholder="12-3456789" formControlName="ssn" />
-          <hlm-error>SSN is required</hlm-error>
         </hlm-form-field>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
+        <div>
+          <label hlmLabel class="mb-2">Type of Business</label>
+          <brn-popover
+            [state]="state()"
+            (stateChanged)="stateChanged($event)"
+            sideOffset="5"
+            class="w-full"
+          >
+            <button
+              type="button"
+              [class]="
+                'w-full justify-between ' +
+                (form().get('businessType')?.invalid && form().get('businessType')?.touched
+                  ? '!border-destructive !border-1'
+                  : '')
+              "
+              id="edit-profile"
+              variant="outline"
+              brnPopoverTrigger
+              (click)="state.set('open')"
+              hlmBtn
+            >
+              {{ currentTob() ? currentTob()?.name : 'Select Type of Business...' }}
+              <ng-icon hlm size="sm" name="lucideChevronsUpDown" class="opacity-50" />
+            </button>
+            <hlm-command *brnPopoverContent="let ctx" hlmPopoverContent class="w-full p-0">
+              <hlm-command-search>
+                <ng-icon hlm name="lucideSearch" />
+                <input
+                  placeholder="Search Type of Business..."
+                  class="placeholder:text-muted-foreground flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                  (input)="commandSearch($event.target.value)"
+                />
+              </hlm-command-search>
+              <div *brnCommandEmpty hlmCommandEmpty>No results found.</div>
+              <hlm-command-list>
+                <hlm-command-group>
+                  @for (tob of tobItems(); track tob.cbbbId) {
+                  <button
+                    type="button"
+                    hlm-command-item
+                    [value]="tob.cbbbId"
+                    (selected)="commandSelected(tob)"
+                  >
+                    <span>{{ tob.name }}</span>
+                    <ng-icon
+                      hlm
+                      class="ml-auto"
+                      [class.opacity-0]="currentTob()?.cbbbId !== tob.cbbbId"
+                      name="lucideCheck"
+                      hlmCommandIcon
+                    />
+                  </button>
+                  }
+                </hlm-command-group>
+              </hlm-command-list>
+            </hlm-command>
+          </brn-popover>
+          @if (form().get('businessType')?.invalid && form().get('businessType')?.touched) {
+          <hlm-error class="mt-2">Type of business is required</hlm-error>
+          }
+        </div>
         <hlm-form-field>
-          <label hlmLabel>Incorporation Details *</label>
+          <label hlmLabel>Incorporation Details</label>
           <input
             hlmInput
             placeholder="Incorporated on 01/01/2015 in California"
             formControlName="incorporationDetails"
           />
-          <hlm-error>Incorporation details are required</hlm-error>
-        </hlm-form-field>
-        <hlm-form-field>
-          <label hlmLabel>Business Entity Type *</label>
-          <brn-select
-            class="inline-block w-full"
-            placeholder="Select some entity types"
-            [multiple]="true"
-            formControlName="businessEntityType"
-          >
-            <hlm-select-trigger class="w-full">
-              <hlm-select-value />
-            </hlm-select-trigger>
-            <hlm-select-content>
-              <hlm-option value="LLC">LLC</hlm-option>
-              <hlm-option value="Corporation">Corporation</hlm-option>
-              <hlm-option value="Inventory">Inventory</hlm-option>
-              <hlm-option value="Partnership">Partnership</hlm-option>
-              <hlm-option value="Sole Proprietorship">Sole Proprietorship</hlm-option>
-              <hlm-option value="Non-Profit">Non-Profit</hlm-option>
-            </hlm-select-content>
-          </brn-select>
-          <hlm-error>Business entity type is required</hlm-error>
         </hlm-form-field>
       </div>
+      <hlm-form-field>
+        <label hlmLabel>Business Entity Type *</label>
+        <brn-select
+          class="inline-block w-full"
+          placeholder="Select some entity types"
+          [multiple]="true"
+          formControlName="businessEntityType"
+        >
+          <hlm-select-trigger class="w-full">
+            <hlm-select-value />
+          </hlm-select-trigger>
+          <hlm-select-content>
+            <hlm-option value="Corporation">Corporation</hlm-option>
+            <hlm-option value="Limited Liability Company (LLC)"
+              >Limited Liability Company (LLC)</hlm-option
+            >
+            <hlm-option value="Limited Partnership (LP)">Limited Partnership (LP)</hlm-option>
+            <hlm-option value="S. Corp">S. Corp</hlm-option>
+            <hlm-option value="Other">Other</hlm-option>
+          </hlm-select-content>
+        </brn-select>
+        <hlm-error>Business entity type is required</hlm-error>
+      </hlm-form-field>
     </div>
   </div>
 

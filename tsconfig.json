@@ -54,6 +54,9 @@
       ],
       "@spartan-ng/helm/alert": [
         "./src/app/shared/ui/ui-alert-helm/src/index.ts"
+      ],
+      "@spartan-ng/helm/command": [
+        "./src/app/shared/ui/ui-command-helm/src/index.ts"
       ]
     }
   },

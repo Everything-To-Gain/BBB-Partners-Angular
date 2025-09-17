@@ -1,5 +1,5 @@
 import { Component, input } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { BrnSelectImports } from '@spartan-ng/brain/select';
 import { HlmSelectImports } from '@spartan-ng/helm/select';
 import { HlmCardImports } from '@spartan-ng/helm/card';
@@ -11,6 +11,7 @@ import { HlmDatePicker } from '@spartan-ng/helm/date-picker';
 @Component({
   selector: 'app-contact-info-section',
   imports: [
+    ReactiveFormsModule,
     HlmFormField,
     HlmInput,
     HlmError,

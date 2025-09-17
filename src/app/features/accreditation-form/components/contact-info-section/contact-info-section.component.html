@@ -1,4 +1,4 @@
-<div class="space-y-4 sm:space-y-6">
+<div [formGroup]="form()" class="space-y-4 sm:space-y-6">
   <div hlmCard>
     <div hlmCardHeader>
       <div hlmCardTitle class="text-lg sm:text-xl text-primary">Business Contact Information</div>
@@ -19,23 +19,23 @@
             type="email"
             formControlName="primaryBusinessEmail"
           />
-          <hlm-error>Primary business email is required</hlm-error>
+          <hlm-error>Primary business email is required or invalid email</hlm-error>
         </hlm-form-field>
       </div>
 
       <hlm-form-field>
-        <label hlmLabel>Request Quote Email *</label>
+        <label hlmLabel>Request Quote Email</label>
         <input
           hlmInput
           placeholder="quotes@abcroofing.com"
           type="email"
           formControlName="requestQuoteEmail"
         />
-        <hlm-error>Request quote email is required</hlm-error>
+        <hlm-error>Invalid email</hlm-error>
       </hlm-form-field>
 
       <hlm-form-field>
-        <label hlmLabel>Website</label>
+        <label hlmLabel>Website *</label>
         <input
           hlmInput
           placeholder="https://www.abcroofing.com"
@@ -49,23 +49,26 @@
 
   <div hlmCard>
     <div hlmCardHeader>
-      <div hlmCardTitle class="text-lg">Primary Contact Person</div>
+      <div hlmCardTitle class="text-lg sm:text-xl text-primary">Primary Contact Person</div>
       <div hlmCardDescription>Main point of contact for your business.</div>
     </div>
     <div hlmCardContent class="space-y-3 sm:space-y-4">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
         <hlm-form-field>
-          <label hlmLabel>Full Name *</label>
-          <input hlmInput placeholder="John Doe" formControlName="primaryContactName" />
-          <hlm-error>Full name is required</hlm-error>
+          <label hlmLabel>First Name *</label>
+          <input hlmInput placeholder="John" formControlName="primaryFirstName" />
+          <hlm-error>First name is required</hlm-error>
         </hlm-form-field>
-
         <hlm-form-field>
-          <label hlmLabel>Title *</label>
-          <input hlmInput placeholder="Owner" formControlName="primaryTitle" />
-          <hlm-error>Title is required</hlm-error>
+          <label hlmLabel>Last Name *</label>
+          <input hlmInput placeholder="Doe" formControlName="primaryLastName" />
+          <hlm-error>Last name is required</hlm-error>
         </hlm-form-field>
       </div>
+      <hlm-form-field>
+        <label hlmLabel>Title</label>
+        <input hlmInput placeholder="Owner" formControlName="primaryTitle" />
+      </hlm-form-field>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
         <div>
@@ -87,7 +90,7 @@
             type="email"
             formControlName="primaryContactEmail"
           />
-          <hlm-error>Contact email is required</hlm-error>
+          <hlm-error>Contact email is required or invalid email</hlm-error>
         </hlm-form-field>
       </div>
 
@@ -99,7 +102,7 @@
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
         <hlm-form-field>
-          <label hlmLabel>Preferred Contact Methods *</label>
+          <label hlmLabel>Preferred Contact Methods</label>
           <brn-select
             class="inline-block w-full"
             placeholder="Select some methods"
@@ -112,14 +115,13 @@
             <hlm-select-content>
               <hlm-option value="Email">Email</hlm-option>
               <hlm-option value="Phone">Phone</hlm-option>
-              <hlm-option value="Text">Text</hlm-option>
-              <hlm-option value="Mail">Mail</hlm-option>
+              <hlm-option value="SMS">SMS</hlm-option>
+              <hlm-option value="Video Call">Video Call</hlm-option>
             </hlm-select-content>
           </brn-select>
-          <hlm-error>Preferred contact methods are required</hlm-error>
         </hlm-form-field>
         <hlm-form-field>
-          <label hlmLabel>Primary Delegation Tasks *</label>
+          <label hlmLabel>Primary Delegation Tasks</label>
           <brn-select
             class="inline-block w-full"
             placeholder="Select some tasks"
@@ -130,12 +132,13 @@
               <hlm-select-value />
             </hlm-select-trigger>
             <hlm-select-content>
-              <hlm-option value="Accounting">Accounting</hlm-option>
-              <hlm-option value="Payroll">Payroll</hlm-option>
-              <hlm-option value="Tax">Tax</hlm-option>
+              <hlm-option value="Contact for Complaints">Contact for Complaints</hlm-option>
+              <hlm-option value="Contact for Billing Matters"
+                >Contact for Billing Matters</hlm-option
+              >
+              <hlm-option value="Marketing Contact">Marketing Contact</hlm-option>
             </hlm-select-content>
           </brn-select>
-          <hlm-error>Primary delegation tasks are required</hlm-error>
         </hlm-form-field>
       </div>
     </div>
@@ -143,16 +146,20 @@
 
   <div hlmCard>
     <div hlmCardHeader>
-      <div hlmCardTitle class="text-lg">Secondary Contact (Optional)</div>
+      <div hlmCardTitle class="text-lg sm:text-xl text-primary">Secondary Contact (Optional)</div>
       <div hlmCardDescription>Additional contact person for your business operations.</div>
     </div>
     <div hlmCardContent class="space-y-3 sm:space-y-4">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
         <hlm-form-field>
-          <label hlmLabel>Full Name</label>
-          <input hlmInput placeholder="Jane Smith" formControlName="secondaryContactName" />
-          <hlm-error>Full name is required</hlm-error>
+          <label hlmLabel>First Name</label>
+          <input hlmInput placeholder="Jane" formControlName="secondaryFirstName" />
         </hlm-form-field>
+        <hlm-form-field>
+          <label hlmLabel>Last Name</label>
+          <input hlmInput placeholder="Smith" formControlName="secondaryLastName" />
+        </hlm-form-field>
+
         <hlm-form-field>
           <label hlmLabel>Email</label>
           <input
@@ -161,35 +168,13 @@
             type="email"
             formControlName="secondaryEmail"
           />
-          <hlm-error>Email is required</hlm-error>
+          <hlm-error>Invalid email</hlm-error>
+        </hlm-form-field>
+        <hlm-form-field>
+          <label hlmLabel>Phone Number</label>
+          <input hlmInput placeholder="(555) 222-3333" formControlName="secondaryPhone" />
         </hlm-form-field>
       </div>
-      <hlm-form-field>
-        <label hlmLabel>Phone Number</label>
-        <input hlmInput placeholder="(555) 222-3333" formControlName="secondaryPhone" />
-        <hlm-error>Phone number is required</hlm-error>
-      </hlm-form-field>
-      <hlm-form-field>
-        <label hlmLabel>Secondary Delegation Tasks</label>
-        <brn-select
-          class="inline-block w-full"
-          placeholder="Select some tasks"
-          [multiple]="true"
-          formControlName="secondaryDelegationTasks"
-        >
-          <hlm-select-trigger class="w-full">
-            <hlm-select-value />
-          </hlm-select-trigger>
-          <hlm-select-content>
-            <hlm-option value="Marketing">Marketing</hlm-option>
-            <hlm-option value="Customer Service">Customer Service</hlm-option>
-            <hlm-option value="Inventory">Inventory</hlm-option>
-            <hlm-option value="Scheduling">Scheduling</hlm-option>
-            <hlm-option value="Research">Research</hlm-option>
-          </hlm-select-content>
-        </brn-select>
-        <hlm-error>Secondary delegation tasks are required</hlm-error>
-      </hlm-form-field>
     </div>
   </div>
 </div>
