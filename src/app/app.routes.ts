@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { AccreditationFormComponent } from './features/accreditation-form/pages/accreditation-form.component';
 import { TrackApplicationComponent } from './features/track-application/pages/track-application.component';
+import { LoginComponent } from './features/auth/pages/login.component';
 
 export const routes: Routes = [
   {
@@ -18,5 +19,10 @@ export const routes: Routes = [
     title: 'Track Application',
     path: 'track-application/:id',
     component: TrackApplicationComponent,
+  },
+  {
+    title: 'Login',
+    path: 'login',
+    component: LoginComponent,
   },
 ];

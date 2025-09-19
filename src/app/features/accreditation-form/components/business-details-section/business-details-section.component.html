@@ -1,7 +1,7 @@
 <div [formGroup]="form()" class="space-y-4 sm:space-y-6">
   <div hlmCard>
     <div hlmCardHeader>
-      <div hlmCardTitle class="text-lg sm:text-xl text-primary">Business Details & Licensing</div>
+      <div hlmCardTitle class="text-lg sm:text-xl text-primary">Business Details</div>
       <div hlmCardDescription>
         Tell us more about your business operations and legal information.
       </div>
@@ -17,21 +17,28 @@
         ></textarea>
         <hlm-error>Business description is required</hlm-error>
       </hlm-form-field>
+      <hlm-form-field class="mt-4">
+        <label hlmLabel>Business Service Area *</label>
+        <textarea
+          hlmInput
+          placeholder="county, city, state&#10;county, city, state&#10;county, city, state"
+          class="min-h-[100px]"
+          formControlName="businessServiceArea"
+        ></textarea>
+        <hlm-error>Business service area is required</hlm-error>
+        <hlm-hint class="mt-2 italic text-xs"
+          >Please list all service areas for your business, specifying county, city, and state for
+          each location.</hlm-hint
+        >
+      </hlm-form-field>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
         <hlm-form-field>
           <label hlmLabel>EIN (Employer Identification Number)</label>
           <input hlmInput placeholder="12-3456789" formControlName="ein" />
         </hlm-form-field>
-        <hlm-form-field>
-          <label hlmLabel>SSN (Social Security Number)</label>
-          <input hlmInput placeholder="12-3456789" formControlName="ssn" />
-        </hlm-form-field>
-      </div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
         <div>
-          <label hlmLabel class="mb-2">Type of Business</label>
+          <label hlmLabel class="mb-2">Type of Business *</label>
           <brn-popover
             [state]="state()"
             (stateChanged)="stateChanged($event)"
@@ -92,81 +99,168 @@
           <hlm-error class="mt-2">Type of business is required</hlm-error>
           }
         </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
+        <div>
+          <label for="businessStartDate" hlmLabel class="px-1">Business Start Date *</label>
+          <hlm-date-picker
+            class="w-full mt-1"
+            [min]="minDate"
+            formControlName="businessStartDate"
+            [autoCloseOnSelect]="true"
+          >
+            <span>Pick a date</span>
+          </hlm-date-picker>
+          @if (form().get('businessStartDate')?.value && form().get('businessStartDate')?.touched) {
+          <hlm-error>Business start date is required</hlm-error>
+          }
+        </div>
         <hlm-form-field>
-          <label hlmLabel>Incorporation Details</label>
-          <input
-            hlmInput
-            placeholder="Incorporated on 01/01/2015 in California"
-            formControlName="incorporationDetails"
-          />
+          <label hlmLabel>Business Entity Type *</label>
+          <brn-select
+            class="inline-block w-full"
+            placeholder="Select entity types"
+            [multiple]="true"
+            formControlName="businessEntityType"
+          >
+            <hlm-select-trigger class="w-full">
+              <hlm-select-value />
+            </hlm-select-trigger>
+            <hlm-select-content class="max-h-56">
+              @for (entityType of entityTypes; track entityType) {
+              <hlm-option value="{{ entityType }}">{{ entityType }}</hlm-option>
+              }
+            </hlm-select-content>
+          </brn-select>
+          <hlm-error>Business entity type is required</hlm-error>
         </hlm-form-field>
       </div>
-      <hlm-form-field>
-        <label hlmLabel>Business Entity Type *</label>
-        <brn-select
-          class="inline-block w-full"
-          placeholder="Select some entity types"
-          [multiple]="true"
-          formControlName="businessEntityType"
-        >
-          <hlm-select-trigger class="w-full">
-            <hlm-select-value />
-          </hlm-select-trigger>
-          <hlm-select-content>
-            <hlm-option value="Corporation">Corporation</hlm-option>
-            <hlm-option value="Limited Liability Company (LLC)"
-              >Limited Liability Company (LLC)</hlm-option
-            >
-            <hlm-option value="Limited Partnership (LP)">Limited Partnership (LP)</hlm-option>
-            <hlm-option value="S. Corp">S. Corp</hlm-option>
-            <hlm-option value="Other">Other</hlm-option>
-          </hlm-select-content>
-        </brn-select>
-        <hlm-error>Business entity type is required</hlm-error>
-      </hlm-form-field>
     </div>
   </div>
 
   <div hlmCard>
     <div hlmCardHeader>
-      <div hlmCardTitle class="text-lg">Licenses & Certifications</div>
+      <div hlmCardTitle class="text-lg sm:text-xl text-primary">Licenses & Certifications</div>
       <div hlmCardDescription>Professional licenses and certifications for your business.</div>
     </div>
     <div hlmCardContent class="space-y-3 sm:space-y-4">
-      <hlm-form-field>
-        <label hlmLabel>State Business License *</label>
-        <input
-          hlmInput
-          placeholder="CA-987654321 (Issued by CSLB on 01/01/2020)"
-          formControlName="stateBusinessLicense"
-        />
-        <hlm-error>State business license is required</hlm-error>
-      </hlm-form-field>
-      <hlm-form-field>
-        <label hlmLabel>Professional License</label>
-        <input
-          hlmInput
-          placeholder="CA-PL-123456 (Issued by CSLB, Exp: 01/01/2026)"
-          formControlName="professionalLicense"
-        />
-        <hlm-error>Professional license is required</hlm-error>
-      </hlm-form-field>
+      <!-- Add License Button -->
+      <div class="flex items-center justify-between">
+        <label hlmLabel class="text-sm font-medium text-gray-700">Licenses</label>
+        <button
+          type="button"
+          hlmBtn
+          variant="outline"
+          size="sm"
+          (click)="addLicense.emit()"
+          class="flex items-center gap-2"
+        >
+          <ng-icon hlm name="lucidePlus" size="sm" />
+          Add License
+        </button>
+      </div>
+
+      <!-- Dynamic License Fields -->
+      <div formArrayName="licenses" class="space-y-4">
+        @for (license of licenses.controls; track $index) {
+        <div class="border border-gray-200 rounded-lg p-4 space-y-3" [formGroupName]="$index">
+          <div class="flex items-center justify-between">
+            <h4 class="text-sm font-medium text-gray-700">License {{ $index + 1 }}</h4>
+            <button
+              type="button"
+              hlmBtn
+              variant="outline"
+              size="sm"
+              (click)="removeLicense.emit($index)"
+              class="text-destructive hover:text-destructive"
+            >
+              <ng-icon hlm name="lucideTrash2" size="sm" />
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
+            <hlm-form-field>
+              <label hlmLabel>Licensing Number</label>
+              <input hlmInput placeholder="CA-987654321" formControlName="licensingNumber" />
+            </hlm-form-field>
+            <hlm-form-field>
+              <label hlmLabel>Agency *</label>
+              <input
+                hlmInput
+                placeholder="CSLB (Contractors State License Board)"
+                formControlName="agency"
+              />
+              <hlm-error>Agency is required</hlm-error>
+            </hlm-form-field>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
+            <div>
+              <label hlmLabel class="px-1">Date Issued *</label>
+              <hlm-date-picker
+                class="w-full mt-1"
+                formControlName="dateIssued"
+                [autoCloseOnSelect]="true"
+              >
+                <span>Pick a date</span>
+              </hlm-date-picker>
+              @if (form().get('dateIssued')?.value && form().get('dateIssued')?.touched) {
+              <hlm-error>Date issued is required</hlm-error>
+              }
+            </div>
+            <div>
+              <label hlmLabel class="px-1">Expiration</label>
+              <hlm-date-picker
+                class="w-full mt-1"
+                formControlName="expiration"
+                [autoCloseOnSelect]="true"
+              >
+                <span>Pick a date</span>
+              </hlm-date-picker>
+            </div>
+          </div>
+        </div>
+        }
+      </div>
     </div>
   </div>
 
   <div hlmCard>
     <div hlmCardHeader>
-      <div hlmCardTitle class="text-lg">Business Scale & Operations</div>
+      <div hlmCardTitle class="text-lg sm:text-xl text-primary">Business Scale & Operations</div>
       <div hlmCardDescription>Information about your business size and customer base.</div>
     </div>
     <div hlmCardContent class="space-y-3 sm:space-y-4">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
         <hlm-form-field>
-          <label hlmLabel>Number of Employees *</label>
+          <label hlmLabel>Number of Full Time Employees *</label>
           <brn-select
             class="inline-block w-full"
             placeholder="Select employee count"
-            formControlName="numberOfEmployees"
+            formControlName="numberOfFullTimeEmployees"
+          >
+            <hlm-select-trigger class="w-full">
+              <hlm-select-value />
+            </hlm-select-trigger>
+            <hlm-select-content class="max-h-56">
+              <hlm-option value="1-5">1-5 employees</hlm-option>
+              <hlm-option value="6-10">6-10 employees</hlm-option>
+              <hlm-option value="11-25">11-25 employees</hlm-option>
+              <hlm-option value="26-50">26-50 employees</hlm-option>
+              <hlm-option value="51-100">51-100 employees</hlm-option>
+              <hlm-option value="100+">100+ employees</hlm-option>
+            </hlm-select-content>
+          </brn-select>
+          <hlm-error>Number of full time employees is required</hlm-error>
+        </hlm-form-field>
+
+        <hlm-form-field>
+          <label hlmLabel>Number of Part Time Employees</label>
+          <brn-select
+            class="inline-block w-full"
+            placeholder="Select employee count"
+            formControlName="numberOfPartTimeEmployees"
           >
             <hlm-select-trigger class="w-full">
               <hlm-select-value />
@@ -180,51 +274,58 @@
               <hlm-option value="100+">100+ employees</hlm-option>
             </hlm-select-content>
           </brn-select>
-          <hlm-error>Number of employees is required</hlm-error>
         </hlm-form-field>
+      </div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
         <hlm-form-field>
           <label hlmLabel>Gross Annual Revenue *</label>
+          <input hlmInput placeholder="100000" formControlName="grossAnnualRevenue" />
+          <hlm-error>Gross annual revenue is required</hlm-error>
+        </hlm-form-field>
+        <hlm-form-field>
+          <label hlmLabel>Average Customers Per Year *</label>
           <brn-select
             class="inline-block w-full"
-            placeholder="Select revenue range"
-            formControlName="grossAnnualRevenue"
+            placeholder="Select customer range"
+            formControlName="avgCustomersPerYear"
           >
             <hlm-select-trigger class="w-full">
               <hlm-select-value />
             </hlm-select-trigger>
-            <hlm-select-content>
-              <hlm-option value="0-50k">0-50k</hlm-option>
-              <hlm-option value="50k-100k">50k-100k</hlm-option>
-              <hlm-option value="100k-250k">100k-250k</hlm-option>
-              <hlm-option value="250k-500k">250k-500k</hlm-option>
-              <hlm-option value="500k-1m">500k-1m</hlm-option>
-              <hlm-option value="1m+">1m+</hlm-option>
+            <hlm-select-content class="max-h-56">
+              @for (range of ranges; track range) {
+              <hlm-option value="{{ range }}">{{ range }} customers</hlm-option>
+              }
             </hlm-select-content>
           </brn-select>
-          <hlm-error>Gross annual revenue is required</hlm-error>
+          <hlm-error>Average customers per year is required</hlm-error>
         </hlm-form-field>
       </div>
+    </div>
+  </div>
 
+  <div hlmCard>
+    <div hlmCardHeader>
+      <div hlmCardTitle class="text-lg sm:text-xl text-primary">
+        Additional Business Information
+      </div>
+      <div hlmCardDescription>
+        Any additional details that would help us better understand your business.
+      </div>
+    </div>
+    <div hlmCardContent class="space-y-3 sm:space-y-4">
       <hlm-form-field>
-        <label hlmLabel>Average Customers Per Year *</label>
-        <brn-select
-          class="inline-block w-full"
-          placeholder="Select customer range"
-          formControlName="avgCustomersPerYear"
+        <label hlmLabel>Additional Information</label>
+        <textarea
+          hlmInput
+          placeholder="Has your business been purchased recently? Does your business require a competency license?"
+          class="min-h-[100px]"
+          formControlName="additionalBusinessInformation"
+        ></textarea>
+        <hlm-hint class="mt-2 italic text-xs"
+          >Examples: Has your business been purchased recently? Does your business require a
+          competency license?</hlm-hint
         >
-          <hlm-select-trigger class="w-full">
-            <hlm-select-value />
-          </hlm-select-trigger>
-          <hlm-select-content>
-            <hlm-option value="0-50">0-50 customers</hlm-option>
-            <hlm-option value="51-100">51-100 customers</hlm-option>
-            <hlm-option value="101-250">101-250 customers</hlm-option>
-            <hlm-option value="251-500">251-500 customers</hlm-option>
-            <hlm-option value="501-1000">501-1,000 customers</hlm-option>
-            <hlm-option value="1000+">1,000+ customers</hlm-option>
-          </hlm-select-content>
-        </brn-select>
-        <hlm-error>Average customers per year is required</hlm-error>
       </hlm-form-field>
     </div>
   </div>

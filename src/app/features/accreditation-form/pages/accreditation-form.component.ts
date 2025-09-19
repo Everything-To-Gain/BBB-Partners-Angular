@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { HlmIcon } from '@spartan-ng/helm/icon';
 import { HlmProgress, HlmProgressIndicator } from '@spartan-ng/helm/progress';
@@ -11,7 +11,7 @@ import {
   lucideLoader,
 } from '@ng-icons/lucide';
 import { HlmCard } from '@spartan-ng/helm/card';
-import { FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormGroup, FormControl, FormArray, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BusinessInfoSectionComponent } from '../components/business-info-section/business-info-section.component';
 import { ContactInfoSectionComponent } from '../components/contact-info-section/contact-info-section.component';
 import { BusinessDetailsSectionComponent } from '../components/business-details-section/business-details-section.component';
@@ -47,7 +47,7 @@ import { AccreditationFormService } from '../services/accreditation-form.service
   ],
   templateUrl: './accreditation-form.component.html',
 })
-export class AccreditationFormComponent {
+export class AccreditationFormComponent implements OnInit {
   private accreditationFormService = inject(AccreditationFormService);
   progress = signal(25);
   currentStep = signal(1);
@@ -65,16 +65,25 @@ export class AccreditationFormComponent {
     businessName: 1,
     doingBusinessAs: 1,
     businessAddress: 1,
+    businessAptSuite: 1,
     businessState: 1,
     businessCity: 1,
     businessZip: 1,
+    sameAsBusinessAddress: 1,
     mailingAddress: 1,
+    mailingAptSuite: 1,
+    mailingCity: 1,
+    mailingState: 1,
+    mailingZip: 1,
+    hasMultipleLocations: 1,
+    numberOfLocations: 1,
 
     // Step 2: Business Contact Information
     primaryBusinessPhone: 2,
     primaryBusinessEmail: 2,
-    requestQuoteEmail: 2,
+    emailToReceiveQuoteRequestsFromCustomers: 2,
     website: 2,
+    socialMediaLinks: 2,
 
     // Step 2: Primary Contact Information
     primaryFirstName: 2,
@@ -84,30 +93,32 @@ export class AccreditationFormComponent {
     primaryContactEmail: 2,
     primaryContactNumber: 2,
     preferredContactMethod: 2,
-    primaryDelegationTasks: 2,
+    primaryContactTypes: 2,
 
     // Step 2: Secondary Contact Information
     secondaryFirstName: 2,
     secondaryLastName: 2,
+    secondaryTitle: 2,
     secondaryEmail: 2,
     secondaryPhone: 2,
-
+    secondaryContactTypes: 2,
+    secondaryPreferredContactMethod: 2,
     // Step 3: Business Details and Licensing
     businessDescription: 3,
+    businessServiceArea: 3,
     ein: 3,
-    ssn: 3,
     businessType: 3,
-    incorporationDetails: 3,
     businessEntityType: 3,
-
+    businessStartDate: 3,
     // Step 3: Licensing and certifications
-    stateBusinessLicense: 3,
-    professionalLicense: 3,
+    licenses: 3,
 
     // Step 3: Business Scale and Operations
-    numberOfEmployees: 3,
+    numberOfFullTimeEmployees: 3,
+    numberOfPartTimeEmployees: 3,
     grossAnnualRevenue: 3,
     avgCustomersPerYear: 3,
+    additionalBusinessInformation: 3,
 
     // Step 4: Tracking Email and Agreement
     trackingEmail: 4,
@@ -119,14 +130,23 @@ export class AccreditationFormComponent {
     businessName: 'Business Name',
     doingBusinessAs: 'Doing Business As',
     businessAddress: 'Business Address',
+    businessAptSuite: 'Business Apt/Suite Number',
     businessState: 'Business State',
     businessCity: 'Business City',
     businessZip: 'Business ZIP Code',
+    sameAsBusinessAddress: 'Same as Business Address',
     mailingAddress: 'Mailing Address',
+    mailingAptSuite: 'Mailing Apt/Suite Number',
+    mailingCity: 'Mailing City',
+    mailingState: 'Mailing State',
+    mailingZip: 'Mailing ZIP Code',
+    hasMultipleLocations: 'Has Multiple Locations',
+    numberOfLocations: 'Number of Locations',
     primaryBusinessPhone: 'Primary Business Phone',
     primaryBusinessEmail: 'Primary Business Email',
-    requestQuoteEmail: 'Request Quote Email',
+    emailToReceiveQuoteRequestsFromCustomers: 'Email to receive quote requests from customers',
     website: 'Website',
+    socialMediaLinks: 'Social Media Links',
     primaryFirstName: 'Primary First Name',
     primaryLastName: 'Primary Last Name',
     primaryTitle: 'Primary Title',
@@ -134,22 +154,26 @@ export class AccreditationFormComponent {
     primaryContactEmail: 'Primary Contact Email',
     primaryContactNumber: 'Primary Contact Number',
     preferredContactMethod: 'Preferred Contact Method',
-    primaryDelegationTasks: 'Primary Delegation Tasks',
+    primaryContactTypes: 'Primary Contact Types',
     secondaryFirstName: 'Secondary First Name',
     secondaryLastName: 'Secondary Last Name',
+    secondaryTitle: 'Secondary Title',
     secondaryEmail: 'Secondary Email',
     secondaryPhone: 'Secondary Phone',
+    secondaryContactTypes: 'Secondary Contact Types',
+    secondaryPreferredContactMethod: 'Secondary Preferred Contact Method',
     businessDescription: 'Business Description',
+    businessServiceArea: 'Business Service Area',
     ein: 'EIN',
-    ssn: 'SSN',
     businessType: 'Type of Business',
-    incorporationDetails: 'Incorporation Details',
     businessEntityType: 'Business Entity Type',
-    stateBusinessLicense: 'State Business License',
-    professionalLicense: 'Professional License',
-    numberOfEmployees: 'Number of Employees',
+    businessStartDate: 'Business Start Date',
+    licenses: 'Licenses',
+    numberOfFullTimeEmployees: 'Number of Full Time Employees',
+    numberOfPartTimeEmployees: 'Number of Part Time Employees',
     grossAnnualRevenue: 'Gross Annual Revenue',
     avgCustomersPerYear: 'Average Customers Per Year',
+    additionalBusinessInformation: 'Additional Business Information',
     trackingEmail: 'Tracking Email',
     agreement: 'Agreement',
   };
@@ -159,55 +183,119 @@ export class AccreditationFormComponent {
     return match ? match.title : `Step ${step}`;
   }
 
+  ngOnInit() {
+    // Watch for changes in the "same as business address" checkbox
+    this.accreditationForm.get('sameAsBusinessAddress')?.valueChanges.subscribe((isSame) => {
+      if (isSame) {
+        // Clear validators for mailing fields when checkbox is checked
+        this.accreditationForm.get('mailingAddress')?.clearValidators();
+        this.accreditationForm.get('mailingCity')?.clearValidators();
+        this.accreditationForm.get('mailingState')?.clearValidators();
+        this.accreditationForm.get('mailingZip')?.clearValidators();
+      } else {
+        // Clear mailing address fields when unchecked
+        this.accreditationForm.patchValue({
+          mailingAddress: '',
+          mailingAptSuite: '',
+          mailingCity: '',
+          mailingState: '',
+          mailingZip: '',
+        });
+
+        // Add validators back when checkbox is unchecked
+        this.accreditationForm.get('mailingAddress')?.setValidators([Validators.required]);
+        this.accreditationForm.get('mailingCity')?.setValidators([Validators.required]);
+        this.accreditationForm.get('mailingState')?.setValidators([Validators.required]);
+        this.accreditationForm.get('mailingZip')?.setValidators([Validators.required]);
+      }
+
+      // Update validation status
+      this.accreditationForm.get('mailingAddress')?.updateValueAndValidity();
+      this.accreditationForm.get('mailingCity')?.updateValueAndValidity();
+      this.accreditationForm.get('mailingState')?.updateValueAndValidity();
+      this.accreditationForm.get('mailingZip')?.updateValueAndValidity();
+    });
+
+    // Watch for changes in the "has multiple locations" checkbox
+    this.accreditationForm.get('hasMultipleLocations')?.valueChanges.subscribe((hasMultiple) => {
+      if (hasMultiple) {
+        // Add validators when checkbox is checked
+        this.accreditationForm.get('numberOfLocations')?.setValidators([Validators.required]);
+      } else {
+        // Clear field and validators when checkbox is unchecked
+        this.accreditationForm.patchValue({
+          numberOfLocations: '',
+        });
+        this.accreditationForm.get('numberOfLocations')?.clearValidators();
+      }
+
+      // Update validation status
+      this.accreditationForm.get('numberOfLocations')?.updateValueAndValidity();
+    });
+  }
+
   // Create the form with all fields using FormGroup and FormControl
   accreditationForm: FormGroup = new FormGroup({
     // Business Information
     businessName: new FormControl('', [Validators.required]),
     doingBusinessAs: new FormControl(''),
     businessAddress: new FormControl('', [Validators.required]),
+    businessAptSuite: new FormControl(''),
     businessState: new FormControl('', [Validators.required]),
     businessCity: new FormControl('', [Validators.required]),
     businessZip: new FormControl('', [Validators.required]),
-    mailingAddress: new FormControl('', [Validators.email]),
+    sameAsBusinessAddress: new FormControl(true),
+    mailingAddress: new FormControl(''),
+    mailingAptSuite: new FormControl(''),
+    mailingCity: new FormControl(''),
+    mailingState: new FormControl(''),
+    mailingZip: new FormControl(''),
+    hasMultipleLocations: new FormControl(false),
+    numberOfLocations: new FormControl(''),
 
     // Business Contact Information
     primaryBusinessPhone: new FormControl('', [Validators.required]),
     primaryBusinessEmail: new FormControl('', [Validators.required, Validators.email]),
-    requestQuoteEmail: new FormControl('', [Validators.email]),
-    website: new FormControl('', [Validators.required]),
+    emailToReceiveQuoteRequestsFromCustomers: new FormControl(''),
+    website: new FormControl(''),
+    socialMediaLinks: new FormArray([]),
 
     // Primary Contact Information
     primaryFirstName: new FormControl('', [Validators.required]),
     primaryLastName: new FormControl('', [Validators.required]),
-    primaryTitle: new FormControl(''),
-    primaryDateOfBirth: new FormControl(null),
+    primaryTitle: new FormControl('', [Validators.required]),
+    primaryDateOfBirth: new FormControl(null, [Validators.required]),
     primaryContactEmail: new FormControl('', [Validators.required, Validators.email]),
     primaryContactNumber: new FormControl('', [Validators.required]),
     preferredContactMethod: new FormControl([]),
-    primaryDelegationTasks: new FormControl([]),
+    primaryContactTypes: new FormControl([]),
 
     // Secondary Contact Information
     secondaryFirstName: new FormControl(''),
     secondaryLastName: new FormControl(''),
-    secondaryEmail: new FormControl('', [Validators.email]),
+    secondaryTitle: new FormControl(''),
+    secondaryEmail: new FormControl(''),
+    secondaryContactTypes: new FormControl([]),
     secondaryPhone: new FormControl(''),
+    secondaryPreferredContactMethod: new FormControl([]),
 
     // Business Details and Licensing
     businessDescription: new FormControl('', [Validators.required]),
+    businessServiceArea: new FormControl('', [Validators.required]),
     ein: new FormControl(''),
-    ssn: new FormControl(''),
     businessType: new FormControl('', [Validators.required]),
-    incorporationDetails: new FormControl(''),
     businessEntityType: new FormControl([], [Validators.required]),
+    businessStartDate: new FormControl(null, [Validators.required]),
 
     // Licensing and certifications
-    stateBusinessLicense: new FormControl('', [Validators.required]),
-    professionalLicense: new FormControl(''),
+    licenses: new FormArray([]),
 
     // Business Scale and Operations
-    numberOfEmployees: new FormControl('', [Validators.required]),
+    numberOfFullTimeEmployees: new FormControl('', [Validators.required]),
+    numberOfPartTimeEmployees: new FormControl(''),
     grossAnnualRevenue: new FormControl('', [Validators.required]),
     avgCustomersPerYear: new FormControl('', [Validators.required]),
+    additionalBusinessInformation: new FormControl(''),
 
     // Tracking Email
     trackingEmail: new FormControl('', [Validators.required, Validators.email]),
@@ -215,22 +303,32 @@ export class AccreditationFormComponent {
   });
 
   onSubmit(): void {
+    if (this.accreditationForm.get('sameAsBusinessAddress')?.value) {
+      this.accreditationForm.patchValue({
+        mailingAddress: this.accreditationForm.get('businessAddress')?.value,
+        mailingAptSuite: this.accreditationForm.get('businessAptSuite')?.value,
+        mailingCity: this.accreditationForm.get('businessCity')?.value,
+        mailingState: this.accreditationForm.get('businessState')?.value,
+        mailingZip: this.accreditationForm.get('businessZip')?.value,
+      });
+    }
     if (this.accreditationForm.valid) {
-      this.isSubmitting.set(true);
+      // this.isSubmitting.set(true);
       console.log('Form submitted:', this.accreditationForm.value);
-      this.accreditationFormService
-        .submitAccreditationForm(this.accreditationForm.value)
-        .subscribe({
-          next: (res) => {
-            toast.success('Form submitted successfully');
-            this.isSubmitting.set(false);
-          },
-          error: (error) => {
-            toast.error('Failed to submit form. Please try again.');
-            this.isSubmitting.set(false);
-          },
-        });
+      // this.accreditationFormService
+      //   .submitAccreditationForm(this.accreditationForm.value)
+      //   .subscribe({
+      //     next: (res) => {
+      //       toast.success('Form submitted successfully');
+      //       this.isSubmitting.set(false);
+      //     },
+      //     error: (error) => {
+      //       toast.error('Failed to submit form. Please try again.');
+      //       this.isSubmitting.set(false);
+      //     },
+      //   });
     } else {
+      console.log('Invalid form submitted:', this.accreditationForm.value);
       this.accreditationForm.markAllAsTouched();
       const firstInvalid = this.getFirstInvalidField();
       if (firstInvalid) {
@@ -371,5 +469,39 @@ export class AccreditationFormComponent {
     }
 
     return invalidFields;
+  }
+
+  // Social Media Links methods
+  get socialMediaLinks(): FormArray {
+    return this.accreditationForm.get('socialMediaLinks') as FormArray;
+  }
+
+  addSocialMediaLink(): void {
+    const socialMediaLink = new FormControl('', [Validators.required]);
+    this.socialMediaLinks.push(socialMediaLink);
+  }
+
+  removeSocialMediaLink(index: number): void {
+    this.socialMediaLinks.removeAt(index);
+  }
+
+  // Licenses methods
+  get licenses(): FormArray {
+    return this.accreditationForm.get('licenses') as FormArray;
+  }
+
+  addLicense(): void {
+    const licenseGroup = new FormGroup({
+      licensingNumber: new FormControl(''),
+      agency: new FormControl('', [Validators.required]),
+      dateIssued: new FormControl(null, [Validators.required]),
+      expiration: new FormControl(null),
+    });
+    console.log(this.accreditationForm.get('licenses'));
+    this.licenses.push(licenseGroup);
+  }
+
+  removeLicense(index: number): void {
+    this.licenses.removeAt(index);
   }
 }

@@ -41,10 +41,14 @@
         <app-contact-info-section
           [form]="accreditationForm"
           [hidden]="currentStep() !== 2"
+          (addSocialMediaLink)="addSocialMediaLink()"
+          (removeSocialMediaLink)="removeSocialMediaLink($event)"
         ></app-contact-info-section>
         <app-business-details-section
           [form]="accreditationForm"
           [hidden]="currentStep() !== 3"
+          (addLicense)="addLicense()"
+          (removeLicense)="removeLicense($event)"
         ></app-business-details-section>
         <app-agreement-section
           [form]="accreditationForm"

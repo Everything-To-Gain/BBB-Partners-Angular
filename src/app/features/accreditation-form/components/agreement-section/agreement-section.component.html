@@ -16,9 +16,24 @@
 
       <div class="flex items-start gap-2 sm:gap-3">
         <hlm-checkbox formControlName="agreement" class="mt-1" />
-        <label hlmLabel class="text-sm sm:text-base leading-relaxed"
-          >I agree to the terms and conditions *</label
-        >
+        <div class="flex-1">
+          <label
+            class="flex select-none items-center gap-2 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-50 has-[[disabled]]:cursor-not-allowed has-[[disabled]]:opacity-50 group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-data-[disabled]:cursor-not-allowed peer-data-[disabled]:opacity-50 text-sm sm:text-base leading-relaxed"
+          >
+            <span>
+              I agree to abide by the
+              <a
+                href="https://www.bbb.org/all/bbb-accreditation-standards"
+                target="_blank"
+                class="text-primary hover:text-primary/80 underline inline"
+              >
+                BBB Accreditation Standards </a
+              >. I certify that all the information provided in this application is true to the best
+              of my knowledge, and I am authorized to submit this information on behalf of the
+              business. *
+            </span>
+          </label>
+        </div>
       </div>
     </div>
   </div>

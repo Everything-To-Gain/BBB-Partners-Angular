@@ -8,7 +8,12 @@
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
         <hlm-form-field>
           <label hlmLabel>Primary Business Phone *</label>
-          <input hlmInput placeholder="(555) 123-4567" formControlName="primaryBusinessPhone" />
+          <input
+            type="number"
+            hlmInput
+            placeholder="(555) 123-4567"
+            formControlName="primaryBusinessPhone"
+          />
           <hlm-error>Primary business phone is required</hlm-error>
         </hlm-form-field>
         <hlm-form-field>
@@ -24,32 +29,74 @@
       </div>
 
       <hlm-form-field>
-        <label hlmLabel>Request Quote Email</label>
+        <label hlmLabel>Email to receive quote requests from customers</label>
         <input
           hlmInput
           placeholder="quotes@abcroofing.com"
           type="email"
-          formControlName="requestQuoteEmail"
+          formControlName="emailToReceiveQuoteRequestsFromCustomers"
         />
         <hlm-error>Invalid email</hlm-error>
       </hlm-form-field>
 
       <hlm-form-field>
-        <label hlmLabel>Website *</label>
+        <label hlmLabel>Website</label>
         <input
           hlmInput
           placeholder="https://www.abcroofing.com"
           type="url"
           formControlName="website"
         />
-        <hlm-error>Website is required</hlm-error>
       </hlm-form-field>
+
+      <!-- Social Media Links Section -->
+      <div class="space-y-3">
+        <div class="flex items-center justify-between">
+          <label hlmLabel class="text-sm font-medium text-gray-700">Social Media Links</label>
+          <button
+            type="button"
+            hlmBtn
+            variant="outline"
+            size="sm"
+            (click)="addSocialMediaLink.emit()"
+            class="flex items-center gap-2"
+          >
+            <ng-icon hlm name="lucidePlus" size="sm" />
+            Add Link
+          </button>
+        </div>
+
+        <div formArrayName="socialMediaLinks" class="space-y-3">
+          @for (link of socialMediaLinks.controls; track $index) {
+          <div class="flex items-start gap-2">
+            <hlm-form-field class="flex-1">
+              <input
+                hlmInput
+                placeholder="https://www.facebook.com/yourbusiness"
+                type="url"
+                [formControlName]="$index"
+              />
+              <hlm-error>Social media link is required</hlm-error>
+            </hlm-form-field>
+            <button
+              type="button"
+              hlmBtn
+              variant="outline"
+              (click)="removeSocialMediaLink.emit($index)"
+              class="text-destructive hover:text-destructive"
+            >
+              <ng-icon hlm name="lucideTrash2" size="sm" />
+            </button>
+          </div>
+          }
+        </div>
+      </div>
     </div>
   </div>
 
   <div hlmCard>
     <div hlmCardHeader>
-      <div hlmCardTitle class="text-lg sm:text-xl text-primary">Primary Contact Person</div>
+      <div hlmCardTitle class="text-lg sm:text-xl text-primary">Company's principal/owner</div>
       <div hlmCardDescription>Main point of contact for your business.</div>
     </div>
     <div hlmCardContent class="space-y-3 sm:space-y-4">
@@ -66,13 +113,14 @@
         </hlm-form-field>
       </div>
       <hlm-form-field>
-        <label hlmLabel>Title</label>
+        <label hlmLabel>Title *</label>
         <input hlmInput placeholder="Owner" formControlName="primaryTitle" />
+        <hlm-error>Title is required</hlm-error>
       </hlm-form-field>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
         <div>
-          <label for="primaryDateOfBirth" hlmLabel class="px-1">Date of birth</label>
+          <label for="primaryDateOfBirth" hlmLabel class="px-1">Date of birth *</label>
           <hlm-date-picker
             class="w-full mt-1"
             [min]="minDate"
@@ -81,6 +129,10 @@
           >
             <span>Pick a date</span>
           </hlm-date-picker>
+          @if (form().get('primaryDateOfBirth')?.value && form().get('primaryDateOfBirth')?.touched)
+          {
+          <hlm-error>Date of birth is required</hlm-error>
+          }
         </div>
         <hlm-form-field>
           <label hlmLabel>Contact Email *</label>
@@ -96,7 +148,12 @@
 
       <hlm-form-field>
         <label hlmLabel>Contact Phone Number *</label>
-        <input hlmInput placeholder="(555) 987-6543" formControlName="primaryContactNumber" />
+        <input
+          type="number"
+          hlmInput
+          placeholder="(555) 987-6543"
+          formControlName="primaryContactNumber"
+        />
         <hlm-error>Contact phone number is required</hlm-error>
       </hlm-form-field>
 
@@ -121,22 +178,24 @@
           </brn-select>
         </hlm-form-field>
         <hlm-form-field>
-          <label hlmLabel>Primary Delegation Tasks</label>
+          <label hlmLabel>Contact Types</label>
           <brn-select
             class="inline-block w-full"
-            placeholder="Select some tasks"
+            placeholder="Select some types"
             [multiple]="true"
-            formControlName="primaryDelegationTasks"
+            formControlName="primaryContactTypes"
           >
             <hlm-select-trigger class="w-full">
               <hlm-select-value />
             </hlm-select-trigger>
             <hlm-select-content>
-              <hlm-option value="Contact for Complaints">Contact for Complaints</hlm-option>
-              <hlm-option value="Contact for Billing Matters"
-                >Contact for Billing Matters</hlm-option
-              >
-              <hlm-option value="Marketing Contact">Marketing Contact</hlm-option>
+              <hlm-option value="Primary">Primary</hlm-option>
+              <hlm-option value="Billing">Billing</hlm-option>
+              <hlm-option value="Marketing">Marketing</hlm-option>
+              <hlm-option value="Complaint Handler">Complaint Handler</hlm-option>
+              <hlm-option value="Customer Reviews">Customer Reviews</hlm-option>
+              <hlm-option value="List on Business Profile">List on Business Profile</hlm-option>
+              <hlm-option value="Company Management">Company Management</hlm-option>
             </hlm-select-content>
           </brn-select>
         </hlm-form-field>
@@ -161,6 +220,11 @@
         </hlm-form-field>
 
         <hlm-form-field>
+          <label hlmLabel>Title</label>
+          <input hlmInput placeholder="Owner" formControlName="secondaryTitle" />
+        </hlm-form-field>
+
+        <hlm-form-field>
           <label hlmLabel>Email</label>
           <input
             hlmInput
@@ -174,7 +238,48 @@
           <label hlmLabel>Phone Number</label>
           <input hlmInput placeholder="(555) 222-3333" formControlName="secondaryPhone" />
         </hlm-form-field>
+        <hlm-form-field>
+          <label hlmLabel>Preferred Contact Methods</label>
+          <brn-select
+            class="inline-block w-full"
+            placeholder="Select some methods"
+            [multiple]="true"
+            formControlName="secondaryPreferredContactMethod"
+          >
+            <hlm-select-trigger class="w-full">
+              <hlm-select-value />
+            </hlm-select-trigger>
+            <hlm-select-content>
+              <hlm-option value="Email">Email</hlm-option>
+              <hlm-option value="Phone">Phone</hlm-option>
+              <hlm-option value="SMS">SMS</hlm-option>
+              <hlm-option value="Video Call">Video Call</hlm-option>
+            </hlm-select-content>
+          </brn-select>
+        </hlm-form-field>
       </div>
+      <hlm-form-field>
+        <label hlmLabel>Contact Types</label>
+        <brn-select
+          class="inline-block w-full"
+          placeholder="Select some types"
+          [multiple]="true"
+          formControlName="secondaryContactTypes"
+        >
+          <hlm-select-trigger class="w-full">
+            <hlm-select-value />
+          </hlm-select-trigger>
+          <hlm-select-content>
+            <hlm-option value="Primary">Primary</hlm-option>
+            <hlm-option value="Billing">Billing</hlm-option>
+            <hlm-option value="Marketing">Marketing</hlm-option>
+            <hlm-option value="Complaint Handler">Complaint Handler</hlm-option>
+            <hlm-option value="Customer Reviews">Customer Reviews</hlm-option>
+            <hlm-option value="List on Business Profile">List on Business Profile</hlm-option>
+            <hlm-option value="Company Management">Company Management</hlm-option>
+          </hlm-select-content>
+        </brn-select>
+      </hlm-form-field>
     </div>
   </div>
 </div>
