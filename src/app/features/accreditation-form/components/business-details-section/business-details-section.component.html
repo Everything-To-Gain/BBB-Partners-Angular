@@ -48,7 +48,7 @@
             <button
               type="button"
               [class]="
-                'w-full justify-between ' +
+                'w-full justify-between font-normal ' +
                 (form().get('businessType')?.invalid && form().get('businessType')?.touched
                   ? '!border-destructive !border-1'
                   : '')
@@ -121,7 +121,6 @@
           <brn-select
             class="inline-block w-full"
             placeholder="Select entity types"
-            [multiple]="true"
             formControlName="businessEntityType"
           >
             <hlm-select-trigger class="w-full">
@@ -142,7 +141,9 @@
   <div hlmCard>
     <div hlmCardHeader>
       <div hlmCardTitle class="text-lg sm:text-xl text-primary">Licenses & Certifications</div>
-      <div hlmCardDescription>Professional licenses and certifications for your business.</div>
+      <div hlmCardDescription>
+        Please add your state business license or professional licenses below.
+      </div>
     </div>
     <div hlmCardContent class="space-y-3 sm:space-y-4">
       <!-- Add License Button -->
@@ -181,8 +182,9 @@
 
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
             <hlm-form-field>
-              <label hlmLabel>Licensing Number</label>
+              <label hlmLabel>Licensing Number *</label>
               <input hlmInput placeholder="CA-987654321" formControlName="licensingNumber" />
+              <hlm-error>Licensing number is required</hlm-error>
             </hlm-form-field>
             <hlm-form-field>
               <label hlmLabel>Agency *</label>
@@ -235,45 +237,23 @@
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
         <hlm-form-field>
           <label hlmLabel>Number of Full Time Employees *</label>
-          <brn-select
-            class="inline-block w-full"
-            placeholder="Select employee count"
+          <input
+            type="number"
+            hlmInput
+            placeholder="10"
             formControlName="numberOfFullTimeEmployees"
-          >
-            <hlm-select-trigger class="w-full">
-              <hlm-select-value />
-            </hlm-select-trigger>
-            <hlm-select-content class="max-h-56">
-              <hlm-option value="1-5">1-5 employees</hlm-option>
-              <hlm-option value="6-10">6-10 employees</hlm-option>
-              <hlm-option value="11-25">11-25 employees</hlm-option>
-              <hlm-option value="26-50">26-50 employees</hlm-option>
-              <hlm-option value="51-100">51-100 employees</hlm-option>
-              <hlm-option value="100+">100+ employees</hlm-option>
-            </hlm-select-content>
-          </brn-select>
+          />
           <hlm-error>Number of full time employees is required</hlm-error>
         </hlm-form-field>
 
         <hlm-form-field>
           <label hlmLabel>Number of Part Time Employees</label>
-          <brn-select
-            class="inline-block w-full"
-            placeholder="Select employee count"
+          <input
+            type="number"
+            hlmInput
+            placeholder="10"
             formControlName="numberOfPartTimeEmployees"
-          >
-            <hlm-select-trigger class="w-full">
-              <hlm-select-value />
-            </hlm-select-trigger>
-            <hlm-select-content>
-              <hlm-option value="1-5">1-5 employees</hlm-option>
-              <hlm-option value="6-10">6-10 employees</hlm-option>
-              <hlm-option value="11-25">11-25 employees</hlm-option>
-              <hlm-option value="26-50">26-50 employees</hlm-option>
-              <hlm-option value="51-100">51-100 employees</hlm-option>
-              <hlm-option value="100+">100+ employees</hlm-option>
-            </hlm-select-content>
-          </brn-select>
+          />
         </hlm-form-field>
       </div>
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
@@ -294,7 +274,7 @@
             </hlm-select-trigger>
             <hlm-select-content class="max-h-56">
               @for (range of ranges; track range) {
-              <hlm-option value="{{ range }}">{{ range }} customers</hlm-option>
+              <hlm-option value="{{ range }}">{{ range }}</hlm-option>
               }
             </hlm-select-content>
           </brn-select>
@@ -318,7 +298,6 @@
         <label hlmLabel>Additional Information</label>
         <textarea
           hlmInput
-          placeholder="Has your business been purchased recently? Does your business require a competency license?"
           class="min-h-[100px]"
           formControlName="additionalBusinessInformation"
         ></textarea>

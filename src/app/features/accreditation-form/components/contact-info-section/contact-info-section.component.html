@@ -159,11 +159,10 @@
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
         <hlm-form-field>
-          <label hlmLabel>Preferred Contact Methods</label>
+          <label hlmLabel>Preferred Contact Method</label>
           <brn-select
             class="inline-block w-full"
             placeholder="Select some methods"
-            [multiple]="true"
             formControlName="preferredContactMethod"
           >
             <hlm-select-trigger class="w-full">
@@ -194,7 +193,7 @@
               <hlm-option value="Marketing">Marketing</hlm-option>
               <hlm-option value="Complaint Handler">Complaint Handler</hlm-option>
               <hlm-option value="Customer Reviews">Customer Reviews</hlm-option>
-              <hlm-option value="List on Business Profile">List on Business Profile</hlm-option>
+              <hlm-option value="Business Profile">List on Business Profile</hlm-option>
               <hlm-option value="Company Management">Company Management</hlm-option>
             </hlm-select-content>
           </brn-select>
@@ -239,11 +238,10 @@
           <input hlmInput placeholder="(555) 222-3333" formControlName="secondaryPhone" />
         </hlm-form-field>
         <hlm-form-field>
-          <label hlmLabel>Preferred Contact Methods</label>
+          <label hlmLabel>Preferred Contact Method</label>
           <brn-select
             class="inline-block w-full"
             placeholder="Select some methods"
-            [multiple]="true"
             formControlName="secondaryPreferredContactMethod"
           >
             <hlm-select-trigger class="w-full">
@@ -275,7 +273,7 @@
             <hlm-option value="Marketing">Marketing</hlm-option>
             <hlm-option value="Complaint Handler">Complaint Handler</hlm-option>
             <hlm-option value="Customer Reviews">Customer Reviews</hlm-option>
-            <hlm-option value="List on Business Profile">List on Business Profile</hlm-option>
+            <hlm-option value="Business Profile">List on Business Profile</hlm-option>
             <hlm-option value="Company Management">Company Management</hlm-option>
           </hlm-select-content>
         </brn-select>

@@ -121,8 +121,11 @@ export class AccreditationFormComponent implements OnInit {
     additionalBusinessInformation: 3,
 
     // Step 4: Tracking Email and Agreement
-    trackingEmail: 4,
+    principalContactAgreement: 4,
     agreement: 4,
+    submittedByName: 4,
+    submittedByTitle: 4,
+    submittedByEmail: 4,
   };
 
   // Human-friendly labels for fields used in toasts and messages
@@ -174,7 +177,10 @@ export class AccreditationFormComponent implements OnInit {
     grossAnnualRevenue: 'Gross Annual Revenue',
     avgCustomersPerYear: 'Average Customers Per Year',
     additionalBusinessInformation: 'Additional Business Information',
-    trackingEmail: 'Tracking Email',
+    principalContactAgreement: 'Principal Contact Agreement',
+    submittedByName: 'Submitted By Name',
+    submittedByTitle: 'Submitted By Title',
+    submittedByEmail: 'Submitted By Email',
     agreement: 'Agreement',
   };
 
@@ -267,7 +273,7 @@ export class AccreditationFormComponent implements OnInit {
     primaryDateOfBirth: new FormControl(null, [Validators.required]),
     primaryContactEmail: new FormControl('', [Validators.required, Validators.email]),
     primaryContactNumber: new FormControl('', [Validators.required]),
-    preferredContactMethod: new FormControl([]),
+    preferredContactMethod: new FormControl(''),
     primaryContactTypes: new FormControl([]),
 
     // Secondary Contact Information
@@ -277,14 +283,14 @@ export class AccreditationFormComponent implements OnInit {
     secondaryEmail: new FormControl(''),
     secondaryContactTypes: new FormControl([]),
     secondaryPhone: new FormControl(''),
-    secondaryPreferredContactMethod: new FormControl([]),
+    secondaryPreferredContactMethod: new FormControl(''),
 
     // Business Details and Licensing
     businessDescription: new FormControl('', [Validators.required]),
     businessServiceArea: new FormControl('', [Validators.required]),
     ein: new FormControl(''),
     businessType: new FormControl('', [Validators.required]),
-    businessEntityType: new FormControl([], [Validators.required]),
+    businessEntityType: new FormControl('', [Validators.required]),
     businessStartDate: new FormControl(null, [Validators.required]),
 
     // Licensing and certifications
@@ -298,8 +304,11 @@ export class AccreditationFormComponent implements OnInit {
     additionalBusinessInformation: new FormControl(''),
 
     // Tracking Email
-    trackingEmail: new FormControl('', [Validators.required, Validators.email]),
+    principalContactAgreement: new FormControl(false, [Validators.required]),
     agreement: new FormControl(false, [Validators.required]),
+    submittedByName: new FormControl('', [Validators.required]),
+    submittedByTitle: new FormControl('', [Validators.required]),
+    submittedByEmail: new FormControl('', [Validators.required, Validators.email]),
   });
 
   onSubmit(): void {
@@ -492,7 +501,7 @@ export class AccreditationFormComponent implements OnInit {
 
   addLicense(): void {
     const licenseGroup = new FormGroup({
-      licensingNumber: new FormControl(''),
+      licensingNumber: new FormControl('', [Validators.required]),
       agency: new FormControl('', [Validators.required]),
       dateIssued: new FormControl(null, [Validators.required]),
       expiration: new FormControl(null),
