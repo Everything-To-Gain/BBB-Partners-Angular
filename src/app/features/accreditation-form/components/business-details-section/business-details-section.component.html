@@ -104,16 +104,17 @@
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
         <div>
           <label for="businessStartDate" hlmLabel class="px-1">Business Start Date *</label>
-          <hlm-date-picker
-            class="w-full mt-1"
-            [min]="minDate"
+          <input
+            hlmInput
+            type="date"
+            class="w-full mt-2"
             formControlName="businessStartDate"
-            [autoCloseOnSelect]="true"
-          >
-            <span>Pick a date</span>
-          </hlm-date-picker>
-          @if (form().get('businessStartDate')?.value && form().get('businessStartDate')?.touched) {
-          <hlm-error>Business start date is required</hlm-error>
+            placeholder="Select a date"
+          />
+
+          @if ( form().get('businessStartDate')?.touched &&
+          form().get('businessStartDate')?.errors?.['required'] ) {
+          <hlm-error class="mt-1">Business start date is required</hlm-error>
           }
         </div>
         <hlm-form-field>
@@ -200,26 +201,28 @@
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
             <div>
               <label hlmLabel class="px-1">Date Issued *</label>
-              <hlm-date-picker
-                class="w-full mt-1"
+              <input
+                hlmInput
+                type="date"
+                class="w-full mt-2"
                 formControlName="dateIssued"
-                [autoCloseOnSelect]="true"
-              >
-                <span>Pick a date</span>
-              </hlm-date-picker>
-              @if (form().get('dateIssued')?.value && form().get('dateIssued')?.touched) {
-              <hlm-error>Date issued is required</hlm-error>
+                placeholder="Select a date"
+              />
+
+              @if ( license.get('dateIssued')?.touched &&
+              license.get('dateIssued')?.errors?.['required'] ) {
+              <hlm-error class="mt-1">Date issued is required</hlm-error>
               }
             </div>
             <div>
               <label hlmLabel class="px-1">Expiration</label>
-              <hlm-date-picker
-                class="w-full mt-1"
+              <input
+                hlmInput
+                type="date"
+                class="w-full mt-2"
                 formControlName="expiration"
-                [autoCloseOnSelect]="true"
-              >
-                <span>Pick a date</span>
-              </hlm-date-picker>
+                placeholder="Select a date"
+              />
             </div>
           </div>
         </div>
@@ -259,7 +262,7 @@
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
         <hlm-form-field>
           <label hlmLabel>Gross Annual Revenue *</label>
-          <input hlmInput placeholder="100000" formControlName="grossAnnualRevenue" />
+          <input type="number" hlmInput placeholder="100000" formControlName="grossAnnualRevenue" />
           <hlm-error>Gross annual revenue is required</hlm-error>
         </hlm-form-field>
         <hlm-form-field>
@@ -299,6 +302,7 @@
         <textarea
           hlmInput
           class="min-h-[100px]"
+          placeholder="type your additional information here"
           formControlName="additionalBusinessInformation"
         ></textarea>
         <hlm-hint class="mt-2 italic text-xs"

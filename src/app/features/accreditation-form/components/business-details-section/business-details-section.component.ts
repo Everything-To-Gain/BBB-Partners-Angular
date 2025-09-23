@@ -22,7 +22,6 @@ import { BrnCommandImports } from '@spartan-ng/brain/command';
 import { HlmButton } from '@spartan-ng/helm/button';
 import { BrnPopover, BrnPopoverContent, BrnPopoverTrigger } from '@spartan-ng/brain/popover';
 import { HlmPopoverContent } from '@spartan-ng/helm/popover';
-import { HlmDatePicker } from '@spartan-ng/helm/date-picker';
 import { TobItem } from '../../models/tob.model';
 import { Subject, debounceTime, distinctUntilChanged, switchMap, takeUntil } from 'rxjs';
 import { HlmHint } from '@spartan-ng/helm/form-field';
@@ -47,7 +46,6 @@ import { HlmHint } from '@spartan-ng/helm/form-field';
     HlmPopoverContent,
     BrnPopoverContent,
     HlmHint,
-    HlmDatePicker,
   ],
   providers: [
     provideIcons({ lucideChevronsUpDown, lucideSearch, lucideCheck, lucidePlus, lucideTrash2 }),
@@ -68,7 +66,6 @@ export class BusinessDetailsSectionComponent implements OnDestroy {
   tobItems = signal<TobItem[]>([]);
   currentTob = signal<TobItem | undefined>(undefined);
   public state = signal<'closed' | 'open'>('closed');
-  minDate = new Date();
 
   entityTypes: string[] = [
     'Charity/NonProfit',
@@ -139,7 +136,6 @@ export class BusinessDetailsSectionComponent implements OnDestroy {
       this.currentTob.set(undefined);
       this.form().get('businessType')?.setValue('');
     } else {
-      console.log(tob);
       this.form().get('businessType')?.setValue(tob.cbbbId);
       this.currentTob.set(tob);
     }

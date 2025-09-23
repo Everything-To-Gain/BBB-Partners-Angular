@@ -11,10 +11,10 @@
           <input
             type="number"
             hlmInput
-            placeholder="(555) 123-4567"
+            placeholder="1234567890"
             formControlName="primaryBusinessPhone"
           />
-          <hlm-error>Primary business phone is required</hlm-error>
+          <hlm-error>Primary business phone is required or invalid phone number</hlm-error>
         </hlm-form-field>
         <hlm-form-field>
           <label hlmLabel>Primary Business Email *</label>
@@ -121,7 +121,14 @@
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
         <div>
           <label for="primaryDateOfBirth" hlmLabel class="px-1">Date of birth *</label>
-          <input hlmInput type="date" class="w-full mt-2" formControlName="primaryDateOfBirth" />
+          <input
+            hlmInput
+            type="date"
+            class="w-full mt-2"
+            formControlName="primaryDateOfBirth"
+            placeholder="Select a date"
+            [max]="today"
+          />
 
           @if ( form().get('primaryDateOfBirth')?.touched &&
           form().get('primaryDateOfBirth')?.errors?.['required'] ) {
@@ -145,10 +152,10 @@
         <input
           type="number"
           hlmInput
-          placeholder="(555) 987-6543"
+          placeholder="1234567890"
           formControlName="primaryContactNumber"
         />
-        <hlm-error>Contact phone number is required</hlm-error>
+        <hlm-error>Contact phone number is required or invalid phone number</hlm-error>
       </hlm-form-field>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
@@ -232,8 +239,11 @@
         </hlm-form-field>
         <hlm-form-field>
           <label hlmLabel>Phone Number</label>
-          <input hlmInput placeholder="(555) 222-3333" formControlName="secondaryPhone" />
-          <hlm-error>Phone number is required or phone number is already in use</hlm-error>
+          <input type="number" hlmInput placeholder="1234567890" formControlName="secondaryPhone" />
+          <hlm-error
+            >Phone number is required or phone number is already in use or invalid phone
+            number</hlm-error
+          >
         </hlm-form-field>
         <hlm-form-field>
           <label hlmLabel>Preferred Contact Method</label>

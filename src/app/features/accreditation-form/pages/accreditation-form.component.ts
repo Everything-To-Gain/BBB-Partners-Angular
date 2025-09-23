@@ -257,6 +257,9 @@ export class AccreditationFormComponent implements OnInit {
     );
 
     this.bindUniqueFieldRevalidation();
+
+    // Keep agreement submitter fields in sync with primary contact when checkbox is checked
+    this.setupPrincipalContactAutoFill();
   }
 
   // Create the form with all fields using FormGroup and FormControl
@@ -279,7 +282,10 @@ export class AccreditationFormComponent implements OnInit {
     numberOfLocations: new FormControl(''),
 
     // Business Contact Information
-    primaryBusinessPhone: new FormControl('', [Validators.required]),
+    primaryBusinessPhone: new FormControl('', [
+      Validators.required,
+      Validators.pattern(/^\d{10}$/),
+    ]),
     primaryBusinessEmail: new FormControl('', [Validators.required, Validators.email]),
     emailToReceiveQuoteRequestsFromCustomers: new FormControl(''),
     website: new FormControl(''),
@@ -291,7 +297,10 @@ export class AccreditationFormComponent implements OnInit {
     primaryTitle: new FormControl('', [Validators.required]),
     primaryDateOfBirth: new FormControl(null, [Validators.required]),
     primaryContactEmail: new FormControl('', [Validators.required, Validators.email]),
-    primaryContactNumber: new FormControl('', [Validators.required]),
+    primaryContactNumber: new FormControl('', [
+      Validators.required,
+      Validators.pattern(/^\d{10}$/),
+    ]),
     preferredContactMethod: new FormControl(''),
     primaryContactTypes: new FormControl([]),
 
@@ -301,7 +310,7 @@ export class AccreditationFormComponent implements OnInit {
     secondaryTitle: new FormControl(''),
     secondaryEmail: new FormControl(''),
     secondaryContactTypes: new FormControl([]),
-    secondaryPhone: new FormControl(''),
+    secondaryPhone: new FormControl('', [Validators.pattern(/^\d{10}$/)]),
     secondaryPreferredContactMethod: new FormControl(''),
 
     // Business Details and Licensing
@@ -442,6 +451,62 @@ export class AccreditationFormComponent implements OnInit {
     });
   }
 
+  // --- Principal contact autofill logic ---
+  private setupPrincipalContactAutoFill(): void {
+    const principalCtrl = this.accreditationForm.get('principalContactAgreement');
+    const nameCtrl = this.accreditationForm.get('submittedByName');
+    const titleCtrl = this.accreditationForm.get('submittedByTitle');
+    const emailCtrl = this.accreditationForm.get('submittedByEmail');
+
+    const computeFullName = (): string => {
+      const first = (this.accreditationForm.get('primaryFirstName')?.value ?? '').toString().trim();
+      const last = (this.accreditationForm.get('primaryLastName')?.value ?? '').toString().trim();
+      return [first, last].filter(Boolean).join(' ');
+    };
+
+    const syncFromPrimary = () => {
+      if (!principalCtrl?.value) return;
+      nameCtrl?.setValue(computeFullName(), { emitEvent: false });
+      titleCtrl?.setValue(this.accreditationForm.get('primaryTitle')?.value ?? '', {
+        emitEvent: false,
+      });
+      emailCtrl?.setValue(this.accreditationForm.get('primaryContactEmail')?.value ?? '', {
+        emitEvent: false,
+      });
+    };
+
+    const applyDisabledState = (checked: boolean) => {
+      if (checked) {
+        nameCtrl?.disable({ emitEvent: false });
+        titleCtrl?.disable({ emitEvent: false });
+        emailCtrl?.disable({ emitEvent: false });
+        syncFromPrimary();
+      } else {
+        nameCtrl?.enable({ emitEvent: false });
+        titleCtrl?.enable({ emitEvent: false });
+        emailCtrl?.enable({ emitEvent: false });
+        nameCtrl?.reset('', { emitEvent: false });
+        titleCtrl?.reset('', { emitEvent: false });
+        emailCtrl?.reset('', { emitEvent: false });
+      }
+    };
+
+    // React when checkbox toggles
+    principalCtrl?.valueChanges.subscribe((checked: boolean) => {
+      applyDisabledState(checked);
+    });
+
+    // Keep in sync if primary fields change while checked
+    ['primaryFirstName', 'primaryLastName', 'primaryTitle', 'primaryContactEmail'].forEach(
+      (name) => {
+        this.accreditationForm.get(name)?.valueChanges.subscribe(() => syncFromPrimary());
+      }
+    );
+
+    // Initialize once at load
+    applyDisabledState(!!principalCtrl?.value);
+  }
+
   onSubmit(): void {
     if (this.accreditationForm.get('sameAsBusinessAddress')?.value) {
       this.accreditationForm.patchValue({
@@ -454,9 +519,10 @@ export class AccreditationFormComponent implements OnInit {
     }
     if (this.accreditationForm.valid) {
       // this.isSubmitting.set(true);
-      console.log('Form submitted:', this.accreditationForm.value);
+      const payload = this.accreditationForm.getRawValue();
+      console.log('Form submitted:', payload);
       // this.accreditationFormService
-      //   .submitAccreditationForm(this.accreditationForm.value)
+      //   .submitAccreditationForm(payload)
       //   .subscribe({
       //     next: (res) => {
       //       toast.success('Form submitted successfully');
@@ -468,7 +534,7 @@ export class AccreditationFormComponent implements OnInit {
       //     },
       //   });
     } else {
-      console.log('Invalid form submitted:', this.accreditationForm.value);
+      console.log('Invalid form submitted:', this.accreditationForm.getRawValue());
       this.accreditationForm.markAllAsTouched();
       const firstInvalid = this.getFirstInvalidField();
       if (firstInvalid) {
@@ -501,6 +567,10 @@ export class AccreditationFormComponent implements OnInit {
     if (current < this.steps.length) {
       this.currentStep.update((value) => value + 1);
       this.progress.update((value) => value + 25);
+      // Scroll to top so the next section starts at the top of the viewport
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 0);
     }
   }
 
@@ -508,6 +578,10 @@ export class AccreditationFormComponent implements OnInit {
     if (this.currentStep() > 1) {
       this.currentStep.update((value) => value - 1);
       this.progress.update((value) => value - 25);
+      // Keep the start of the section visible after navigation
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 0);
     }
   }
 

@@ -6,7 +6,6 @@ import { HlmCardImports } from '@spartan-ng/helm/card';
 import { HlmError, HlmFormField } from '@spartan-ng/helm/form-field';
 import { HlmInput } from '@spartan-ng/helm/input';
 import { HlmLabel } from '@spartan-ng/helm/label';
-import { HlmDatePicker } from '@spartan-ng/helm/date-picker';
 import { HlmButton } from '@spartan-ng/helm/button';
 import { NgIcon } from '@ng-icons/core';
 import { HlmIcon } from '@spartan-ng/helm/icon';
@@ -22,7 +21,6 @@ import { provideIcons } from '@ng-icons/core';
     HlmError,
     HlmLabel,
     HlmCardImports,
-    HlmDatePicker,
     BrnSelectImports,
     HlmSelectImports,
     HlmButton,
@@ -35,7 +33,7 @@ import { provideIcons } from '@ng-icons/core';
 })
 export class ContactInfoSectionComponent {
   form = input.required<FormGroup>();
-  minDate = new Date();
+  today = new Date().toISOString().split('T')[0];
 
   get socialMediaLinks(): FormArray {
     return this.form().get('socialMediaLinks') as FormArray;
