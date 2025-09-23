@@ -160,7 +160,7 @@
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
         <hlm-form-field>
-          <label hlmLabel>Preferred Contact Method</label>
+          <label hlmLabel>Preferred Contact Method *</label>
           <brn-select
             class="inline-block w-full"
             placeholder="Select some methods"
@@ -176,6 +176,7 @@
               <hlm-option value="Video Call">Video Call</hlm-option>
             </hlm-select-content>
           </brn-select>
+          <hlm-error>Preferred contact method is required</hlm-error>
         </hlm-form-field>
         <hlm-form-field>
           <label hlmLabel>Contact Types</label>
@@ -262,6 +263,7 @@
               <hlm-option value="Video Call">Video Call</hlm-option>
             </hlm-select-content>
           </brn-select>
+          <hlm-error>Preferred contact method is required</hlm-error>
         </hlm-form-field>
       </div>
       <hlm-form-field>

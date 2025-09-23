@@ -27,6 +27,7 @@ import { AgreementSectionComponent } from '../components/agreement-section/agree
 import { HlmButton } from '@spartan-ng/helm/button';
 import { toast } from 'ngx-sonner';
 import { AccreditationFormService } from '../services/accreditation-form.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-accreditation-form',
@@ -301,7 +302,7 @@ export class AccreditationFormComponent implements OnInit {
       Validators.required,
       Validators.pattern(/^\d{10}$/),
     ]),
-    preferredContactMethod: new FormControl(''),
+    preferredContactMethod: new FormControl('', [Validators.required]),
     primaryContactTypes: new FormControl([]),
 
     // Secondary Contact Information
@@ -362,6 +363,8 @@ export class AccreditationFormComponent implements OnInit {
         if (anyFilled) {
           if (name === 'secondaryEmail') {
             control.setValidators([Validators.required, Validators.email]);
+          } else if (name === 'secondaryPhone') {
+            control.setValidators([Validators.required, Validators.pattern(/^\d{10}$/)]);
           } else {
             control.setValidators([Validators.required]);
           }
@@ -369,12 +372,25 @@ export class AccreditationFormComponent implements OnInit {
           // When none are filled, remove required constraints
           if (name === 'secondaryEmail') {
             control.setValidators([Validators.email]);
+          } else if (name === 'secondaryPhone') {
+            control.setValidators([Validators.pattern(/^\d{10}$/)]);
           } else {
             control.clearValidators();
           }
         }
         control.updateValueAndValidity({ emitEvent: false });
       });
+
+      // Also toggle requirement for secondaryPreferredContactMethod
+      const secondaryPreferredCtrl = this.accreditationForm.get('secondaryPreferredContactMethod');
+      if (secondaryPreferredCtrl) {
+        if (anyFilled) {
+          secondaryPreferredCtrl.setValidators([Validators.required]);
+        } else {
+          secondaryPreferredCtrl.clearValidators();
+        }
+        secondaryPreferredCtrl.updateValueAndValidity({ emitEvent: false });
+      }
     };
 
     // Subscribe to changes for each text field
@@ -518,23 +534,20 @@ export class AccreditationFormComponent implements OnInit {
       });
     }
     if (this.accreditationForm.valid) {
-      // this.isSubmitting.set(true);
+      this.isSubmitting.set(true);
       const payload = this.accreditationForm.getRawValue();
-      console.log('Form submitted:', payload);
-      // this.accreditationFormService
-      //   .submitAccreditationForm(payload)
-      //   .subscribe({
-      //     next: (res) => {
-      //       toast.success('Form submitted successfully');
-      //       this.isSubmitting.set(false);
-      //     },
-      //     error: (error) => {
-      //       toast.error('Failed to submit form. Please try again.');
-      //       this.isSubmitting.set(false);
-      //     },
-      //   });
+      this.accreditationFormService
+        .submitAccreditationForm(payload)
+        .pipe(finalize(() => this.isSubmitting.set(false)))
+        .subscribe({
+          next: (res) => {
+            toast.success('Form submitted successfully');
+          },
+          error: (error) => {
+            toast.error('Failed to submit form. Please try again.');
+          },
+        });
     } else {
-      console.log('Invalid form submitted:', this.accreditationForm.getRawValue());
       this.accreditationForm.markAllAsTouched();
       const firstInvalid = this.getFirstInvalidField();
       if (firstInvalid) {
@@ -717,7 +730,6 @@ export class AccreditationFormComponent implements OnInit {
       dateIssued: new FormControl(null, [Validators.required]),
       expiration: new FormControl(null),
     });
-    console.log(this.accreditationForm.get('licenses'));
     this.licenses.push(licenseGroup);
   }
 
