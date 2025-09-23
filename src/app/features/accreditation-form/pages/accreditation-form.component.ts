@@ -11,7 +11,15 @@ import {
   lucideLoader,
 } from '@ng-icons/lucide';
 import { HlmCard } from '@spartan-ng/helm/card';
-import { FormGroup, FormControl, FormArray, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormGroup,
+  FormControl,
+  FormArray,
+  ReactiveFormsModule,
+  Validators,
+  AbstractControl,
+  ValidationErrors,
+} from '@angular/forms';
 import { BusinessInfoSectionComponent } from '../components/business-info-section/business-info-section.component';
 import { ContactInfoSectionComponent } from '../components/contact-info-section/contact-info-section.component';
 import { BusinessDetailsSectionComponent } from '../components/business-details-section/business-details-section.component';
@@ -238,6 +246,17 @@ export class AccreditationFormComponent implements OnInit {
       // Update validation status
       this.accreditationForm.get('numberOfLocations')?.updateValueAndValidity();
     });
+
+    // Conditional validators for Secondary Contact: if any text field has a value,
+    // make all secondary text fields required (excluding selects)
+    this.setupSecondaryContactConditionalValidators();
+
+    // Enforce uniqueness between primary and secondary email/phone
+    this.accreditationForm.setValidators((control: AbstractControl): ValidationErrors | null =>
+      this.uniquePrimarySecondaryValidator(control as FormGroup)
+    );
+
+    this.bindUniqueFieldRevalidation();
   }
 
   // Create the form with all fields using FormGroup and FormControl
@@ -310,6 +329,118 @@ export class AccreditationFormComponent implements OnInit {
     submittedByTitle: new FormControl('', [Validators.required]),
     submittedByEmail: new FormControl('', [Validators.required, Validators.email]),
   });
+
+  // --- Conditional validators logic for Secondary Contact ---
+  private setupSecondaryContactConditionalValidators(): void {
+    const textFieldNames = [
+      'secondaryFirstName',
+      'secondaryLastName',
+      'secondaryTitle',
+      'secondaryEmail',
+      'secondaryPhone',
+    ];
+
+    const updateValidators = () => {
+      const anyFilled = textFieldNames.some((name) => {
+        const value = (this.accreditationForm.get(name)?.value ?? '').toString().trim();
+        return value.length > 0;
+      });
+
+      textFieldNames.forEach((name) => {
+        const control = this.accreditationForm.get(name);
+        if (!control) return;
+
+        if (anyFilled) {
+          if (name === 'secondaryEmail') {
+            control.setValidators([Validators.required, Validators.email]);
+          } else {
+            control.setValidators([Validators.required]);
+          }
+        } else {
+          // When none are filled, remove required constraints
+          if (name === 'secondaryEmail') {
+            control.setValidators([Validators.email]);
+          } else {
+            control.clearValidators();
+          }
+        }
+        control.updateValueAndValidity({ emitEvent: false });
+      });
+    };
+
+    // Subscribe to changes for each text field
+    textFieldNames.forEach((name) => {
+      this.accreditationForm.get(name)?.valueChanges.subscribe(updateValidators);
+    });
+
+    // Initialize once
+    updateValidators();
+  }
+
+  // --- Primary vs Secondary uniqueness (email and phone) ---
+  private uniquePrimarySecondaryValidator(group: FormGroup): ValidationErrors | null {
+    const primaryEmail = (group.get('primaryContactEmail')?.value ?? '')
+      .toString()
+      .trim()
+      .toLowerCase();
+    const secondaryEmail = (group.get('secondaryEmail')?.value ?? '')
+      .toString()
+      .trim()
+      .toLowerCase();
+    const normalizePhone = (raw: any): string => {
+      const digits = (raw ?? '').toString().replace(/\D+/g, '');
+      // Strip leading country code '1' if present to compare NANP numbers fairly
+      return digits.length === 11 && digits.startsWith('1') ? digits.slice(1) : digits;
+    };
+
+    const primaryPhone = normalizePhone(group.get('primaryContactNumber')?.value);
+    const secondaryPhone = normalizePhone(group.get('secondaryPhone')?.value);
+
+    const secondaryEmailControl = group.get('secondaryEmail');
+    const secondaryPhoneControl = group.get('secondaryPhone');
+
+    // Helper to set/clear a specific error key without wiping others
+    const setSpecificError = (ctrl: AbstractControl | null, key: string, hasError: boolean) => {
+      if (!ctrl) return;
+      const existing = ctrl.errors ?? {};
+      if (hasError) {
+        existing[key] = true;
+        ctrl.setErrors(existing);
+      } else {
+        if (existing[key]) {
+          delete existing[key];
+          const newErrors = Object.keys(existing).length ? existing : null;
+          ctrl.setErrors(newErrors);
+        }
+      }
+    };
+
+    const emailDuplicate = !!primaryEmail && !!secondaryEmail && primaryEmail === secondaryEmail;
+    const phoneDuplicate = !!primaryPhone && !!secondaryPhone && primaryPhone === secondaryPhone;
+
+    setSpecificError(secondaryEmailControl, 'duplicateWithPrimary', emailDuplicate);
+    setSpecificError(secondaryPhoneControl, 'duplicateWithPrimary', phoneDuplicate);
+
+    // Also reflect a group-level error for convenience
+    const groupHasError =
+      emailDuplicate || phoneDuplicate ? { duplicatePrimarySecondary: true } : null;
+    return groupHasError;
+  }
+
+  private bindUniqueFieldRevalidation(): void {
+    const names = [
+      'primaryContactEmail',
+      'secondaryEmail',
+      'primaryContactNumber',
+      'secondaryPhone',
+    ];
+    names.forEach((name) => {
+      this.accreditationForm.get(name)?.valueChanges.subscribe(() => {
+        // trigger group validator without emitting extra value change loops
+        this.accreditationForm.updateValueAndValidity({ onlySelf: true, emitEvent: false });
+      });
+    });
+  }
 
   onSubmit(): void {
     if (this.accreditationForm.get('sameAsBusinessAddress')?.value) {

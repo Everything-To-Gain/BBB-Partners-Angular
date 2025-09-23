@@ -212,15 +212,18 @@
         <hlm-form-field>
           <label hlmLabel>First Name</label>
           <input hlmInput placeholder="Jane" formControlName="secondaryFirstName" />
+          <hlm-error>First name is required</hlm-error>
         </hlm-form-field>
         <hlm-form-field>
           <label hlmLabel>Last Name</label>
           <input hlmInput placeholder="Smith" formControlName="secondaryLastName" />
+          <hlm-error>Last name is required</hlm-error>
         </hlm-form-field>
 
         <hlm-form-field>
           <label hlmLabel>Title</label>
           <input hlmInput placeholder="Owner" formControlName="secondaryTitle" />
+          <hlm-error>Title is required</hlm-error>
         </hlm-form-field>
 
         <hlm-form-field>
@@ -231,11 +234,12 @@
             type="email"
             formControlName="secondaryEmail"
           />
-          <hlm-error>Invalid email</hlm-error>
+          <hlm-error>Email is required or invalid email or email is already in use</hlm-error>
         </hlm-form-field>
         <hlm-form-field>
           <label hlmLabel>Phone Number</label>
           <input hlmInput placeholder="(555) 222-3333" formControlName="secondaryPhone" />
+          <hlm-error>Phone number is required or phone number is already in use</hlm-error>
         </hlm-form-field>
         <hlm-form-field>
           <label hlmLabel>Preferred Contact Method</label>
