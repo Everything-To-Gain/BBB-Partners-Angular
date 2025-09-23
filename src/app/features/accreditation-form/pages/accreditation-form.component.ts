@@ -484,7 +484,21 @@ export class AccreditationFormComponent implements OnInit {
   }
 
   nextStep(): void {
-    if (this.currentStep() < this.steps.length) {
+    const current = this.currentStep();
+    const invalidInStep = this.getInvalidFieldsForStep(current);
+
+    if (invalidInStep.length > 0) {
+      // Mark invalid fields as touched so errors show
+      invalidInStep.forEach((name) => this.accreditationForm.get(name)?.markAsTouched());
+      const first = invalidInStep[0];
+      const label = this.fieldLabels[first] ?? first;
+      const stepTitle = this.getStepTitle(current);
+      toast.error(`Please complete "${label}" in ${stepTitle}.`);
+      this.scrollToAndFocusField(first);
+      return;
+    }
+
+    if (current < this.steps.length) {
       this.currentStep.update((value) => value + 1);
       this.progress.update((value) => value + 25);
     }
@@ -591,24 +605,16 @@ export class AccreditationFormComponent implements OnInit {
     return classes;
   }
 
-  // Add this new method to get all invalid fields with their errors
-  private getInvalidFields(): { [key: string]: any } {
-    const invalidFields: { [key: string]: any } = {};
+  // Returns names of controls in a step that are currently invalid (any error)
+  private getInvalidFieldsForStep(stepId: number): string[] {
+    const result: string[] = [];
     const controls = this.accreditationForm.controls;
-
     for (const [fieldName, control] of Object.entries(controls)) {
-      if (control.invalid) {
-        invalidFields[fieldName] = {
-          value: control.value,
-          errors: control.errors,
-          touched: control.touched,
-          dirty: control.dirty,
-          status: control.status,
-        };
-      }
+      if (this.fieldToStepMap[fieldName] !== stepId) continue;
+      control.updateValueAndValidity({ onlySelf: true, emitEvent: false });
+      if (control.invalid) result.push(fieldName);
     }
-
-    return invalidFields;
+    return result;
   }
 
   // Social Media Links methods

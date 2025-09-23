@@ -121,17 +121,11 @@
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
         <div>
           <label for="primaryDateOfBirth" hlmLabel class="px-1">Date of birth *</label>
-          <hlm-date-picker
-            class="w-full mt-1"
-            [min]="minDate"
-            formControlName="primaryDateOfBirth"
-            [autoCloseOnSelect]="true"
-          >
-            <span>Pick a date</span>
-          </hlm-date-picker>
-          @if (form().get('primaryDateOfBirth')?.value && form().get('primaryDateOfBirth')?.touched)
-          {
-          <hlm-error>Date of birth is required</hlm-error>
+          <input hlmInput type="date" class="w-full mt-2" formControlName="primaryDateOfBirth" />
+
+          @if ( form().get('primaryDateOfBirth')?.touched &&
+          form().get('primaryDateOfBirth')?.errors?.['required'] ) {
+          <hlm-error class="mt-1">Date of birth is required</hlm-error>
           }
         </div>
         <hlm-form-field>
