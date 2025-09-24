@@ -1,4 +1,5 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { HlmIcon } from '@spartan-ng/helm/icon';
 import { HlmProgress, HlmProgressIndicator } from '@spartan-ng/helm/progress';
@@ -28,6 +29,12 @@ import { HlmButton } from '@spartan-ng/helm/button';
 import { toast } from 'ngx-sonner';
 import { AccreditationFormService } from '../services/accreditation-form.service';
 import { finalize } from 'rxjs';
+import {
+  PartnershipSource,
+  VALID_PARTNERSHIP_SOURCES,
+  PARTNERSHIP_SOURCE,
+  convertToPascalCase,
+} from '../models/partnership-sources.model';
 
 @Component({
   selector: 'app-accreditation-form',
@@ -58,9 +65,11 @@ import { finalize } from 'rxjs';
 })
 export class AccreditationFormComponent implements OnInit {
   private accreditationFormService = inject(AccreditationFormService);
+  private route = inject(ActivatedRoute);
   progress = signal(25);
   currentStep = signal(1);
   isSubmitting = signal(false);
+  partnershipSource: PartnershipSource | null = null;
   steps = [
     { id: 1, title: 'Business Information', icon: 'lucideBuilding' },
     { id: 2, title: 'Contact Information', icon: 'lucideUsers' },
@@ -199,6 +208,14 @@ export class AccreditationFormComponent implements OnInit {
   }
 
   ngOnInit() {
+    // Get partnership source from route parameter
+    const id = this.route.snapshot.paramMap.get('id');
+    const pascalCaseId = id ? convertToPascalCase(id) : null;
+
+    if (pascalCaseId && VALID_PARTNERSHIP_SOURCES.includes(pascalCaseId as PartnershipSource)) {
+      this.partnershipSource = pascalCaseId as PartnershipSource;
+    }
+
     // Watch for changes in the "same as business address" checkbox
     this.accreditationForm.get('sameAsBusinessAddress')?.valueChanges.subscribe((isSame) => {
       if (isSame) {
@@ -535,7 +552,24 @@ export class AccreditationFormComponent implements OnInit {
     }
     if (this.accreditationForm.valid) {
       this.isSubmitting.set(true);
-      const payload = this.accreditationForm.getRawValue();
+      const formData = this.accreditationForm.getRawValue();
+
+      const payload = {
+        ...formData,
+        numberOfLocations: formData.numberOfLocations || null,
+        numberOfFullTimeEmployees: formData.numberOfFullTimeEmployees || null,
+        numberOfPartTimeEmployees: formData.numberOfPartTimeEmployees || null,
+        grossAnnualRevenue: formData.grossAnnualRevenue || null,
+        businessZip: formData.businessZip?.toString() || '',
+        mailingZip: formData.mailingZip?.toString() || '',
+        primaryBusinessPhone: formData.primaryBusinessPhone?.toString() || '',
+        primaryContactNumber: formData.primaryContactNumber?.toString() || '',
+        secondaryPhone: formData.secondaryPhone?.toString() || '',
+        PartnershipSource: this.partnershipSource
+          ? PARTNERSHIP_SOURCE[this.partnershipSource]
+          : null,
+      };
+      console.log(payload);
       this.accreditationFormService
         .submitAccreditationForm(payload)
         .pipe(finalize(() => this.isSubmitting.set(false)))
@@ -568,7 +602,12 @@ export class AccreditationFormComponent implements OnInit {
 
     if (invalidInStep.length > 0) {
       // Mark invalid fields as touched so errors show
-      invalidInStep.forEach((name) => this.accreditationForm.get(name)?.markAsTouched());
+      invalidInStep.forEach((name) => {
+        const control = this.accreditationForm.get(name);
+        if (control) {
+          this.markControlAsTouched(control);
+        }
+      });
       const first = invalidInStep[0];
       const label = this.fieldLabels[first] ?? first;
       const stepTitle = this.getStepTitle(current);
@@ -624,19 +663,46 @@ export class AccreditationFormComponent implements OnInit {
 
     // First, check for touched invalid fields
     for (const [fieldName, control] of Object.entries(controls)) {
-      if (control.invalid && control.touched) {
+      if (this.isControlInvalid(control) && control.touched) {
         return fieldName;
       }
     }
 
     // If no touched invalid fields, find the first invalid field
     for (const [fieldName, control] of Object.entries(controls)) {
-      if (control.invalid) {
+      if (this.isControlInvalid(control)) {
         return fieldName;
       }
     }
 
     return null;
+  }
+
+  // Helper method to check if a control is invalid, handling FormArray and FormGroup properly
+  private isControlInvalid(control: AbstractControl): boolean {
+    if (control instanceof FormArray) {
+      // For FormArray, check if any of its controls are invalid
+      return control.controls.some((childControl) => this.isControlInvalid(childControl));
+    } else if (control instanceof FormGroup) {
+      // For FormGroup, check if any of its controls are invalid
+      return Object.keys(control.controls).some((key) => this.isControlInvalid(control.get(key)!));
+    }
+    return control.invalid;
+  }
+
+  // Helper method to mark a control as touched, handling FormArray and FormGroup properly
+  private markControlAsTouched(control: AbstractControl): void {
+    if (control instanceof FormArray) {
+      // For FormArray, mark all child controls as touched
+      control.controls.forEach((childControl) => this.markControlAsTouched(childControl));
+    } else if (control instanceof FormGroup) {
+      // For FormGroup, mark all child controls as touched
+      Object.keys(control.controls).forEach((key) => {
+        this.markControlAsTouched(control.get(key)!);
+      });
+    } else {
+      control.markAsTouched();
+    }
   }
 
   private scrollToAndFocusField(fieldName: string): void {
@@ -699,7 +765,7 @@ export class AccreditationFormComponent implements OnInit {
     for (const [fieldName, control] of Object.entries(controls)) {
       if (this.fieldToStepMap[fieldName] !== stepId) continue;
       control.updateValueAndValidity({ onlySelf: true, emitEvent: false });
-      if (control.invalid) result.push(fieldName);
+      if (this.isControlInvalid(control)) result.push(fieldName);
     }
     return result;
   }

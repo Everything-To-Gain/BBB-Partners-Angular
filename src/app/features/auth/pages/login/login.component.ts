@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -12,6 +12,6 @@ export class LoginComponent {
   }
 
   continueWithGoogle() {
-    this.authService.loginWithGoogle();
+    window.location.href = this.authService.getGoogleLoginUrl();
   }
 }
