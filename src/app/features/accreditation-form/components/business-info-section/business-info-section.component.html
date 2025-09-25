@@ -5,21 +5,20 @@
       <div hlmCardDescription>Tell us about your business and where it's located.</div>
     </div>
     <div hlmCardContent class="space-y-3 sm:space-y-4">
+      <hlm-form-field>
+        <label hlmLabel>Business Name *</label>
+        <input hlmInput type="text" placeholder="ABC Roofing Inc." formControlName="businessName" />
+        <hlm-error>Business name is required</hlm-error>
+      </hlm-form-field>
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
-        <hlm-form-field>
-          <label hlmLabel>Business Name *</label>
-          <input
-            hlmInput
-            type="text"
-            placeholder="ABC Roofing Inc."
-            formControlName="businessName"
-          />
-          <hlm-error>Business name is required</hlm-error>
-        </hlm-form-field>
         <hlm-form-field>
           <label hlmLabel>Business Address *</label>
           <input hlmInput placeholder="123 Main St" formControlName="businessAddress" />
           <hlm-error>Business address is required</hlm-error>
+        </hlm-form-field>
+        <hlm-form-field>
+          <label hlmLabel>Business Apt/Suite Number</label>
+          <input hlmInput placeholder="Apt 2B, Suite 100" formControlName="businessAptSuite" />
         </hlm-form-field>
       </div>
 
@@ -64,16 +63,10 @@
         </hlm-form-field>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
-        <hlm-form-field>
-          <label hlmLabel>Doing Business As (DBA)</label>
-          <input hlmInput placeholder="ABC Contractors" formControlName="doingBusinessAs" />
-        </hlm-form-field>
-        <hlm-form-field>
-          <label hlmLabel>Business Apt/Suite Number</label>
-          <input hlmInput placeholder="Apt 2B, Suite 100" formControlName="businessAptSuite" />
-        </hlm-form-field>
-      </div>
+      <hlm-form-field>
+        <label hlmLabel>Doing Business As (DBA)</label>
+        <input hlmInput placeholder="ABC Contractors" formControlName="doingBusinessAs" />
+      </hlm-form-field>
 
       <!-- Mailing Address Section -->
       <div class="space-y-3 sm:space-y-4">
@@ -137,7 +130,7 @@
         <div class="flex items-center space-x-2">
           <hlm-checkbox formControlName="hasMultipleLocations" />
           <label hlmLabel class="text-sm font-medium text-gray-700">
-            Does this business have more than 1 location?
+            This business has more than 1 location.
           </label>
         </div>
 

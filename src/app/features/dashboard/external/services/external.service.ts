@@ -2,7 +2,10 @@ import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../../../environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { ApiResponse, PagedResult } from '../../../../core/models/api-response.model';
-import { ExternalApplicationResponse } from '../models/external-application.model';
+import {
+  ApplicationStatus,
+  ExternalApplicationResponse,
+} from '../models/external-application.model';
 
 export interface PaginationParams {
   pageNumber: number;
@@ -33,6 +36,12 @@ export class ExternalService {
     return this.http.get<ApiResponse<PagedResult<ExternalApplicationResponse>>>(
       `${this.apiUrl}/application/external-data`,
       { params: httpParams }
+    );
+  }
+
+  getApplicationExternalStatus() {
+    return this.http.get<ApiResponse<ApplicationStatus[]>>(
+      `${this.apiUrl}/application/application-external-status`
     );
   }
 }
