@@ -1,0 +1,230 @@
+<!-- Header -->
+<header class="bg-white border-b border-slate-200">
+  <div class="w-full px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center py-3">
+      <div>
+        <h1 class="text-2xl font-bold text-slate-800">Dashboard</h1>
+        <p class="text-sm text-slate-600 mt-1">{{ partnershipSourceDisplayName }} Applications</p>
+      </div>
+      <div class="flex items-center space-x-3">
+        <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+          <span class="text-white font-medium text-sm">
+            {{ (userName || userEmail || 'U').charAt(0).toUpperCase() }}
+          </span>
+        </div>
+        <div class="text-sm">
+          <p class="font-medium text-slate-800">{{ userName || 'User' }}</p>
+          <p class="text-slate-500">{{ userRole }}</p>
+        </div>
+        <button
+          hlmBtn
+          variant="outline"
+          size="sm"
+          (click)="logout()"
+          class="ml-3 bg-red-50 text-red-600 border-red-200 hover:bg-red-100 hover:text-red-700 hover:border-red-300 transition-colors duration-200"
+        >
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+            ></path>
+          </svg>
+          Logout
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="w-full min-h-screen bg-slate-50 p-4">
+  <div class="w-full">
+    <!-- Search Bar -->
+    <div class="mb-6">
+      <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
+        <div class="flex items-center space-x-4">
+          <div class="flex-1">
+            <input
+              hlmInput
+              type="text"
+              placeholder="Search by email..."
+              (input)="onSearchChange($event)"
+              class="w-full"
+            />
+          </div>
+          @if (searchTerm()) {
+          <button
+            hlmBtn
+            variant="outline"
+            size="sm"
+            (click)="searchTerm.set(''); currentPage.set(1); loadData()"
+            class="text-slate-500 hover:text-slate-700"
+          >
+            Clear
+          </button>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden w-full">
+      <div class="w-full">
+        <table hlmTable class="w-full">
+          <thead hlmTHead class="bg-gradient-to-r from-blue-600 to-blue-700">
+            <tr hlmTr>
+              <th hlmTh class="text-white font-semibold px-6 py-4 text-left">Application ID</th>
+              <th hlmTh class="text-white font-semibold px-6 py-4 text-left">Company Name</th>
+              <th hlmTh class="text-white font-semibold px-6 py-4 text-left">Submitted By</th>
+              <th hlmTh class="text-white font-semibold px-6 py-4 text-left">Status</th>
+            </tr>
+          </thead>
+          <tbody hlmTBody class="bg-white divide-y divide-slate-100">
+            @if (isLoading()) {
+            <!-- Loading Skeleton -->
+            @for (i of [1,2,3,4,5]; track i) {
+            <tr hlmTr class="animate-pulse">
+              <td hlmTd class="px-6 py-4">
+                <div class="h-4 bg-slate-200 rounded w-full"></div>
+              </td>
+              <td hlmTd class="px-6 py-4">
+                <div class="h-4 bg-slate-200 rounded w-32"></div>
+              </td>
+              <td hlmTd class="px-6 py-4">
+                <div class="h-4 bg-slate-200 rounded w-40"></div>
+              </td>
+              <td hlmTd class="px-6 py-4">
+                <div class="h-6 bg-slate-200 rounded-full w-24"></div>
+              </td>
+            </tr>
+            } } @else { @for (item of paginatedData; track item.applicationId) {
+            <tr hlmTr class="hover:bg-slate-50 transition-colors duration-200">
+              <td hlmTd class="px-6 py-4 text-sm text-slate-700 font-mono bg-slate-50">
+                {{ item.applicationId }}
+              </td>
+              <td hlmTd class="px-6 py-4 text-sm text-slate-800">
+                {{ item.companyName || '-' }}
+              </td>
+              <td
+                hlmTd
+                class="px-6 py-4 text-sm text-blue-600 hover:text-blue-700 transition-colors"
+              >
+                {{ item.submittedByEmail || '-' }}
+              </td>
+              <td hlmTd class="px-6 py-4 text-sm">
+                <span
+                  class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200"
+                >
+                  {{ item.applicationStatusExternal || '-' }}
+                </span>
+              </td>
+            </tr>
+            } @empty {
+            <tr hlmTr>
+              <td hlmTd class="px-6 py-12 text-center text-slate-500" colspan="4">
+                <div class="flex flex-col items-center">
+                  <svg
+                    class="w-12 h-12 text-slate-400 mb-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                    ></path>
+                  </svg>
+                  <p class="text-lg font-medium text-slate-700">No applications found</p>
+                  <p class="text-sm text-slate-500">
+                    There are no external applications to display at this time.
+                  </p>
+                </div>
+              </td>
+            </tr>
+            } }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Pagination Controls -->
+    <div class="mt-6 bg-white rounded-lg shadow-sm border border-slate-200 p-4">
+      <div class="flex flex-col justify-between sm:flex-row sm:items-center">
+        @if (totalItems() > 0) {
+        <span class="text-sm text-slate-600 mb-2 sm:mb-0">
+          Showing {{ getStartIndex() }} to {{ getEndIndex() }} of {{ totalItems() }} entries
+        </span>
+        <div class="flex items-center space-x-3">
+          <div class="flex items-center space-x-2">
+            <span class="text-sm text-slate-600">Show:</span>
+            <brn-select
+              class="inline-block"
+              [ngModel]="pageSize()"
+              (ngModelChange)="onPageSizeChange($event)"
+            >
+              <hlm-select-trigger class="w-20 inline-flex h-8 text-sm">
+                <hlm-select-value />
+              </hlm-select-trigger>
+              <hlm-select-content>
+                @for (size of availablePageSizes; track size) {
+                <hlm-option [value]="size">
+                  {{ size }}
+                </hlm-option>
+                }
+              </hlm-select-content>
+            </brn-select>
+          </div>
+
+          <div class="flex items-center space-x-1">
+            <button
+              size="sm"
+              variant="outline"
+              hlmBtn
+              [disabled]="!canPreviousPage"
+              (click)="previousPage()"
+              class="h-8 px-3 text-sm"
+            >
+              Previous
+            </button>
+
+            <!-- Page Numbers -->
+            @for (page of getPageNumbers(); track page) {
+            <button
+              size="sm"
+              variant="default"
+              hlmBtn
+              [class]="
+                page === currentPage()
+                  ? 'h-8 px-3 text-sm bg-blue-600 text-white border-blue-600 hover:bg-blue-700'
+                  : 'h-8 px-3 text-sm text-slate-700 border-slate-300 hover:bg-slate-100'
+              "
+              (click)="goToPage(page)"
+            >
+              {{ page }}
+            </button>
+            }
+
+            <button
+              size="sm"
+              variant="outline"
+              hlmBtn
+              [disabled]="!canNextPage"
+              (click)="nextPage()"
+              class="h-8 px-3 text-sm"
+            >
+              Next
+            </button>
+          </div>
+        </div>
+        } @else {
+        <div class="flex h-full w-full items-center justify-center py-8">
+          <div class="text-slate-500 text-sm">No Data</div>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>

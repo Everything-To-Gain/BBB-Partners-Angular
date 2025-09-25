@@ -57,6 +57,9 @@
       ],
       "@spartan-ng/helm/command": [
         "./src/app/shared/ui/ui-command-helm/src/index.ts"
+      ],
+      "@spartan-ng/helm/table": [
+        "./src/app/shared/ui/ui-table-helm/src/index.ts"
       ]
     }
   },

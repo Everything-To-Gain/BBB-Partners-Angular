@@ -32,17 +32,35 @@ export class AuthService {
   private apiUrl = environment.apiUrl;
   private http = inject(HttpClient);
   private googleRedirectUri = `${environment.frontUrl}/auth/google-callback`;
+  private microsoftRedirectUri = `${environment.frontUrl}/auth/microsoft-callback`;
 
-  // Authentication state signals
-  private authDataSignal = signal<AuthData | null>(null);
+  // Store only the token
+  private tokenSignal = signal<string | null>(null);
 
-  // Public readonly signals
-  readonly authData = this.authDataSignal.asReadonly();
-  readonly isAuthenticated = computed(() => !!this.authDataSignal());
-  readonly userEmail = computed(() => this.authDataSignal()?.email || null);
-  readonly userRole = computed(() => this.authDataSignal()?.role || null);
-  readonly userName = computed(() => this.authDataSignal()?.userName || null);
-  readonly token = computed(() => this.authDataSignal()?.token || null);
+  // Public readonly signals - decode token on demand
+  readonly isAuthenticated = computed(() => !!this.tokenSignal());
+  readonly token = computed(() => this.tokenSignal());
+  readonly userEmail = computed(() => {
+    const token = this.tokenSignal();
+    if (!token) return null;
+    const decoded = this.decodeJwtToken(token);
+    return decoded?.email || null;
+  });
+  readonly userRole = computed(() => {
+    const token = this.tokenSignal();
+    if (!token) return null;
+    const decoded = this.decodeJwtToken(token);
+    return decoded?.role || null;
+  });
+  readonly userName = computed(() => {
+    const email = this.userEmail();
+    if (!email) return null;
+    // Extract name from email (part before @)
+    return email
+      .split('@')[0]
+      .replace(/[._]/g, ' ')
+      .replace(/\b\w/g, (l) => l.toUpperCase());
+  });
 
   constructor() {
     // Initialize auth data from localStorage on service creation
@@ -51,20 +69,42 @@ export class AuthService {
 
   // Initialize authentication data from localStorage
   private initializeAuthFromStorage(): void {
-    const storedAuthData = localStorage.getItem('authData');
-    if (storedAuthData) {
-      try {
-        const authData = JSON.parse(storedAuthData) as AuthData;
-        this.authDataSignal.set(authData);
-      } catch (error) {
-        console.error('Error parsing stored auth data:', error);
-        localStorage.removeItem('authData');
+    const storedToken = localStorage.getItem('authToken');
+
+    if (storedToken) {
+      // Verify token is still valid by decoding it
+      const decoded = this.decodeJwtToken(storedToken);
+      if (decoded && decoded.exp * 1000 > Date.now()) {
+        this.tokenSignal.set(storedToken);
+      } else {
+        // Token expired, clear storage
+        this.clearStorage();
       }
     }
   }
 
   loginWithMicrosoft() {
-    window.location.href = `${this.apiUrl}/auth/microsoft-login`;
+    window.location.href = this.getMicrosoftLoginUrl();
+  }
+
+  getMicrosoftLoginUrl(): string {
+    const microsoftClientId = environment.microsoftClientId;
+    const microsoftTenantId = environment.microsoftTenantId;
+    const microsoftRedirectUri = this.microsoftRedirectUri;
+
+    const state = crypto.randomUUID().replace(/-/g, '');
+
+    const url = new URL(
+      `https://login.microsoftonline.com/${microsoftTenantId}/oauth2/v2.0/authorize`
+    );
+    url.searchParams.set('client_id', microsoftClientId);
+    url.searchParams.set('response_type', 'code');
+    url.searchParams.set('redirect_uri', microsoftRedirectUri);
+    url.searchParams.set('response_mode', 'query');
+    url.searchParams.set('scope', 'openid profile email offline_access User.Read');
+    url.searchParams.set('state', state);
+
+    return url.toString();
   }
 
   getGoogleLoginUrl(): string {
@@ -85,6 +125,12 @@ export class AuthService {
   handleGoogleCallback(code: string): Observable<AuthCallbackResponse> {
     return this.http.get<AuthCallbackResponse>(`${this.apiUrl}/auth/google-callback`, {
       params: { code, redirectUrl: this.googleRedirectUri },
+    });
+  }
+
+  handleMicrosoftCallback(code: string): Observable<AuthCallbackResponse> {
+    return this.http.get<AuthCallbackResponse>(`${this.apiUrl}/auth/microsoft-callback`, {
+      params: { code, redirectUrl: this.microsoftRedirectUri },
     });
   }
 
@@ -111,19 +157,13 @@ export class AuthService {
     const decodedToken = this.decodeJwtToken(response.token);
 
     if (decodedToken) {
-      const authData: AuthData = {
-        token: response.token,
-        userName: response.userName,
-        email: decodedToken.email,
-        role: decodedToken.role,
-      };
-
       // Update signal
-      this.authDataSignal.set(authData);
+      this.tokenSignal.set(response.token);
 
-      // Save to localStorage
-      localStorage.setItem('authData', JSON.stringify(authData));
-      console.log('Authentication data saved:', authData);
+      // Save only token to localStorage
+      localStorage.setItem('authToken', response.token);
+
+      console.log('Authentication data saved - token only');
     } else {
       console.error('Failed to decode token, authentication data not saved');
     }
@@ -131,17 +171,42 @@ export class AuthService {
 
   // Get authentication data from localStorage (legacy method - use signals instead)
   getAuthData(): AuthData | null {
-    const authData = localStorage.getItem('authData');
-    return authData ? JSON.parse(authData) : null;
+    const token = localStorage.getItem('authToken');
+
+    if (!token) return null;
+
+    const decoded = this.decodeJwtToken(token);
+    if (!decoded) return null;
+
+    // Generate userName from email
+    const email = decoded.email;
+    const userName = email
+      ? email
+          .split('@')[0]
+          .replace(/[._]/g, ' ')
+          .replace(/\b\w/g, (l) => l.toUpperCase())
+      : '';
+
+    return {
+      token,
+      userName,
+      email: decoded.email,
+      role: decoded.role,
+    };
+  }
+
+  // Clear storage helper
+  private clearStorage(): void {
+    localStorage.removeItem('authToken');
   }
 
   // Logout and clear authentication data
   logout(): void {
     // Clear signal
-    this.authDataSignal.set(null);
+    this.tokenSignal.set(null);
 
     // Clear localStorage
-    localStorage.removeItem('authData');
+    this.clearStorage();
   }
 
   // Test method to verify interceptor is working

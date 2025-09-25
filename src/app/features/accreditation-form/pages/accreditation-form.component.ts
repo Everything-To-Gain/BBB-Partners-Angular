@@ -1,5 +1,5 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { HlmIcon } from '@spartan-ng/helm/icon';
 import { HlmProgress, HlmProgressIndicator } from '@spartan-ng/helm/progress';
@@ -66,6 +66,7 @@ import {
 export class AccreditationFormComponent implements OnInit {
   private accreditationFormService = inject(AccreditationFormService);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   progress = signal(25);
   currentStep = signal(1);
   isSubmitting = signal(false);
@@ -385,6 +386,11 @@ export class AccreditationFormComponent implements OnInit {
           } else {
             control.setValidators([Validators.required]);
           }
+          // Ensure validation messages show immediately once any field is typed
+          if (!control.touched) {
+            control.markAsTouched({ onlySelf: true });
+          }
+          control.markAsDirty({ onlySelf: true });
         } else {
           // When none are filled, remove required constraints
           if (name === 'secondaryEmail') {
@@ -394,6 +400,9 @@ export class AccreditationFormComponent implements OnInit {
           } else {
             control.clearValidators();
           }
+          // Revert visual state when nothing is filled
+          control.markAsPristine({ onlySelf: true });
+          control.markAsUntouched({ onlySelf: true });
         }
         control.updateValueAndValidity({ emitEvent: false });
       });
@@ -403,8 +412,14 @@ export class AccreditationFormComponent implements OnInit {
       if (secondaryPreferredCtrl) {
         if (anyFilled) {
           secondaryPreferredCtrl.setValidators([Validators.required]);
+          if (!secondaryPreferredCtrl.touched) {
+            secondaryPreferredCtrl.markAsTouched({ onlySelf: true });
+          }
+          secondaryPreferredCtrl.markAsDirty({ onlySelf: true });
         } else {
           secondaryPreferredCtrl.clearValidators();
+          secondaryPreferredCtrl.markAsPristine({ onlySelf: true });
+          secondaryPreferredCtrl.markAsUntouched({ onlySelf: true });
         }
         secondaryPreferredCtrl.updateValueAndValidity({ emitEvent: false });
       }
@@ -576,6 +591,7 @@ export class AccreditationFormComponent implements OnInit {
         .subscribe({
           next: (res) => {
             toast.success('Form submitted successfully');
+            this.router.navigate(['/submission-success']);
           },
           error: (error) => {
             toast.error('Failed to submit form. Please try again.');

@@ -4,7 +4,7 @@ import { AuthService } from '../../services/auth.service';
 import { toast } from 'ngx-sonner';
 
 @Component({
-  selector: 'app-auth-callback',
+  selector: 'app-microsoft-callback',
   template: `
     <div
       class="min-h-screen bg-gradient-to-br from-primary/5 via-white to-primary/10 flex flex-col items-center justify-center py-6 px-4 sm:py-12 sm:px-6 lg:px-8 relative overflow-hidden"
@@ -33,9 +33,9 @@ import { toast } from 'ngx-sonner';
         <div
           class="bg-white/80 backdrop-blur-sm py-8 px-6 sm:py-10 sm:px-8 shadow-xl border border-white/20 rounded-2xl"
         >
-          <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">Signing in to Google</h2>
+          <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">Signing in to Microsoft</h2>
           <p class="text-gray-600 mb-6">
-            Please wait while we authenticate you with your Google account.
+            Please wait while we authenticate you with your Microsoft account.
           </p>
 
           <p class="text-sm text-gray-500">This may take a few moments...</p>
@@ -49,7 +49,7 @@ import { toast } from 'ngx-sonner';
     </div>
   `,
 })
-export class AuthCallbackComponent {
+export class MicrosoftCallbackComponent {
   private authService = inject(AuthService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
@@ -60,7 +60,7 @@ export class AuthCallbackComponent {
 
       if (code) {
         // Send the code to backend for exchange
-        this.authService.handleGoogleCallback(code).subscribe({
+        this.authService.handleMicrosoftCallback(code).subscribe({
           next: (response) => {
             // Save authentication data to localStorage
             this.authService.saveAuthData(response);
@@ -88,7 +88,6 @@ export class AuthCallbackComponent {
   private navigateBasedOnRole(): void {
     // Get user role from the saved auth data
     const userRole = this.authService.userRole();
-    console.log('userRole', userRole);
     if (userRole === 'Internal') {
       // Navigate to internal dashboard
       this.router.navigate(['/dashboard/internal/overview']);
