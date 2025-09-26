@@ -1,0 +1,861 @@
+<!-- Enhanced Header -->
+<header
+  class="bg-gradient-to-r from-primary/5 via-white to-primary/5 border-b border-border shadow-sm"
+>
+  <div class="w-full px-6 py-6">
+    <div class="flex justify-between items-center">
+      <div class="flex items-center space-x-6">
+        <!-- BBB Logo -->
+        <div
+          class="w-14 h-14 bg-primary rounded-xl flex items-center justify-center shadow-lg transform hover:scale-105 transition-transform duration-300"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0.5 0.5 266.4 368.6"
+            aria-hidden="true"
+            focusable="false"
+            class="h-10 w-10"
+          >
+            <path
+              fill="white"
+              d="M185.1 231.5H44l-5.2 16.9h37.7l7.2 23.2h61.9l7.1-23.2h37.6l-5-17zM67 136.6a33.4 33.4 0 0 0 7.4 46.7l33.8 24.5a8.4 8.4 0 0 1 2 11.7l5 3.7 17.9-24.7a33.2 33.2 0 0 0 6.3-19.5 33.8 33.8 0 0 0-.4-5.4 33.2 33.2 0 0 0-13.4-21.7l-33.8-24.6a8.3 8.3 0 0 1-3.4-5.4 8.8 8.8 0 0 1 0-1.4 8.2 8.2 0 0 1 1.5-4.8l-5-3.7zM87.3 38A48 48 0 0 0 78 66.2a49.2 49.2 0 0 0 .6 7.7A48.1 48.1 0 0 0 98 105.5l42.5 30.8a25.8 25.8 0 0 1 10.4 16.9 26.4 26.4 0 0 1 .3 4.1 25.8 25.8 0 0 1-5 15.2l4.1 3 33.5-46.3A48.4 48.4 0 0 0 173 61.6l-51.3-37.3a15 15 0 0 1-3.3-20.9l-4-2.9zM.5 285.8h38.7c9.5 0 17 2.6 21.8 7.3a19.1 19.1 0 0 1 5.7 14.2v.2c0 9.4-5 14.7-11 18 9.6 3.7 15.6 9.3 15.6 20.5v.2c0 15.3-12.4 22.9-31.2 22.9H.5zm34.8 33.6c8 0 13.2-2.6 13.2-8.8v-.2c0-5.5-4.3-8.6-12-8.6H18.4v17.6zm4.9 33.6c8 0 13-2.8 13-9v-.2c0-5.6-4.2-9-13.6-9H18.4V353zm39.1-67.3H118c9.6 0 17 2.7 21.8 7.4a19.1 19.1 0 0 1 5.7 14.2v.2c0 9.4-5 14.7-11 18 9.7 3.7 15.6 9.3 15.6 20.5v.2c0 15.3-12.4 22.9-31.2 22.9H79.3zm34.8 33.8c8 0 13.2-2.7 13.2-8.9v-.2c0-5.5-4.3-8.6-12-8.6H97.2v17.6zM119 353c8 0 13-2.8 13-9v-.2c0-5.6-4.2-9-13.6-9H97.2V353zm39.1-67.3H197c9.5 0 17 2.7 21.7 7.4a19.1 19.1 0 0 1 5.8 14.2v.2c0 9.4-5 14.7-11 18 9.6 3.7 15.6 9.3 15.6 20.5v.2c0 15.3-12.4 22.9-31.2 22.9h-39.6zm34.8 33.8c8.1 0 13.2-2.7 13.2-8.9v-.2c0-5.5-4.2-8.6-12-8.6h-18v17.6zm4.9 33.5c8.1 0 13-2.8 13-9v-.2c0-5.6-4.2-9-13.6-9H176V353zm35-1.3v-.1a17 17 0 0 1 34-.1 17 17 0 0 1-34 .2zm32-.1v-.1a15 15 0 1 0-30 0v.2a15 15 0 1 0 30-.1zm-22-9.5h8a7.6 7.6 0 0 1 5.6 2 5.4 5.4 0 0 1 1.6 4 5.6 5.6 0 0 1-4 5.6l4.5 6.4h-4.7l-3.8-5.8h-3.2v5.8h-4zm8 8.8c2 0 3.2-1 3.2-2.6 0-1.8-1.3-2.7-3.2-2.7h-4v5.3z"
+            ></path>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-2xl font-bold text-foreground">Application Details</h1>
+          <p class="text-sm text-muted-foreground mt-1">View detailed application information</p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-4">
+        <div class="flex items-center space-x-3 bg-secondary/50 rounded-lg px-4 py-2">
+          <div class="w-10 h-10 bg-accent rounded-full flex items-center justify-center">
+            <span class="text-white font-medium text-sm">
+              {{ (userName || userEmail || 'U').charAt(0).toUpperCase() }}
+            </span>
+          </div>
+          <div class="text-sm">
+            <p class="font-semibold text-foreground">{{ userName || 'User' }}</p>
+            <p class="text-muted-foreground">{{ userRole }}</p>
+          </div>
+        </div>
+        <button
+          hlmBtn
+          variant="outline"
+          size="sm"
+          (click)="logout()"
+          class="text-destructive border-destructive/20 hover:bg-destructive/10 hover:border-destructive/30 transition-all duration-200"
+        >
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+            ></path>
+          </svg>
+          Logout
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="w-full min-h-screen bg-background p-6">
+  <div class="w-full max-w-[1400px] mx-auto">
+    <!-- Back Navigation -->
+    <div class="mb-6">
+      <button
+        hlmBtn
+        variant="ghost"
+        size="sm"
+        (click)="goBack()"
+        class="flex items-center gap-2 text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors duration-200"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M10 19l-7-7m0 0l7-7m-7 7h18"
+          ></path>
+        </svg>
+        Back to Applications
+      </button>
+    </div>
+
+    @if (isLoading()) {
+    <!-- Loading State -->
+    <div class="flex items-center justify-center py-12">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      <span class="ml-3 text-muted-foreground">Loading application details...</span>
+    </div>
+    } @else if (applicationDetails()) {
+    <!-- Application Details -->
+    <div class="space-y-6">
+      <!-- Application Header -->
+      <div hlmCard class="bg-gradient-to-r from-primary/5 to-accent/5 border-primary/20">
+        <div hlmCardHeader class="pb-4">
+          <div class="flex items-start justify-between">
+            <div>
+              <div hlmCardTitle class="text-2xl font-bold text-foreground">
+                {{ applicationDetails()?.businessName || 'Business Name Not Provided' }}
+              </div>
+              <div hlmCardDescription class="text-muted-foreground mt-1">
+                {{ applicationDetails()?.applicationNumber || 'Application Number Not Available' }}
+              </div>
+              <p class="text-sm text-muted-foreground mt-2 font-mono">
+                Application ID: {{ applicationDetails()?.applicationId || 'Not Available' }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Business Information -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Business Details -->
+        <div
+          hlmCard
+          class="border-primary/20 hover:border-primary/40 transition-colors duration-200"
+        >
+          <div hlmCardHeader>
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                <svg
+                  class="w-5 h-5 text-primary"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                  ></path>
+                </svg>
+              </div>
+              <div hlmCardTitle class="text-lg">Business Information</div>
+            </div>
+          </div>
+          <div hlmCardContent class="space-y-4">
+            <div class="bg-primary/5 rounded-lg p-4 border border-primary/10">
+              <label class="text-sm font-medium text-muted-foreground block mb-1"
+                >Business Name</label
+              >
+              <p class="text-foreground font-medium">
+                {{ applicationDetails()?.businessName || 'Not provided' }}
+              </p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="text-sm font-medium text-muted-foreground block mb-1"
+                  >Doing Business As</label
+                >
+                <p class="text-foreground break-words">
+                  {{ applicationDetails()?.doingBusinessAs || 'Not specified' }}
+                </p>
+              </div>
+              <div>
+                <label class="text-sm font-medium text-muted-foreground block mb-1">EIN</label>
+                <p class="text-foreground font-mono text-sm break-words">
+                  {{ applicationDetails()?.ein || 'Not provided' }}
+                </p>
+              </div>
+            </div>
+            <div>
+              <label class="text-sm font-medium text-muted-foreground block mb-1"
+                >Business Address</label
+              >
+              <div class="bg-secondary/20 rounded-lg p-3">
+                <p class="text-foreground break-words">
+                  {{ applicationDetails()?.businessAddress || 'Address not provided' }}<br />
+                  @if (applicationDetails()?.businessCity && applicationDetails()?.businessState) {
+                  {{ applicationDetails()?.businessCity }},
+                  {{ applicationDetails()?.businessState }}
+                  {{ applicationDetails()?.businessZip }}
+                  } @else {
+                  <span class="text-muted-foreground">Location details not available</span>
+                  }
+                </p>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="text-sm font-medium text-muted-foreground block mb-1"
+                  >Business Phone</label
+                >
+                <p class="text-foreground font-mono break-words">
+                  {{ applicationDetails()?.primaryBusinessPhone || 'Not provided' }}
+                </p>
+              </div>
+              <div>
+                <label class="text-sm font-medium text-muted-foreground block mb-1"
+                  >Business Email</label
+                >
+                <p class="text-foreground break-words">
+                  {{ applicationDetails()?.primaryBusinessEmail || 'Not provided' }}
+                </p>
+              </div>
+            </div>
+            @if (applicationDetails()?.website) {
+            <div>
+              <label class="text-sm font-medium text-muted-foreground block mb-1">Website</label>
+              <a
+                [href]="applicationDetails()?.website"
+                target="_blank"
+                class="text-primary hover:underline break-all"
+              >
+                {{ applicationDetails()?.website }}
+              </a>
+            </div>
+            }
+          </div>
+        </div>
+
+        <!-- Contact Information -->
+        <div hlmCard class="border-accent/20 hover:border-accent/40 transition-colors duration-200">
+          <div hlmCardHeader>
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-accent/10 rounded-lg flex items-center justify-center">
+                <svg
+                  class="w-5 h-5 text-accent"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  ></path>
+                </svg>
+              </div>
+              <div hlmCardTitle class="text-lg">Contact Information</div>
+            </div>
+          </div>
+          <div hlmCardContent class="space-y-4">
+            <div class="bg-accent/10 rounded-lg p-4 border border-accent/20">
+              <label class="text-sm font-medium text-muted-foreground block mb-2"
+                >Primary Contact</label
+              >
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-accent rounded-full flex items-center justify-center">
+                  <span class="text-white text-sm font-medium">
+                    {{ (applicationDetails()?.primaryFirstName?.charAt(0) || 'U').toUpperCase() }}
+                  </span>
+                </div>
+                <div>
+                  <p class="text-foreground font-medium">
+                    {{ applicationDetails()?.primaryFirstName || 'Not provided' }}
+                    {{ applicationDetails()?.primaryLastName || '' }}
+                  </p>
+                  <p class="text-sm text-muted-foreground">
+                    {{ applicationDetails()?.primaryTitle || 'Title not specified' }}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="text-sm font-medium text-muted-foreground block mb-1"
+                  >Contact Email</label
+                >
+                <p class="text-foreground break-words">
+                  {{ applicationDetails()?.primaryContactEmail || 'Not provided' }}
+                </p>
+              </div>
+              <div>
+                <label class="text-sm font-medium text-muted-foreground block mb-1"
+                  >Contact Phone</label
+                >
+                <p class="text-foreground font-mono break-words">
+                  {{ applicationDetails()?.primaryContactNumber || 'Not provided' }}
+                </p>
+              </div>
+            </div>
+            <div>
+              <label class="text-sm font-medium text-muted-foreground block mb-1"
+                >Preferred Contact Method</label
+              >
+              <span
+                class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-success/10 text-success border border-success"
+              >
+                {{ applicationDetails()?.preferredContactMethod || 'Not specified' }}
+              </span>
+            </div>
+            @if (applicationDetails()?.primaryContactTypes &&
+            (applicationDetails()?.primaryContactTypes?.length ?? 0) > 0) {
+            <div>
+              <label class="text-sm font-medium text-muted-foreground block mb-2"
+                >Contact Types</label
+              >
+              <div class="flex flex-wrap gap-2">
+                @for (type of (applicationDetails()?.primaryContactTypes || []); track $index) {
+                <span
+                  class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20"
+                >
+                  {{ type }}
+                </span>
+                }
+              </div>
+            </div>
+            } @if (applicationDetails()?.secondaryFirstName) {
+            <div class="bg-secondary/20 rounded-lg p-4">
+              <label class="text-sm font-medium text-muted-foreground block mb-2"
+                >Secondary Contact</label
+              >
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-secondary rounded-full flex items-center justify-center">
+                  <span class="text-foreground text-sm font-medium">
+                    {{ (applicationDetails()?.secondaryFirstName?.charAt(0) || 'S').toUpperCase() }}
+                  </span>
+                </div>
+                <div>
+                  <p class="text-foreground font-medium">
+                    {{ applicationDetails()?.secondaryFirstName }}
+                    {{ applicationDetails()?.secondaryLastName }}
+                  </p>
+                  <p class="text-sm text-muted-foreground">
+                    {{ applicationDetails()?.secondaryTitle || 'Title not specified' }}
+                  </p>
+                </div>
+              </div>
+            </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Business Details -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Business Operations -->
+        <div
+          hlmCard
+          class="border-success/20 hover:border-success/40 transition-colors duration-200"
+        >
+          <div hlmCardHeader>
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-success/10 rounded-lg flex items-center justify-center">
+                <svg
+                  class="w-5 h-5 text-success"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  ></path>
+                </svg>
+              </div>
+              <div hlmCardTitle class="text-lg">Business Operations</div>
+            </div>
+          </div>
+          <div hlmCardContent class="space-y-4">
+            <div>
+              <label class="text-sm font-medium text-muted-foreground block mb-2"
+                >Business Description</label
+              >
+              <div class="bg-success/5 rounded-lg p-4 border border-success/10">
+                <p class="text-foreground">
+                  {{ applicationDetails()?.businessDescription || 'No description provided' }}
+                </p>
+              </div>
+            </div>
+            <div>
+              <label class="text-sm font-medium text-muted-foreground block mb-2"
+                >Service Area</label
+              >
+              <div class="bg-secondary/20 rounded-lg p-4">
+                <p class="text-foreground">
+                  {{ applicationDetails()?.businessServiceArea || 'Service area not specified' }}
+                </p>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="text-sm font-medium text-muted-foreground block mb-1"
+                  >Business Type</label
+                >
+                <span
+                  class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary/10 text-primary border border-primary/20"
+                >
+                  {{ applicationDetails()?.businessType || 'Not specified' }}
+                </span>
+              </div>
+              <div>
+                <label class="text-sm font-medium text-muted-foreground block mb-1"
+                  >Entity Type</label
+                >
+                <span
+                  class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-accent/10 text-accent border border-accent/20"
+                >
+                  {{ applicationDetails()?.businessEntityType || 'Not specified' }}
+                </span>
+              </div>
+            </div>
+            <div>
+              <label class="text-sm font-medium text-muted-foreground block mb-1"
+                >Business Start Date</label
+              >
+              <p class="text-foreground font-mono">
+                {{ applicationDetails()?.businessStartDate || 'Not provided' }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Financial Information -->
+        <div
+          hlmCard
+          class="border-destructive/20 hover:border-destructive/40 transition-colors duration-200"
+        >
+          <div hlmCardHeader>
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-destructive/10 rounded-lg flex items-center justify-center">
+                <svg
+                  class="w-5 h-5 text-destructive"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
+                  ></path>
+                </svg>
+              </div>
+              <div hlmCardTitle class="text-lg">Financial Information</div>
+            </div>
+          </div>
+          <div hlmCardContent class="space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+              <div class="bg-success/10 rounded-lg p-4 text-center border border-success/20">
+                <div class="text-2xl font-bold text-success">
+                  {{ applicationDetails()?.numberOfFullTimeEmployees || 0 }}
+                </div>
+                <div class="text-sm text-muted-foreground">Full-time Employees</div>
+              </div>
+              <div class="bg-accent/10 rounded-lg p-4 text-center border border-accent/20">
+                <div class="text-2xl font-bold text-accent">
+                  {{ applicationDetails()?.numberOfPartTimeEmployees || 0 }}
+                </div>
+                <div class="text-sm text-muted-foreground">Part-time Employees</div>
+              </div>
+            </div>
+            <div class="bg-primary/10 rounded-lg p-4">
+              <label class="text-sm font-medium text-muted-foreground block mb-1"
+                >Gross Annual Revenue</label
+              >
+              <div class="text-2xl font-bold text-primary">
+                ${{ applicationDetails()?.grossAnnualRevenue?.toLocaleString() || '0' }}
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="text-sm font-medium text-muted-foreground block mb-1"
+                  >Average Customers Per Year</label
+                >
+                <span
+                  class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-secondary text-foreground"
+                >
+                  {{ applicationDetails()?.avgCustomersPerYear || 'Not specified' }}
+                </span>
+              </div>
+              <div>
+                <label class="text-sm font-medium text-muted-foreground block mb-1"
+                  >Number of Locations</label
+                >
+                <span
+                  class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-secondary text-foreground"
+                >
+                  {{ applicationDetails()?.numberOfLocations || 'Not specified' }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Application Details -->
+      <div hlmCard class="border-muted/20 hover:border-muted/40 transition-colors duration-200">
+        <div hlmCardHeader>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-muted/10 rounded-lg flex items-center justify-center">
+              <svg
+                class="w-5 h-5 text-muted-foreground"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                ></path>
+              </svg>
+            </div>
+            <div hlmCardTitle class="text-lg">Application Details</div>
+          </div>
+        </div>
+        <div hlmCardContent>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-secondary/20 rounded-lg p-4 border border-secondary/30">
+              <label class="text-sm font-medium text-muted-foreground block mb-1"
+                >Blue Application ID</label
+              >
+              <p class="text-foreground font-mono text-sm">
+                {{ applicationDetails()?.blueApplicationID || 'Not available' }}
+              </p>
+            </div>
+            <div class="bg-secondary/20 rounded-lg p-4">
+              <label class="text-sm font-medium text-muted-foreground block mb-1"
+                >HubSpot Application ID</label
+              >
+              <p class="text-foreground font-mono text-sm">
+                {{ applicationDetails()?.hubSpotApplicationID || 'Not available' }}
+              </p>
+            </div>
+            <div class="bg-secondary/20 rounded-lg p-4">
+              <label class="text-sm font-medium text-muted-foreground block mb-1">BID</label>
+              <p class="text-foreground font-mono text-sm">
+                {{ applicationDetails()?.bid || 'Not available' }}
+              </p>
+            </div>
+            <div class="bg-secondary/20 rounded-lg p-4">
+              <label class="text-sm font-medium text-muted-foreground block mb-1"
+                >Company Record ID</label
+              >
+              <p class="text-foreground font-mono text-sm">
+                {{ applicationDetails()?.companyRecordID || 'Not available' }}
+              </p>
+            </div>
+          </div>
+          @if (applicationDetails()?.trackingLink) {
+          <div class="mt-4">
+            <label class="text-sm font-medium text-muted-foreground block mb-2"
+              >Tracking Link</label
+            >
+            <div class="bg-primary/10 rounded-lg p-4">
+              <a
+                [href]="applicationDetails()?.trackingLink"
+                target="_blank"
+                class="text-primary hover:underline break-all font-mono text-sm"
+              >
+                {{ applicationDetails()?.trackingLink }}
+              </a>
+            </div>
+          </div>
+          }
+        </div>
+      </div>
+
+      <!-- Licenses -->
+      @if (applicationDetails()?.licenses && (applicationDetails()?.licenses?.length ?? 0) > 0) {
+      <div hlmCard class="border-warning/20 hover:border-warning/40 transition-colors duration-200">
+        <div hlmCardHeader>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-warning/10 rounded-lg flex items-center justify-center">
+              <svg
+                class="w-5 h-5 text-warning"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                ></path>
+              </svg>
+            </div>
+            <div hlmCardTitle class="text-lg">Business Licenses</div>
+          </div>
+        </div>
+        <div hlmCardContent class="space-y-4">
+          @for (license of (applicationDetails()?.licenses || []); track $index) {
+          <div class="bg-warning/5 rounded-lg p-6 border border-warning/20">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div>
+                <label class="text-sm font-medium text-muted-foreground block mb-1">Agency</label>
+                <p class="text-foreground font-medium">{{ license.agency || 'Not specified' }}</p>
+              </div>
+              <div>
+                <label class="text-sm font-medium text-muted-foreground block mb-1"
+                  >License Number</label
+                >
+                <p class="text-foreground font-mono text-sm bg-primary/10 px-2 py-1 rounded">
+                  {{ license.licensingNumber || 'Not provided' }}
+                </p>
+              </div>
+              <div>
+                <label class="text-sm font-medium text-muted-foreground block mb-1"
+                  >Date Issued</label
+                >
+                <p class="text-foreground font-mono text-sm">
+                  {{ license.dateIssued || 'Not specified' }}
+                </p>
+              </div>
+              <div>
+                <label class="text-sm font-medium text-muted-foreground block mb-1"
+                  >Expiration</label
+                >
+                @if (license.expiration) {
+                <p class="text-foreground font-mono text-sm">{{ license.expiration }}</p>
+                } @else {
+                <span
+                  class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-success/10 text-success"
+                >
+                  No expiration
+                </span>
+                }
+              </div>
+            </div>
+          </div>
+          }
+        </div>
+      </div>
+      } @else {
+      <div hlmCard class="border-muted/20">
+        <div hlmCardHeader>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-muted/10 rounded-lg flex items-center justify-center">
+              <svg
+                class="w-5 h-5 text-muted-foreground"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                ></path>
+              </svg>
+            </div>
+            <div hlmCardTitle class="text-lg">Business Licenses</div>
+          </div>
+        </div>
+        <div hlmCardContent>
+          <div class="text-center py-8">
+            <div
+              class="w-16 h-16 bg-muted/20 rounded-full flex items-center justify-center mx-auto mb-4"
+            >
+              <svg
+                class="w-8 h-8 text-muted-foreground"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                ></path>
+              </svg>
+            </div>
+            <p class="text-muted-foreground">No business licenses on file</p>
+          </div>
+        </div>
+      </div>
+      }
+
+      <!-- Social Media Links -->
+      @if (applicationDetails()?.socialMediaLinks && (applicationDetails()?.socialMediaLinks?.length
+      ?? 0) > 0) {
+      <div
+        class="bg-card rounded-lg border border-border p-6 shadow-sm hover:shadow-md transition-shadow duration-200"
+      >
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-10 h-10 bg-accent/10 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
+              ></path>
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold text-foreground">Social Media Links</h3>
+        </div>
+        <div class="space-y-3">
+          @for (link of (applicationDetails()?.socialMediaLinks || []); track $index) {
+          <div class="bg-secondary/20 rounded-lg p-4">
+            <a
+              [href]="link"
+              target="_blank"
+              class="text-primary hover:underline break-all font-mono text-sm flex items-center gap-2"
+            >
+              <svg
+                class="w-4 h-4 flex-shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                ></path>
+              </svg>
+              {{ link }}
+            </a>
+          </div>
+          }
+        </div>
+      </div>
+      } @else {
+      <div class="bg-card rounded-lg border border-border p-6 shadow-sm">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 bg-muted/10 rounded-lg flex items-center justify-center">
+            <svg
+              class="w-5 h-5 text-muted-foreground"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
+              ></path>
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold text-foreground">Social Media Links</h3>
+        </div>
+        <div class="text-center py-8">
+          <div
+            class="w-16 h-16 bg-muted/20 rounded-full flex items-center justify-center mx-auto mb-4"
+          >
+            <svg
+              class="w-8 h-8 text-muted-foreground"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
+              ></path>
+            </svg>
+          </div>
+          <p class="text-muted-foreground">No social media links provided</p>
+        </div>
+      </div>
+      }
+
+      <!-- Additional Information -->
+      @if (applicationDetails()?.additionalBusinessInformation) {
+      <div
+        class="bg-card rounded-lg border border-border p-6 shadow-sm hover:shadow-md transition-shadow duration-200"
+      >
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              ></path>
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold text-foreground">Additional Business Information</h3>
+        </div>
+        <div class="bg-secondary/20 rounded-lg p-4">
+          <p class="text-foreground">{{ applicationDetails()?.additionalBusinessInformation }}</p>
+        </div>
+      </div>
+      }
+
+      <!-- Submission Information -->
+      <div
+        class="bg-card rounded-lg border border-border p-6 shadow-sm hover:shadow-md transition-shadow duration-200"
+      >
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-10 h-10 bg-success/10 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+              ></path>
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold text-foreground">Submission Information</h3>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="bg-success/10 rounded-lg p-4">
+            <label class="text-sm font-medium text-muted-foreground block mb-2">Submitted By</label>
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-success rounded-full flex items-center justify-center">
+                <span class="text-white font-medium text-sm">
+                  {{ (applicationDetails()?.submittedByName?.charAt(0) || 'U').toUpperCase() }}
+                </span>
+              </div>
+              <div>
+                <p class="text-foreground font-medium">
+                  {{ applicationDetails()?.submittedByName || 'Not provided' }}
+                </p>
+                <p class="text-sm text-muted-foreground">
+                  {{ applicationDetails()?.submittedByTitle || 'Title not specified' }}
+                </p>
+                <p class="text-sm text-muted-foreground">
+                  {{ applicationDetails()?.submittedByEmail || 'Email not provided' }}
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="bg-accent/10 rounded-lg p-4">
+            <label class="text-sm font-medium text-muted-foreground block mb-2"
+              >Partnership Source</label
+            >
+            <span
+              class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-accent/20 text-accent border border-accent/30"
+            >
+              {{ applicationDetails()?.partnershipSource || 'Not specified' }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    } @else {
+    <!-- Error State -->
+    <div class="flex flex-col items-center justify-center py-12">
+      <svg
+        class="w-12 h-12 text-muted-foreground mb-4"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+        ></path>
+      </svg>
+      <p class="text-lg font-medium text-foreground">Application not found</p>
+      <p class="text-sm text-muted-foreground">The requested application could not be found.</p>
+    </div>
+    }
+  </div>
+</div>

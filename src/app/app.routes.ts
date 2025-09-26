@@ -8,6 +8,8 @@ import { NotFoundComponent } from './core/pages/not-found/not-found.component';
 import { InternalOverviewComponent } from './features/dashboard/internal/pages/internal-overview/internal-overview.component';
 import { ExternalOverviewComponent } from './features/dashboard/external/pages/external-overview/external-overview.component';
 import { SuccessfullSubmissionComponent } from './features/accreditation-form/pages/successfull-submission/successfull-submission.component';
+import { InternalApplicationDetailsComponent } from './features/dashboard/internal/pages/internal-application-details/internal-application-details.component';
+import { MicrosoftCallbackComponent } from './features/auth/pages/auth-callback/microsoft-callback.component';
 
 export const routes: Routes = [
   {
@@ -43,6 +45,11 @@ export const routes: Routes = [
     component: AuthCallbackComponent,
   },
   {
+    title: 'Microsoft Callback',
+    path: 'auth/microsoft-callback',
+    component: MicrosoftCallbackComponent,
+  },
+  {
     title: 'Page Not Found',
     path: '404',
     component: NotFoundComponent,
@@ -57,7 +64,11 @@ export const routes: Routes = [
     path: 'dashboard/internal/overview',
     component: InternalOverviewComponent,
   },
-
+  {
+    title: 'Internal Application Details',
+    path: 'dashboard/internal/application-details/:id',
+    component: InternalApplicationDetailsComponent,
+  },
   {
     path: '**',
     redirectTo: '404',

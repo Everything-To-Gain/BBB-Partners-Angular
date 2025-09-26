@@ -13,6 +13,7 @@ import { HlmInput } from '@spartan-ng/helm/input';
 import { BrnSelectImports } from '@spartan-ng/brain/select';
 import { HlmSelectImports } from '@spartan-ng/helm/select';
 import { FormsModule } from '@angular/forms';
+import { toast } from 'ngx-sonner';
 
 @Component({
   selector: 'app-internal-overview',
@@ -27,7 +28,8 @@ export class InternalOverviewComponent implements OnInit {
   // Make Math available in template
   Math = Math;
 
-  columns: ColumnDef<InternalApplicationResponse>[] = [
+  // Base columns without special actions
+  private baseColumns: ColumnDef<InternalApplicationResponse>[] = [
     {
       accessorKey: 'applicationId',
       header: 'Application ID',
@@ -54,9 +56,27 @@ export class InternalOverviewComponent implements OnInit {
     },
     {
       accessorKey: 'applicationStatusInternal',
-      header: 'Status',
+      header: 'Internal Status',
+    },
+    {
+      accessorKey: 'applicationStatusExternal',
+      header: 'External Status',
     },
   ];
+
+  // Special actions column
+  private specialActionsColumn: ColumnDef<InternalApplicationResponse> = {
+    id: 'specialActions',
+    header: 'Actions',
+  };
+
+  // Dynamic columns based on special access
+  get columns(): ColumnDef<InternalApplicationResponse>[] {
+    if (this.specialAccess) {
+      return [...this.baseColumns, this.specialActionsColumn];
+    }
+    return this.baseColumns;
+  }
 
   // ✅ state
   internalApplications = signal<InternalApplicationResponse[]>([]);
@@ -66,10 +86,13 @@ export class InternalOverviewComponent implements OnInit {
   pageSize = signal(10);
   totalItems = signal(0);
   searchTerm = signal('');
-  selectedStatus = signal<number | null>(null);
+  selectedInternalStatus = signal<number | null>(null);
+  selectedExternalStatus = signal<number | null>(null);
   availablePageSizes = [5, 10, 20, 50];
   isLoading = signal(false);
-  availableStatuses = signal<ApplicationStatus[]>([]);
+  availableInternalStatuses = signal<ApplicationStatus[]>([]);
+  availableExternalStatuses = signal<ApplicationStatus[]>([]);
+  sendingFormData = signal<Set<string>>(new Set());
 
   // ✅ TanStack table (createTable API)
   table = createAngularTable<InternalApplicationResponse>(() => ({
@@ -109,7 +132,8 @@ export class InternalOverviewComponent implements OnInit {
       pageNumber: this.pageNumber(),
       pageSize: this.pageSize(),
       searchTerm: this.searchTerm() || undefined,
-      status: this.selectedStatus() || undefined,
+      internalStatus: this.selectedInternalStatus() || undefined,
+      externalStatus: this.selectedExternalStatus() || undefined,
     };
 
     this.internalService
@@ -117,16 +141,10 @@ export class InternalOverviewComponent implements OnInit {
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: (res) => {
-          console.log('API Response:', res);
           const items = res.data?.items ?? [];
           const count = res.data?.count ?? 0;
-          console.log('Items:', items);
-          console.log('Count:', count);
           this.internalApplications.set(items);
           this.totalItems.set(count);
-          // Force table update
-          this.table.setOptions((prev) => ({ ...prev, data: items }));
-          console.log('Signal updated, current value:', this.internalApplications());
         },
         error: (err) => {
           console.error('Error loading data:', err);
@@ -160,8 +178,14 @@ export class InternalOverviewComponent implements OnInit {
     this.loadData();
   }
 
-  onStatusChange(statusId: number | null): void {
-    this.selectedStatus.set(statusId);
+  onInternalStatusChange(statusId: number | null): void {
+    this.selectedInternalStatus.set(statusId);
+    this.pageNumber.set(1);
+    this.loadData();
+  }
+
+  onExternalStatusChange(statusId: number | null): void {
+    this.selectedExternalStatus.set(statusId);
     this.pageNumber.set(1);
     this.loadData();
   }
@@ -174,7 +198,20 @@ export class InternalOverviewComponent implements OnInit {
           id: status.id + 1, // Add 1 to make UI 1-based
           name: this.formatStatusName(status.name),
         }));
-        this.availableStatuses.set(formattedStatuses);
+        this.availableInternalStatuses.set(formattedStatuses);
+      },
+      error: (err) => {
+        console.error('Error loading statuses:', err);
+      },
+    });
+    this.internalService.getApplicationExternalStatus().subscribe({
+      next: (res) => {
+        const formattedStatuses = (res.data || []).map((status) => ({
+          ...status,
+          id: status.id + 1, // Add 1 to make UI 1-based
+          name: this.formatStatusName(status.name),
+        }));
+        this.availableExternalStatuses.set(formattedStatuses);
       },
       error: (err) => {
         console.error('Error loading statuses:', err);
@@ -199,8 +236,17 @@ export class InternalOverviewComponent implements OnInit {
     return this.formatStatusForDisplay(cellValue as string | null);
   }
 
-  getSelectedStatusName(): string {
-    const status = this.availableStatuses().find((s) => s.id === this.selectedStatus());
+  getSelectedInternalStatusName(): string {
+    const status = this.availableInternalStatuses().find(
+      (s) => s.id === this.selectedInternalStatus()
+    );
+    return status?.name || 'Unknown';
+  }
+
+  getSelectedExternalStatusName(): string {
+    const status = this.availableExternalStatuses().find(
+      (s) => s.id === this.selectedExternalStatus()
+    );
     return status?.name || 'Unknown';
   }
 
@@ -218,9 +264,58 @@ export class InternalOverviewComponent implements OnInit {
   get userRole() {
     return this.authService.userRole();
   }
+  get specialAccess() {
+    return this.authService.specialAccess();
+  }
 
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);
+  }
+
+  navigateToDetails(applicationId: unknown): void {
+    const id = applicationId as string;
+    if (id) {
+      this.router.navigate(['/dashboard/internal/application-details', id]);
+    }
+  }
+
+  // Special access action - send form data
+  onSpecialAction(applicationId: unknown): void {
+    const id = applicationId as string;
+    if (!id) {
+      console.error('No application ID provided');
+      return;
+    }
+
+    // Add to loading set
+    this.sendingFormData.update((set) => new Set(set).add(id));
+
+    this.internalService
+      .sendFormData(id)
+      .pipe(
+        finalize(() => {
+          this.sendingFormData.update((set) => {
+            const newSet = new Set(set);
+            newSet.delete(id);
+            return newSet;
+          });
+        })
+      )
+      .subscribe({
+        next: (response) => {
+          console.log('Form data sent successfully:', response);
+          toast.success('Form data sent successfully');
+        },
+        error: (error) => {
+          console.error('Error sending form data:', error);
+          toast.error('Error sending form data');
+        },
+      });
+  }
+
+  // Helper method to check if form data is being sent for a specific application
+  isSendingFormData(applicationId: string): boolean {
+    return this.sendingFormData().has(applicationId);
   }
 }

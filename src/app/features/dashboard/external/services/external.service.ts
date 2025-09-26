@@ -11,6 +11,7 @@ export interface PaginationParams {
   pageNumber: number;
   pageSize: number;
   searchTerm?: string;
+  externalStatus?: number;
 }
 
 @Injectable({
@@ -30,6 +31,10 @@ export class ExternalService {
 
       if (params.searchTerm) {
         httpParams = httpParams.set('searchTerm', params.searchTerm);
+      }
+
+      if (params.externalStatus !== undefined && params.externalStatus !== null) {
+        httpParams = httpParams.set('externalStatus', (params.externalStatus - 1).toString());
       }
     }
 

@@ -13,6 +13,7 @@ interface AuthCallbackResponse {
 interface DecodedToken {
   email: string;
   role: string;
+  specialAccess?: string;
   nbf: number;
   exp: number;
   iat: number;
@@ -60,6 +61,12 @@ export class AuthService {
       .split('@')[0]
       .replace(/[._]/g, ' ')
       .replace(/\b\w/g, (l) => l.toUpperCase());
+  });
+  readonly specialAccess = computed(() => {
+    const token = this.tokenSignal();
+    if (!token) return null;
+    const decoded = this.decodeJwtToken(token);
+    return decoded?.specialAccess || null;
   });
 
   constructor() {

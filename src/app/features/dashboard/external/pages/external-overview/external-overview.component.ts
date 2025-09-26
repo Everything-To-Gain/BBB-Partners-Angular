@@ -1,4 +1,6 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, computed, OnInit } from '@angular/core';
+import { getCoreRowModel, ColumnDef } from '@tanstack/table-core';
+import { createAngularTable } from '@tanstack/angular-table';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HlmTableImports } from '@spartan-ng/helm/table';
@@ -8,6 +10,7 @@ import { BrnSelectImports } from '@spartan-ng/brain/select';
 import { HlmSelectImports } from '@spartan-ng/helm/select';
 import { ExternalService, PaginationParams } from '../../services/external.service';
 import { ExternalApplicationResponse } from '../../models/external-application.model';
+import { ApplicationStatus } from '../../models/external-application.model';
 import { AuthService } from '../../../../auth/services/auth.service';
 import { debounceTime, distinctUntilChanged, finalize, Subject } from 'rxjs';
 
@@ -20,117 +23,184 @@ export class ExternalOverviewComponent implements OnInit {
   private externalService = inject(ExternalService);
   private authService = inject(AuthService);
   private router = inject(Router);
+
+  // Make Math available in template
+  Math = Math;
+
+  columns: ColumnDef<ExternalApplicationResponse>[] = [
+    {
+      accessorKey: 'applicationId',
+      header: 'Application ID',
+    },
+    {
+      accessorKey: 'companyName',
+      header: 'Company Name',
+    },
+    {
+      accessorKey: 'submittedByEmail',
+      header: 'Submitted By',
+    },
+    {
+      accessorKey: 'applicationStatusExternal',
+      header: 'Status',
+    },
+  ];
+
+  // ✅ state
   externalApplications = signal<ExternalApplicationResponse[]>([]);
 
-  // Pagination state
-  currentPage = signal(1);
+  // ✅ search & pagination
+  pageNumber = signal(1);
   pageSize = signal(10);
   totalItems = signal(0);
   searchTerm = signal('');
+  selectedExternalStatus = signal<number | null>(null);
   availablePageSizes = [5, 10, 20, 50];
   isLoading = signal(false);
+  availableStatuses = signal<ApplicationStatus[]>([]);
 
-  // Search debouncing
+  // ✅ TanStack table (createTable API)
+  table = createAngularTable<ExternalApplicationResponse>(() => ({
+    columns: this.columns,
+    getCoreRowModel: getCoreRowModel(),
+    data: this.externalApplications(),
+    renderFallbackValue: null,
+  }));
+
+  // --- Computed values
+  pageCount = computed(() => Math.ceil(this.totalItems() / this.pageSize()));
+  canPreviousPage = computed(() => this.pageNumber() > 1);
+  canNextPage = computed(() => this.pageNumber() < this.pageCount());
+
+  // --- Search debouncing
   private searchSubject = new Subject<string>();
 
   ngOnInit(): void {
     this.setupSearchDebouncing();
+    this.loadStatuses();
     this.loadData();
   }
 
   private setupSearchDebouncing(): void {
     this.searchSubject.pipe(debounceTime(300), distinctUntilChanged()).subscribe((searchTerm) => {
       this.searchTerm.set(searchTerm);
-      this.currentPage.set(1); // Reset to first page when searching
+      this.pageNumber.set(1);
       this.loadData();
     });
-  }
-
-  onSearchChange(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    this.searchSubject.next(target.value);
   }
 
   loadData(): void {
     this.isLoading.set(true);
     const params: PaginationParams = {
-      pageNumber: this.currentPage(),
+      pageNumber: this.pageNumber(),
       pageSize: this.pageSize(),
       searchTerm: this.searchTerm() || undefined,
+      externalStatus: this.selectedExternalStatus() ?? undefined,
     };
 
     this.externalService
       .getExternalApplications(params)
-      .pipe(
-        finalize(() => {
-          this.isLoading.set(false);
-        })
-      )
+      .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
-        next: (response) => {
-          const items = response.data?.items ?? [];
+        next: (res) => {
+          console.log('API Response:', res);
+          const items = res.data?.items ?? [];
+          const count = res.data?.count ?? 0;
+          console.log('Items:', items);
+          console.log('Count:', count);
           this.externalApplications.set(items);
-          this.totalItems.set(response.data?.count ?? items.length);
+          this.totalItems.set(count);
+          // Force table update
+          this.table.setOptions((prev) => ({ ...prev, data: items }));
+          console.log('Signal updated, current value:', this.externalApplications());
         },
-        error: (error) => {
-          console.error('Error loading data:', error);
+        error: (err) => {
+          console.error('Error loading data:', err);
         },
       });
   }
 
-  get paginatedData(): ExternalApplicationResponse[] {
-    return this.externalApplications();
-  }
-
-  get totalPages(): number {
-    return Math.ceil(this.totalItems() / this.pageSize());
-  }
-
-  get canPreviousPage(): boolean {
-    return this.currentPage() > 1;
-  }
-
-  get canNextPage(): boolean {
-    return this.currentPage() < this.totalPages;
-  }
-
-  getStartIndex(): number {
-    return (this.currentPage() - 1) * this.pageSize() + 1;
-  }
-
-  getEndIndex(): number {
-    return Math.min(this.currentPage() * this.pageSize(), this.totalItems());
-  }
-
-  previousPage(): void {
-    if (this.canPreviousPage) {
-      this.currentPage.update((page) => page - 1);
-      this.loadData();
-    }
-  }
-
+  // --- pagination actions
   nextPage(): void {
-    if (this.canNextPage) {
-      this.currentPage.update((page) => page + 1);
+    if (this.canNextPage()) {
+      this.pageNumber.update((prev) => prev + 1);
       this.loadData();
     }
+  }
+  previousPage(): void {
+    if (this.canPreviousPage()) {
+      this.pageNumber.update((prev) => prev - 1);
+      this.loadData();
+    }
+  }
+
+  // --- search
+  onSearchChange(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    this.searchSubject.next(target.value);
   }
 
   onPageSizeChange(newSize: number): void {
     this.pageSize.set(newSize);
-    this.currentPage.set(1);
+    this.pageNumber.set(1);
     this.loadData();
   }
 
-  // Auth data getters
+  onStatusChange(statusId: number | null): void {
+    this.selectedExternalStatus.set(statusId);
+    this.pageNumber.set(1);
+    this.loadData();
+  }
+
+  private loadStatuses(): void {
+    this.externalService.getApplicationExternalStatus().subscribe({
+      next: (res) => {
+        const formattedStatuses = (res.data || []).map((status) => ({
+          ...status,
+          id: status.id + 1, // Add 1 to make UI 1-based
+          name: this.formatStatusName(status.name),
+        }));
+        this.availableStatuses.set(formattedStatuses);
+      },
+      error: (err) => {
+        console.error('Error loading statuses:', err);
+      },
+    });
+  }
+
+  private formatStatusName(name: string): string {
+    return name
+      .replace(/_/g, ' ')
+      .split(' ')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
+  }
+
+  formatStatusForDisplay(statusValue: string | null): string {
+    if (!statusValue) return 'N/A';
+    return this.formatStatusName(statusValue);
+  }
+
+  getFormattedStatus(cellValue: unknown): string {
+    return this.formatStatusForDisplay(cellValue as string | null);
+  }
+
+  getSelectedStatusName(): string {
+    const status = this.availableStatuses().find((s) => s.id === this.selectedExternalStatus());
+    return status?.name || 'Unknown';
+  }
+
+  getSkeletonRows(): number[] {
+    return Array(this.pageSize()).fill(0);
+  }
+
+  // --- auth getters
   get userName() {
     return this.authService.userName();
   }
-
   get userEmail() {
     return this.authService.userEmail();
   }
-
   get userRole() {
     return this.authService.userRole();
   }
@@ -147,36 +217,16 @@ export class ExternalOverviewComponent implements OnInit {
       .replace(/\b\w/g, (l: string) => l.toUpperCase());
   }
 
-  // Page navigation helpers
-  getPageNumbers(): number[] {
-    const totalPages = this.totalPages;
-    const current = this.currentPage();
-    const pages: number[] = [];
+  get formattedUserRole() {
+    const role = this.userRole;
+    if (!role) return 'User';
 
-    // Always show first page
-    if (totalPages > 0) pages.push(1);
-
-    // Show pages around current page
-    const start = Math.max(2, current - 1);
-    const end = Math.min(totalPages - 1, current + 1);
-
-    for (let i = start; i <= end; i++) {
-      if (!pages.includes(i)) pages.push(i);
-    }
-
-    // Always show last page if more than 1 page
-    if (totalPages > 1 && !pages.includes(totalPages)) {
-      pages.push(totalPages);
-    }
-
-    return pages;
-  }
-
-  goToPage(page: number): void {
-    if (page >= 1 && page <= this.totalPages && page !== this.currentPage()) {
-      this.currentPage.set(page);
-      this.loadData();
-    }
+    // Convert PascalCase to readable format
+    return role
+      .replace(/([A-Z])/g, ' $1')
+      .trim()
+      .toLowerCase()
+      .replace(/\b\w/g, (l: string) => l.toUpperCase());
   }
 
   logout(): void {
