@@ -14,3 +14,17 @@ export const convertToPascalCase = (str: string): string => {
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join('');
 };
+
+// Centralized display names derived from PascalCase key by inserting spaces before capitals
+export function getPartnershipDisplayName(source: PartnershipSource): string {
+  return source.replace(/([A-Z])/g, ' $1').trim();
+}
+
+// Convenience: Get display name from route id (kebab-case)
+export function getDisplayNameFromRouteId(idParam: string | null): string {
+  if (!idParam) return 'Partner';
+  const pascal = convertToPascalCase(idParam);
+  return (VALID_PARTNERSHIP_SOURCES as readonly string[]).includes(pascal)
+    ? getPartnershipDisplayName(pascal as PartnershipSource)
+    : 'Partner';
+}

@@ -3,10 +3,15 @@
     <!-- Header -->
     <div class="text-center mb-6 sm:mb-8">
       <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-primary mb-2">
-        Business Registration
+        Business Information Form – {{ getPartnerDisplayName() }}
       </h1>
       <p class="text-base sm:text-lg text-muted-foreground">
-        Complete your business profile to get started
+        This form is designed to help {{ getPartnerDisplayName() }} collect important information
+        about your business for the Better Business Bureau® (BBB). The details you provide will
+        allow us to understand your business and determine if you may be ready for BBB
+        Accreditation. Please note: completing this form does not constitute an application for
+        Accreditation, nor does it guarantee approval. Instead, this information helps us evaluate
+        whether your business meets BBB’s standards for trust, ethics, and marketplace integrity.
       </p>
     </div>
 
@@ -93,6 +98,14 @@
         </div>
       </form>
     </div>
+
+    <!-- Disclaimer Footer -->
+    <hr class="my-6 border-border" />
+    <p class="text-sm italic text-muted-foreground">
+      Submission of this Business Information Form does not constitute an application for BBB®
+      Accreditation or guarantee of approval. Information provided will be used solely to determine
+      if your business meets the standards required to be considered for BBB Accreditation.
+    </p>
   </div>
 </div>
 <!-- email you would like to receive updates from trackingEmail -->

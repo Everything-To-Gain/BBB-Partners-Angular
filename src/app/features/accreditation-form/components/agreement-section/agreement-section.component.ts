@@ -7,7 +7,6 @@ import { HlmFormField, HlmError } from '@spartan-ng/helm/form-field';
 import { HlmInput } from '@spartan-ng/helm/input';
 import { HlmCheckbox } from '@spartan-ng/helm/checkbox';
 import { HlmLabel } from '@spartan-ng/helm/label';
-import { HlmHint } from '@spartan-ng/helm/form-field';
 
 @Component({
   selector: 'app-agreement-section',
@@ -20,7 +19,6 @@ import { HlmHint } from '@spartan-ng/helm/form-field';
     HlmError,
     HlmCheckbox,
     HlmLabel,
-    HlmHint,
   ],
   providers: [provideIcons({ lucideShield, lucideCircleCheck })],
   templateUrl: './agreement-section.component.html',

@@ -34,6 +34,7 @@ import {
   VALID_PARTNERSHIP_SOURCES,
   PARTNERSHIP_SOURCE,
   convertToPascalCase,
+  getPartnershipDisplayName,
 } from '../models/partnership-sources.model';
 
 @Component({
@@ -77,6 +78,10 @@ export class AccreditationFormComponent implements OnInit {
     { id: 3, title: 'Business Details', icon: 'lucideFileText' },
     { id: 4, title: 'Agreement', icon: 'lucideAward' },
   ];
+
+  getPartnerDisplayName(): string {
+    return this.partnershipSource ? getPartnershipDisplayName(this.partnershipSource) : 'Partner';
+  }
 
   // Field mapping to steps
   private fieldToStepMap: { [key: string]: number } = {
@@ -139,9 +144,8 @@ export class AccreditationFormComponent implements OnInit {
     avgCustomersPerYear: 3,
     additionalBusinessInformation: 3,
 
-    // Step 4: Tracking Email and Agreement
+    // Step 4: Confirmation of Information
     principalContactAgreement: 4,
-    agreement: 4,
     submittedByName: 4,
     submittedByTitle: 4,
     submittedByEmail: 4,
@@ -200,7 +204,7 @@ export class AccreditationFormComponent implements OnInit {
     submittedByName: 'Submitted By Name',
     submittedByTitle: 'Submitted By Title',
     submittedByEmail: 'Submitted By Email',
-    agreement: 'Agreement',
+    // agreement removed
   };
 
   private getStepTitle(step: number): string {
@@ -351,8 +355,7 @@ export class AccreditationFormComponent implements OnInit {
     additionalBusinessInformation: new FormControl(''),
 
     // Tracking Email
-    principalContactAgreement: new FormControl(false, [Validators.required]),
-    agreement: new FormControl(false, [Validators.required]),
+    principalContactAgreement: new FormControl(false),
     submittedByName: new FormControl('', [Validators.required]),
     submittedByTitle: new FormControl('', [Validators.required]),
     submittedByEmail: new FormControl('', [Validators.required, Validators.email]),

@@ -10,6 +10,7 @@ import { ExternalOverviewComponent } from './features/dashboard/external/pages/e
 import { SuccessfullSubmissionComponent } from './features/accreditation-form/pages/successfull-submission/successfull-submission.component';
 import { InternalApplicationDetailsComponent } from './features/dashboard/internal/pages/internal-application-details/internal-application-details.component';
 import { MicrosoftCallbackComponent } from './features/auth/pages/auth-callback/microsoft-callback.component';
+import { getDisplayNameFromRouteId } from './features/accreditation-form/models/partnership-sources.model';
 
 export const routes: Routes = [
   {
@@ -19,8 +20,9 @@ export const routes: Routes = [
     pathMatch: 'full',
   },
   {
-    title: 'Accreditation Form',
-    path: 'accreditation-form/:id',
+    title: (route) =>
+      `Business Information Form – ${getDisplayNameFromRouteId(route.paramMap.get('id'))}`,
+    path: 'business-registration/:id',
     component: AccreditationFormComponent,
     canActivate: [partnershipSourceGuard],
   },

@@ -3,9 +3,9 @@
     <div hlmCardHeader>
       <div hlmCardTitle class="text-lg sm:text-xl text-primary flex items-center gap-2">
         <ng-icon name="lucideShield" class="h-4 w-4 sm:h-5 sm:w-5" />
-        Final Agreement & Submission
+        Confirmation of Information
       </div>
-      <div hlmCardDescription>Review your information and provide final agreement details.</div>
+      <div hlmCardDescription>Review your information and confirm accuracy.</div>
     </div>
     <div hlmCardContent class="space-y-4 sm:space-y-6">
       <div class="flex items-start gap-2 sm:gap-3">
@@ -27,30 +27,8 @@
       <hlm-form-field>
         <label hlmLabel>Email *</label>
         <input hlmInput placeholder="john@abcroofing.com" formControlName="submittedByEmail" />
-        <hlm-hint class="mt-2 italic text-xs">
-          If we have questions on your application we will reach you out at this email.
-        </hlm-hint>
         <hlm-error>Email is required or invalid email</hlm-error>
       </hlm-form-field>
-
-      <label
-        class="flex select-none items-start gap-3 font-medium leading-relaxed peer-disabled:cursor-not-allowed peer-disabled:opacity-50 has-[[disabled]]:cursor-not-allowed has-[[disabled]]:opacity-50 group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-data-[disabled]:cursor-not-allowed peer-data-[disabled]:opacity-50 text-sm sm:text-base"
-      >
-        <hlm-checkbox formControlName="agreement" class="mt-1" />
-        <span>
-          I agree to abide by the
-          <a
-            href="https://www.bbb.org/all/bbb-accreditation-standards"
-            target="_blank"
-            class="text-primary hover:text-primary/80 underline inline"
-          >
-            BBB Accreditation Standards
-          </a>
-          . I certify that all the information provided in this application is true to the best of
-          my knowledge, and I am authorized to submit this information on behalf of the business.
-          <span class="text-destructive">*</span>
-        </span>
-      </label>
     </div>
   </div>
 </div>
