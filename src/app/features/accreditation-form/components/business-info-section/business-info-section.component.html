@@ -5,6 +5,19 @@
       <div hlmCardDescription>Tell us about your business and where it's located.</div>
     </div>
     <div hlmCardContent class="space-y-3 sm:space-y-4">
+      <div class="bg-muted/40 border-l-4 border-primary p-3 sm:p-4 rounded-r-lg">
+        <p class="text-sm sm:text-base text-muted-foreground">
+          This form is designed to help
+          <span class="font-semibold text-primary">{{ partnerName() }}</span>
+          collect important information about your business for the
+          <span class="font-semibold text-primary">Better Business Bureau® (BBB)</span>. The details
+          you provide will allow us to understand your business and determine if you may be ready
+          for BBB Accreditation. Please note: completing this form does not constitute an
+          application for Accreditation, nor does it guarantee approval. Instead, this information
+          helps us evaluate whether your business meets BBB's standards for trust, ethics, and
+          marketplace integrity.
+        </p>
+      </div>
       <hlm-form-field>
         <label hlmLabel>Business Name *</label>
         <input hlmInput type="text" placeholder="ABC Roofing Inc." formControlName="businessName" />

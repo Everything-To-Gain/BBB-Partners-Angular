@@ -26,6 +26,7 @@ import { HlmSelectImports } from '@spartan-ng/helm/select';
 })
 export class BusinessInfoSectionComponent {
   form = input.required<FormGroup>();
+  partnerName = input<string>('Partner');
   states: string[] = [
     'Alabama',
     'Alaska',
