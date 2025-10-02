@@ -16,6 +16,7 @@ import { FormsModule } from '@angular/forms';
 import { HlmCheckbox } from '@spartan-ng/helm/checkbox';
 import { AuthService } from '../../../../auth/services/auth.service';
 import { toast } from 'ngx-sonner';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-admin-dashboard-main',
@@ -36,6 +37,7 @@ export class AdminDashboardMainComponent implements OnInit {
   private adminService = inject(AdminDashboardService);
   private authService = inject(AuthService);
   private destroyRef = inject(DestroyRef);
+  private router = inject(Router);
   // expose Math to template
   Math = Math;
 
@@ -124,6 +126,7 @@ export class AdminDashboardMainComponent implements OnInit {
 
   logout(): void {
     this.authService.logout();
+    this.router.navigate(['/login']);
   }
 
   loadUsers(): void {

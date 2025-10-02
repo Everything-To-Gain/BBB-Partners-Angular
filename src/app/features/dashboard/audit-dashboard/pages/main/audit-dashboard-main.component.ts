@@ -106,6 +106,7 @@ export class AuditDashboardMainComponent implements OnInit {
 
   logout(): void {
     this.authService.logout();
+    this.router.navigate(['/login']);
   }
 
   loadAuditLogs(): void {

@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, signal, computed } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { HlmButton } from '@spartan-ng/helm/button';
 import { ActivatedRoute } from '@angular/router';
 import { AuditService } from '../../services/audit.service';
@@ -20,6 +20,7 @@ export class AuditDetailsComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private auditService = inject(AuditService);
   private authService = inject(AuthService);
+  private router = inject(Router);
   auditDetails = signal<AuditLog | null>(null);
   highlightedMetadata = computed(() => {
     const meta = this.auditDetails()?.metadata;
@@ -62,5 +63,6 @@ export class AuditDetailsComponent implements OnInit {
 
   logout(): void {
     this.authService.logout();
+    this.router.navigate(['/login']);
   }
 }
