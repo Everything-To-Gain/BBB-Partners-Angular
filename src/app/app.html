@@ -1,4 +1,11 @@
-<ngx-sonner-toaster richColors closeButton position="top-right" />
+<ngx-sonner-toaster
+  richColors
+  closeButton
+  position="top-right"
+  [toastOptions]="{
+    classes: { description: 'whitespace-pre-line' }
+  }"
+/>
 <div className="min-h-screen bg-background">
   <router-outlet></router-outlet>
 </div>

@@ -1,0 +1,441 @@
+<!-- Enhanced Header -->
+<header
+  class="bg-gradient-to-r from-primary/5 via-white to-primary/5 border-b border-border shadow-sm"
+>
+  <div class="w-full px-6 py-6">
+    <div class="flex justify-between items-center">
+      <div class="flex items-center space-x-6">
+        <!-- BBB Logo -->
+        <div
+          class="w-14 h-14 bg-primary rounded-xl flex items-center justify-center shadow-lg transform hover:scale-105 transition-transform duration-300"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0.5 0.5 266.4 368.6"
+            aria-hidden="true"
+            focusable="false"
+            class="h-10 w-10"
+          >
+            <path
+              fill="white"
+              d="M185.1 231.5H44l-5.2 16.9h37.7l7.2 23.2h61.9l7.1-23.2h37.6l-5-17zM67 136.6a33.4 33.4 0 0 0 7.4 46.7l33.8 24.5a8.4 8.4 0 0 1 2 11.7l5 3.7 17.9-24.7a33.2 33.2 0 0 0 6.3-19.5 33.8 33.8 0 0 0-.4-5.4 33.2 33.2 0 0 0-13.4-21.7l-33.8-24.6a8.3 8.3 0 0 1-3.4-5.4 8.8 8.8 0 0 1 0-1.4 8.2 8.2 0 0 1 1.5-4.8l-5-3.7zM87.3 38A48 48 0 0 0 78 66.2a49.2 49.2 0 0 0 .6 7.7A48.1 48.1 0 0 0 98 105.5l42.5 30.8a25.8 25.8 0 0 1 10.4 16.9 26.4 26.4 0 0 1 .3 4.1 25.8 25.8 0 0 1-5 15.2l4.1 3 33.5-46.3A48.4 48.4 0 0 0 173 61.6l-51.3-37.3a15 15 0 0 1-3.3-20.9l-4-2.9zM.5 285.8h38.7c9.5 0 17 2.6 21.8 7.3a19.1 19.1 0 0 1 5.7 14.2v.2c0 9.4-5 14.7-11 18 9.6 3.7 15.6 9.3 15.6 20.5v.2c0 15.3-12.4 22.9-31.2 22.9H.5zm34.8 33.6c8 0 13.2-2.6 13.2-8.8v-.2c0-5.5-4.3-8.6-12-8.6H18.4v17.6zm4.9 33.6c8 0 13-2.8 13-9v-.2c0-5.6-4.2-9-13.6-9H18.4V353zm39.1-67.3H118c9.6 0 17 2.7 21.8 7.4a19.1 19.1 0 0 1 5.7 14.2v.2c0 9.4-5 14.7-11 18 9.7 3.7 15.6 9.3 15.6 20.5v.2c0 15.3-12.4 22.9-31.2 22.9H79.3zm34.8 33.8c8 0 13.2-2.7 13.2-8.9v-.2c0-5.5-4.3-8.6-12-8.6H97.2v17.6zM119 353c8 0 13-2.8 13-9v-.2c0-5.6-4.2-9-13.6-9H97.2V353zm39.1-67.3H197c9.5 0 17 2.7 21.7 7.4a19.1 19.1 0 0 1 5.8 14.2v.2c0 9.4-5 14.7-11 18 9.6 3.7 15.6 9.3 15.6 20.5v.2c0 15.3-12.4 22.9-31.2 22.9h-39.6zm34.8 33.8c8.1 0 13.2-2.7 13.2-8.9v-.2c0-5.5-4.2-8.6-12-8.6h-18v17.6zm4.9 33.5c8.1 0 13-2.8 13-9v-.2c0-5.6-4.2-9-13.6-9H176V353zm35-1.3v-.1a17 17 0 0 1 34-.1 17 17 0 0 1-34 .2zm32-.1v-.1a15 15 0 1 0-30 0v.2a15 15 0 1 0 30-.1zm-22-9.5h8a7.6 7.6 0 0 1 5.6 2 5.4 5.4 0 0 1 1.6 4 5.6 5.6 0 0 1-4 5.6l4.5 6.4h-4.7l-3.8-5.8h-3.2v5.8h-4zm8 8.8c2 0 3.2-1 3.2-2.6 0-1.8-1.3-2.7-3.2-2.7h-4v5.3z"
+            ></path>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-2xl font-bold text-foreground">Audit Dashboard</h1>
+          <p class="text-sm text-muted-foreground mt-1">Monitor system activity and user actions</p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-4">
+        <div class="flex items-center space-x-3 bg-secondary/50 rounded-lg px-4 py-2">
+          <div class="w-10 h-10 bg-accent rounded-full flex items-center justify-center">
+            <span class="text-white font-medium text-sm">
+              {{ (userName || userEmail || 'U').charAt(0).toUpperCase() }}
+            </span>
+          </div>
+          <div class="text-sm">
+            <p class="font-semibold text-foreground">{{ userName || 'User' }}</p>
+            <p class="text-muted-foreground">{{ userRole }}</p>
+          </div>
+        </div>
+        <button
+          hlmBtn
+          variant="outline"
+          size="sm"
+          (click)="logout()"
+          class="text-destructive border-destructive/20 hover:bg-destructive/10 hover:border-destructive/30 transition-all duration-200"
+        >
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+            ></path>
+          </svg>
+          Logout
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="w-full min-h-screen bg-background p-6">
+  <div class="w-full max-w-7xl mx-auto">
+    <div class="mb-0">
+      <div class="bg-card rounded-t-xl border border-border border-b-0 p-4 shadow-sm">
+        <div class="mb-4 flex items-start justify-between">
+          <div>
+            <h2 class="text-xl font-semibold leading-tight">Audit Logs</h2>
+            <p class="text-sm text-muted-foreground">Track system activities and user actions</p>
+          </div>
+          <div class="text-sm text-muted-foreground self-center">{{ totalLogs() }} logs</div>
+        </div>
+        <!-- Filters -->
+        <div class="space-y-3">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- User -->
+            <div>
+              <label class="block text-xs font-medium text-muted-foreground mb-1">User</label>
+              <brn-select
+                class="block"
+                [ngModel]="selectedUser()"
+                (ngModelChange)="selectedUser.set($event); onFilterChange()"
+              >
+                <hlm-select-trigger class="w-full inline-flex h-9 text-sm">
+                  <hlm-select-value placeholder="All users" />
+                </hlm-select-trigger>
+                <hlm-select-content class="max-h-60">
+                  <hlm-option [value]="null">All users</hlm-option>
+                  @for (u of users(); track u) { <hlm-option [value]="u">{{ u }}</hlm-option> }
+                </hlm-select-content>
+              </brn-select>
+            </div>
+
+            <!-- Status -->
+            <div>
+              <label class="block text-xs font-medium text-muted-foreground mb-1">Status</label>
+              <brn-select
+                class="block"
+                [ngModel]="selectedStatus()"
+                (ngModelChange)="selectedStatus.set($event); onFilterChange()"
+              >
+                <hlm-select-trigger class="w-full inline-flex h-9 text-sm">
+                  <hlm-select-value placeholder="All statuses" />
+                </hlm-select-trigger>
+                <hlm-select-content class="max-h-60">
+                  <hlm-option [value]="null">All statuses</hlm-option>
+                  @for (s of statuses(); track s) { <hlm-option [value]="s">{{ s }}</hlm-option> }
+                </hlm-select-content>
+              </brn-select>
+            </div>
+
+            <!-- Entity -->
+            <div>
+              <label class="block text-xs font-medium text-muted-foreground mb-1">Entity</label>
+              <brn-select
+                class="block"
+                [ngModel]="selectedEntity()"
+                (ngModelChange)="selectedEntity.set($event); onFilterChange()"
+              >
+                <hlm-select-trigger class="w-full inline-flex h-9 text-sm">
+                  <hlm-select-value placeholder="All entities" />
+                </hlm-select-trigger>
+                <hlm-select-content class="max-h-60">
+                  <hlm-option [value]="null">All entities</hlm-option>
+                  @for (e of entities(); track e) { <hlm-option [value]="e">{{ e }}</hlm-option> }
+                </hlm-select-content>
+              </brn-select>
+            </div>
+
+            <!-- Version -->
+            <div>
+              <label class="block text-xs font-medium text-muted-foreground mb-1"
+                >User Version</label
+              >
+              <brn-select
+                class="block"
+                [ngModel]="selectedVersion()"
+                (ngModelChange)="selectedVersion.set($event); onFilterChange()"
+              >
+                <hlm-select-trigger class="w-full inline-flex h-9 text-sm">
+                  <hlm-select-value placeholder="All versions" />
+                </hlm-select-trigger>
+                <hlm-select-content class="max-h-60">
+                  <hlm-option [value]="null">All versions</hlm-option>
+                  @for (v of versions(); track v) { <hlm-option [value]="v">{{ v }}</hlm-option> }
+                </hlm-select-content>
+              </brn-select>
+            </div>
+
+            <!-- Dates -->
+            <div>
+              <label class="block text-xs font-medium text-muted-foreground mb-1">From</label>
+              <input
+                hlmInput
+                type="date"
+                class="h-9 rounded border border-border bg-background text-foreground px-2 w-full"
+                [ngModel]="dateFrom()"
+                (ngModelChange)="dateFrom.set($event); onFilterChange()"
+              />
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-muted-foreground mb-1">To</label>
+              <input
+                hlmInput
+                type="date"
+                class="h-9 rounded border border-border bg-background text-foreground px-2 w-full"
+                [ngModel]="dateTo()"
+                (ngModelChange)="dateTo.set($event); onFilterChange()"
+              />
+            </div>
+          </div>
+
+          <div class="flex justify-end">
+            <button
+              hlmBtn
+              variant="outline"
+              size="sm"
+              (click)="
+                selectedUser.set(null);
+                selectedStatus.set(null);
+                selectedEntity.set(null);
+                selectedVersion.set(null);
+                dateFrom.set('');
+                dateTo.set('');
+                pageNumber.set(1);
+                loadAuditLogs()
+              "
+            >
+              Clear filters
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-card border-x border-border w-full">
+      <div class="w-full overflow-x-auto">
+        <table hlmTable class="w-full min-w-max">
+          <thead hlmTHead class="bg-muted/40">
+            <tr hlmTr>
+              @for (column of table.getAllColumns(); track column.id) {
+              <th
+                hlmTh
+                class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-foreground"
+              >
+                {{ column.columnDef.header }}
+              </th>
+              }
+            </tr>
+          </thead>
+          <tbody hlmTBody class="bg-card divide-y divide-border">
+            @if (isLoading()) { @for (i of getSkeletonRows(); track $index) {
+            <tr hlmTr class="animate-pulse">
+              @for (column of table.getAllColumns(); track column.id) {
+              <td hlmTd class="px-6 py-4">
+                <div class="h-4 bg-slate-200 rounded w-24"></div>
+              </td>
+              }
+            </tr>
+            } } @else if (table.getRowModel().rows.length) { @for (row of table.getRowModel().rows;
+            track row.id) {
+            <tr hlmTr class="hover:bg-muted/40 transition-colors duration-150">
+              @for (cell of row.getVisibleCells(); track cell.id) {
+              <td hlmTd class="px-6 py-3 text-sm text-foreground align-middle whitespace-nowrap">
+                @switch (cell.column.id) { @case ('timestamp') {
+                <span class="font-mono text-xs">{{ formatTimestamp(cell.getValue()) }}</span>
+                } @case ('user') {
+                <span class="font-semibold">{{ cell.getValue() || '-' }}</span>
+                } @case ('action') {
+                <span
+                  class="inline-flex items-center rounded-full px-2 py-0.5 text-xs"
+                  [class]="
+                    (cell.getValue() || '-') !== '-'
+                      ? 'bg-blue-100 text-blue-700'
+                      : 'bg-muted text-muted-foreground'
+                  "
+                >
+                  {{ cell.getValue() || '-' }}
+                </span>
+                } @case ('entity') {
+                <span
+                  class="inline-flex items-center rounded-full px-2 py-0.5 text-xs"
+                  [class]="
+                    (cell.getValue() || '-') !== '-'
+                      ? 'bg-green-100 text-green-700'
+                      : 'bg-muted text-muted-foreground'
+                  "
+                >
+                  {{ cell.getValue() || '-' }}
+                </span>
+                } @case ('entityIdentifier') {
+                <span class="font-mono text-xs">{{ cell.getValue() || '-' }}</span>
+                } @case ('status') {
+                <span
+                  class="inline-flex items-center rounded-full px-2 py-0.5 text-xs"
+                  [class]="
+                    cell.getValue() === 'SUCCESS'
+                      ? 'bg-emerald-500/10 text-emerald-600'
+                      : cell.getValue() === 'FAILED'
+                      ? 'bg-red-500/10 text-red-600'
+                      : 'bg-amber-500/10 text-amber-600'
+                  "
+                >
+                  {{ cell.getValue() }}
+                </span>
+                } @case ('actions') {
+                <div class="flex items-center gap-2">
+                  <button
+                    hlmBtn
+                    variant="outline"
+                    size="sm"
+                    class="shadow-xs"
+                    (click)="openDetails(row.original)"
+                  >
+                    View
+                  </button>
+                </div>
+                } @default {
+                <span>{{ cell.getValue() ?? '-' }}</span>
+                } }
+              </td>
+              }
+            </tr>
+            } } @else {
+            <tr hlmTr>
+              <td
+                hlmTd
+                class="px-6 py-12 text-center"
+                [attr.colspan]="table.getAllColumns().length"
+              >
+                <div class="flex flex-col items-center gap-2">
+                  <div
+                    class="h-12 w-12 rounded-full bg-muted text-muted-foreground flex items-center justify-center"
+                  >
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                      />
+                    </svg>
+                  </div>
+                  <div class="text-sm text-muted-foreground">No audit logs found</div>
+                  <div class="text-xs text-muted-foreground">No activity recorded yet</div>
+                </div>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="mt-0 bg-card rounded-b-lg border border-border border-t p-4 shadow-sm">
+      <div class="flex flex-col justify-between sm:flex-row sm:items-center gap-4">
+        @if (totalLogs() > 0) {
+        <div class="flex items-center gap-4">
+          <span class="text-sm text-muted-foreground">
+            Showing {{ pageNumber() * pageSize() - pageSize() + 1 }} to
+            {{ Math.min(pageNumber() * pageSize(), totalLogs()) }} of {{ totalLogs() }} logs
+          </span>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="flex items-center gap-3">
+            <span class="text-sm text-muted-foreground">Show:</span>
+            <brn-select
+              class="inline-block"
+              [ngModel]="pageSize()"
+              (ngModelChange)="onPageSizeChange($event)"
+            >
+              <hlm-select-trigger class="w-20 inline-flex h-8 text-sm">
+                <hlm-select-value />
+              </hlm-select-trigger>
+              <hlm-select-content>
+                @for (size of availablePageSizes; track size) {
+                <hlm-option [value]="size">{{ size }}</hlm-option>
+                }
+              </hlm-select-content>
+            </brn-select>
+          </div>
+          <button
+            hlmBtn
+            variant="outline"
+            size="sm"
+            [disabled]="!canPreviousPage()"
+            (click)="previousPage()"
+            class="h-8 px-3"
+          >
+            Previous
+          </button>
+          <span class="text-sm text-muted-foreground px-2"
+            >Page {{ pageNumber() }} of {{ pageCount() }}</span
+          >
+          <button
+            hlmBtn
+            variant="outline"
+            size="sm"
+            [disabled]="!canNextPage()"
+            (click)="nextPage()"
+            class="h-8 px-3"
+          >
+            Next
+          </button>
+        </div>
+        } @else {
+        <div class="flex h-full w-full items-center justify-center py-8">
+          <div class="text-muted-foreground text-sm">No results</div>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Details Dialog -->
+<hlm-dialog>
+  <hlm-dialog-content *brnDialogContent="let ctx" class="w-[800px] max-w-[800px]">
+    <hlm-dialog-header>
+      <h3 brnDialogTitle hlm class="text-lg">Audit Log Details</h3>
+      <p brnDialogDescription hlm class="text-sm text-muted-foreground">
+        Detailed information about this audit log entry
+      </p>
+    </hlm-dialog-header>
+    <div class="border-b border-border my-3"></div>
+    @if (selectedLog()) {
+    <div class="space-y-4 mt-1">
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="text-sm font-medium text-foreground">User</label>
+          <p class="text-sm text-muted-foreground mt-1">{{ selectedLog()?.user }}</p>
+        </div>
+        <div>
+          <label class="text-sm font-medium text-foreground">Action</label>
+          <p class="text-sm text-muted-foreground mt-1">{{ selectedLog()?.action }}</p>
+        </div>
+        <div>
+          <label class="text-sm font-medium text-foreground">Entity</label>
+          <p class="text-sm text-muted-foreground mt-1">{{ selectedLog()?.entity }}</p>
+        </div>
+        <div>
+          <label class="text-sm font-medium text-foreground">Status</label>
+          <p class="text-sm text-muted-foreground mt-1">{{ selectedLog()?.status }}</p>
+        </div>
+        <div>
+          <label class="text-sm font-medium text-foreground">Timestamp</label>
+          <p class="text-sm text-muted-foreground mt-1">
+            {{ formatTimestamp(selectedLog()?.timestamp || '') }}
+          </p>
+        </div>
+        <div>
+          <label class="text-sm font-medium text-foreground">Entity ID</label>
+          <p class="text-sm text-muted-foreground mt-1">{{ selectedLog()?.entityIdentifier }}</p>
+        </div>
+      </div>
+
+      @if (selectedLog()?.metadata?.url) {
+      <div>
+        <label class="text-sm font-medium text-foreground">URL</label>
+        <p class="text-sm text-muted-foreground mt-1 break-all">
+          {{ selectedLog()?.metadata?.url }}
+        </p>
+      </div>
+      } @if (selectedLog()?.metadata?.requestId) {
+      <div>
+        <label class="text-sm font-medium text-foreground">Request ID</label>
+        <p class="text-sm text-muted-foreground mt-1 font-mono">
+          {{ selectedLog()?.metadata?.requestId }}
+        </p>
+      </div>
+      }
+    </div>
+    }
+    <div class="border-t border-border mt-4"></div>
+    <hlm-dialog-footer>
+      <button hlmBtn variant="outline" brnDialogClose>Close</button>
+    </hlm-dialog-footer>
+  </hlm-dialog-content>
+</hlm-dialog>

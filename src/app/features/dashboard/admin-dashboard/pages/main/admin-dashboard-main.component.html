@@ -1,0 +1,569 @@
+<!-- Enhanced Header -->
+<header
+  class="bg-gradient-to-r from-primary/5 via-white to-primary/5 border-b border-border shadow-sm"
+>
+  <div class="w-full px-6 py-6">
+    <div class="flex justify-between items-center">
+      <div class="flex items-center space-x-6">
+        <!-- BBB Logo -->
+        <div
+          class="w-14 h-14 bg-primary rounded-xl flex items-center justify-center shadow-lg transform hover:scale-105 transition-transform duration-300"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0.5 0.5 266.4 368.6"
+            aria-hidden="true"
+            focusable="false"
+            class="h-10 w-10"
+          >
+            <path
+              fill="white"
+              d="M185.1 231.5H44l-5.2 16.9h37.7l7.2 23.2h61.9l7.1-23.2h37.6l-5-17zM67 136.6a33.4 33.4 0 0 0 7.4 46.7l33.8 24.5a8.4 8.4 0 0 1 2 11.7l5 3.7 17.9-24.7a33.2 33.2 0 0 0 6.3-19.5 33.8 33.8 0 0 0-.4-5.4 33.2 33.2 0 0 0-13.4-21.7l-33.8-24.6a8.3 8.3 0 0 1-3.4-5.4 8.8 8.8 0 0 1 0-1.4 8.2 8.2 0 0 1 1.5-4.8l-5-3.7zM87.3 38A48 48 0 0 0 78 66.2a49.2 49.2 0 0 0 .6 7.7A48.1 48.1 0 0 0 98 105.5l42.5 30.8a25.8 25.8 0 0 1 10.4 16.9 26.4 26.4 0 0 1 .3 4.1 25.8 25.8 0 0 1-5 15.2l4.1 3 33.5-46.3A48.4 48.4 0 0 0 173 61.6l-51.3-37.3a15 15 0 0 1-3.3-20.9l-4-2.9zM.5 285.8h38.7c9.5 0 17 2.6 21.8 7.3a19.1 19.1 0 0 1 5.7 14.2v.2c0 9.4-5 14.7-11 18 9.6 3.7 15.6 9.3 15.6 20.5v.2c0 15.3-12.4 22.9-31.2 22.9H.5zm34.8 33.6c8 0 13.2-2.6 13.2-8.8v-.2c0-5.5-4.3-8.6-12-8.6H18.4v17.6zm4.9 33.6c8 0 13-2.8 13-9v-.2c0-5.6-4.2-9-13.6-9H18.4V353zm39.1-67.3H118c9.6 0 17 2.7 21.8 7.4a19.1 19.1 0 0 1 5.7 14.2v.2c0 9.4-5 14.7-11 18 9.7 3.7 15.6 9.3 15.6 20.5v.2c0 15.3-12.4 22.9-31.2 22.9H79.3zm34.8 33.8c8 0 13.2-2.7 13.2-8.9v-.2c0-5.5-4.3-8.6-12-8.6H97.2v17.6zM119 353c8 0 13-2.8 13-9v-.2c0-5.6-4.2-9-13.6-9H97.2V353zm39.1-67.3H197c9.5 0 17 2.7 21.7 7.4a19.1 19.1 0 0 1 5.8 14.2v.2c0 9.4-5 14.7-11 18 9.6 3.7 15.6 9.3 15.6 20.5v.2c0 15.3-12.4 22.9-31.2 22.9h-39.6zm34.8 33.8c8.1 0 13.2-2.7 13.2-8.9v-.2c0-5.5-4.2-8.6-12-8.6h-18v17.6zm4.9 33.5c8.1 0 13-2.8 13-9v-.2c0-5.6-4.2-9-13.6-9H176V353zm35-1.3v-.1a17 17 0 0 1 34-.1 17 17 0 0 1-34 .2zm32-.1v-.1a15 15 0 1 0-30 0v.2a15 15 0 1 0 30-.1zm-22-9.5h8a7.6 7.6 0 0 1 5.6 2 5.4 5.4 0 0 1 1.6 4 5.6 5.6 0 0 1-4 5.6l4.5 6.4h-4.7l-3.8-5.8h-3.2v5.8h-4zm8 8.8c2 0 3.2-1 3.2-2.6 0-1.8-1.3-2.7-3.2-2.7h-4v5.3z"
+            ></path>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-2xl font-bold text-foreground">Admin Dashboard</h1>
+          <p class="text-sm text-muted-foreground mt-1">Manage representatives, roles and access</p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-4">
+        <div class="flex items-center space-x-3 bg-secondary/50 rounded-lg px-4 py-2">
+          <div class="w-10 h-10 bg-accent rounded-full flex items-center justify-center">
+            <span class="text-white font-medium text-sm">
+              {{ (userName || userEmail || 'U').charAt(0).toUpperCase() }}
+            </span>
+          </div>
+          <div class="text-sm">
+            <p class="font-semibold text-foreground">{{ userName || 'User' }}</p>
+            <p class="text-muted-foreground">{{ userRole }}</p>
+          </div>
+        </div>
+        <button
+          hlmBtn
+          variant="outline"
+          size="sm"
+          (click)="logout()"
+          class="text-destructive border-destructive/20 hover:bg-destructive/10 hover:border-destructive/30 transition-all duration-200"
+        >
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+            ></path>
+          </svg>
+          Logout
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="w-full min-h-screen bg-background p-6">
+  <div class="w-full max-w-6xl mx-auto">
+    <div class="mb-0">
+      <div class="bg-card rounded-t-xl border border-border border-b-0 p-4 shadow-sm">
+        <div class="mb-4 flex items-start justify-between">
+          <div>
+            <h2 class="text-xl font-semibold leading-tight">Admin Representatives</h2>
+            <p class="text-sm text-muted-foreground">
+              Manage access, roles and status for representatives
+            </p>
+          </div>
+          <div class="text-sm text-muted-foreground self-center">{{ totalUsers() }} users</div>
+        </div>
+        <div class="flex items-end justify-between gap-6">
+          <div class="flex items-end gap-6 flex-1">
+            <div class="flex-1 max-w-md">
+              <label class="block text-sm font-medium text-foreground mb-2"
+                >Search By <strong>Email</strong></label
+              >
+              <div class="relative">
+                <svg
+                  class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+                <input
+                  hlmInput
+                  type="text"
+                  placeholder="Search users..."
+                  (input)="onSearchChange($event)"
+                  class="pl-10 w-full"
+                />
+              </div>
+            </div>
+
+            <div class="flex-shrink-0">
+              <label class="block text-sm font-medium text-foreground mb-2">Admin</label>
+              <brn-select
+                class="inline-block"
+                [ngModel]="isAdmin()"
+                (ngModelChange)="onAdminFilterChange($event)"
+              >
+                <hlm-select-trigger class="w-40 inline-flex h-9 text-sm">
+                  <hlm-select-value placeholder="All" />
+                </hlm-select-trigger>
+                <hlm-select-content class="max-h-60">
+                  <hlm-option [value]="null">All</hlm-option>
+                  <hlm-option [value]="true">Admin</hlm-option>
+                  <hlm-option [value]="false">Non-admin</hlm-option>
+                </hlm-select-content>
+              </brn-select>
+            </div>
+
+            <div class="flex-shrink-0">
+              <label class="block text-sm font-medium text-foreground mb-2">CSV Sync</label>
+              <brn-select
+                class="inline-block"
+                [ngModel]="isCSVSync()"
+                (ngModelChange)="onCsvSyncFilterChange($event)"
+              >
+                <hlm-select-trigger class="w-40 inline-flex h-9 text-sm">
+                  <hlm-select-value placeholder="All" />
+                </hlm-select-trigger>
+                <hlm-select-content class="max-h-60">
+                  <hlm-option [value]="null">All</hlm-option>
+                  <hlm-option [value]="true">Enabled</hlm-option>
+                  <hlm-option [value]="false">Disabled</hlm-option>
+                </hlm-select-content>
+              </brn-select>
+            </div>
+
+            <div class="flex-shrink-0">
+              <label class="block text-sm font-medium text-foreground mb-2">Status</label>
+              <brn-select
+                class="inline-block"
+                [ngModel]="isActive()"
+                (ngModelChange)="onActiveFilterChange($event)"
+              >
+                <hlm-select-trigger class="w-40 inline-flex h-9 text-sm">
+                  <hlm-select-value placeholder="All" />
+                </hlm-select-trigger>
+                <hlm-select-content class="max-h-60">
+                  <hlm-option [value]="null">All</hlm-option>
+                  <hlm-option [value]="true">Active</hlm-option>
+                  <hlm-option [value]="false">Inactive</hlm-option>
+                </hlm-select-content>
+              </brn-select>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <!-- Dialog-based Add User -->
+            <hlm-dialog>
+              <button brnDialogTrigger hlmBtn variant="outline" size="sm" (click)="openAddUser()">
+                Add user
+              </button>
+              <hlm-dialog-content *brnDialogContent="let ctx" class="w-[720px] max-w-[720px]">
+                <hlm-dialog-header>
+                  <h3 brnDialogTitle hlm class="text-lg">Add representative</h3>
+                  <p brnDialogDescription hlm class="text-sm text-muted-foreground">
+                    Provide email and roles for the user. You can modify roles later.
+                  </p>
+                </hlm-dialog-header>
+                <div class="border-b border-border my-3"></div>
+                <div class="space-y-4 mt-1">
+                  <div class="space-y-1">
+                    <label class="text-sm font-medium text-foreground">Email</label>
+                    <input
+                      hlmInput
+                      [ngModel]="addEmail()"
+                      (ngModelChange)="addEmail.set($event)"
+                      type="email"
+                      placeholder="name@example.com"
+                      class="w-full"
+                    />
+                    @if (!addEmailValid() && addEmail()) {
+                    <p class="text-xs text-destructive mt-1">Please enter a valid email.</p>
+                    }
+                  </div>
+                  <div class="space-y-2">
+                    <div class="text-sm font-medium text-foreground">Roles</div>
+                    <div class="grid grid-cols-1 gap-2">
+                      <label class="flex items-center gap-2">
+                        <hlm-checkbox
+                          [ngModel]="addIsAdmin()"
+                          (ngModelChange)="addIsAdmin.set($event)"
+                        ></hlm-checkbox>
+                        <span class="text-sm">Admin Role</span>
+                      </label>
+                      <label class="flex items-center gap-2">
+                        <hlm-checkbox
+                          [ngModel]="addIsCsvSync()"
+                          (ngModelChange)="addIsCsvSync.set($event)"
+                        ></hlm-checkbox>
+                        <span class="text-sm">CSV Sync Role</span>
+                      </label>
+                    </div>
+                    <p class="text-xs text-muted-foreground">
+                      Select the roles you want to assign to this user
+                    </p>
+                  </div>
+                </div>
+                <div class="border-t border-border mt-4"></div>
+                <hlm-dialog-footer>
+                  <button hlmBtn variant="outline" brnDialogClose [disabled]="addSubmitting()">
+                    Cancel
+                  </button>
+                  <button hlmBtn (click)="submitAddUser()" [disabled]="!canSubmitAdd()">Add</button>
+                </hlm-dialog-footer>
+              </hlm-dialog-content>
+            </hlm-dialog>
+            <!-- Dialog-based Bulk Add -->
+            <hlm-dialog>
+              <button brnDialogTrigger hlmBtn variant="outline" size="sm" (click)="openBulkAdd()">
+                Bulk add
+              </button>
+              <hlm-dialog-content *brnDialogContent="let ctx" class="w-[720px] max-w-[720px]">
+                <hlm-dialog-header>
+                  <h3 brnDialogTitle hlm class="text-lg">Bulk add representatives</h3>
+                  <p brnDialogDescription hlm class="text-sm text-muted-foreground">
+                    Enter one user per line in format: email;csvsync
+                  </p>
+                </hlm-dialog-header>
+                <div class="border-b border-border my-3"></div>
+                <div class="space-y-3 mt-1">
+                  <div>
+                    <label class="text-sm font-medium text-foreground">Users</label>
+                    <textarea
+                      hlmInput
+                      rows="8"
+                      class="w-full font-mono text-xs mt-1 min-h-24"
+                      [ngModel]="bulkText()"
+                      (ngModelChange)="bulkText.set($event)"
+                      placeholder="user1@gmail.com;csvsync&#10;user2@gmail.com&#10;user3@gmail.com;csvsync"
+                    ></textarea>
+                  </div>
+                  <div class="p-3 rounded-lg bg-muted/50 border border-border">
+                    <div class="text-xs font-medium text-foreground mb-2">Format examples:</div>
+                    <ul class="text-xs text-muted-foreground space-y-1 list-disc pl-5">
+                      <li>
+                        <code class="bg-background px-1 py-0.5 rounded"
+                          >user@gmail.com;csvsync</code
+                        >
+                        - User with CSV Sync role
+                      </li>
+                      <li>
+                        <code class="bg-background px-1 py-0.5 rounded">user@gmail.com</code> - User
+                        without CSV Sync role
+                      </li>
+                      <li>One user per line</li>
+                      <li>Separate email and role with semicolon</li>
+                      <li>Only 'csvsync' role is supported</li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="border-t border-border mt-4"></div>
+                <hlm-dialog-footer>
+                  <button hlmBtn variant="outline" brnDialogClose [disabled]="bulkSubmitting()">
+                    Cancel
+                  </button>
+                  <button hlmBtn (click)="submitBulkAdd()" [disabled]="!canSubmitBulk()">
+                    Add users
+                  </button>
+                </hlm-dialog-footer>
+              </hlm-dialog-content>
+            </hlm-dialog>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-card border-x border-border w-full">
+      <div class="w-full overflow-x-auto">
+        <table hlmTable class="w-full min-w-max">
+          <thead hlmTHead class="bg-muted/40">
+            <tr hlmTr>
+              @for (column of table.getAllColumns(); track column.id) {
+              <th
+                hlmTh
+                class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-foreground"
+              >
+                {{ column.columnDef.header }}
+              </th>
+              }
+            </tr>
+          </thead>
+          <tbody hlmTBody class="bg-card divide-y divide-border">
+            @if (isLoading()) { @for (i of getSkeletonRows(); track $index) {
+            <tr hlmTr class="animate-pulse">
+              @for (column of table.getAllColumns(); track column.id) {
+              <td hlmTd class="px-6 py-4">
+                <div class="h-4 bg-slate-200 rounded w-24"></div>
+              </td>
+              }
+            </tr>
+            } } @else if (table.getRowModel().rows.length) { @for (row of table.getRowModel().rows;
+            track row.id) {
+            <tr hlmTr class="hover:bg-muted/40 transition-colors duration-150">
+              @for (cell of row.getVisibleCells(); track cell.id) {
+              <td hlmTd class="px-6 py-3 text-sm text-foreground align-middle whitespace-nowrap">
+                @switch (cell.column.id) { @case ('email') {
+                <span class="font-semibold">{{ cell.getValue() ?? '-' }}</span>
+                } @case ('isAdmin') {
+                <span
+                  class="inline-flex items-center rounded-full px-2 py-0.5 text-xs"
+                  [class]="
+                    cell.getValue() ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700'
+                  "
+                >
+                  {{ cell.getValue() ? 'Yes' : 'No' }}
+                </span>
+                } @case ('isCSVSync') {
+                <span
+                  class="inline-flex items-center rounded-full px-2 py-0.5 text-xs"
+                  [class]="
+                    cell.getValue() ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'
+                  "
+                >
+                  {{ cell.getValue() ? 'Yes' : 'No' }}
+                </span>
+                } @case ('isActive') {
+                <span
+                  class="inline-flex items-center rounded-full px-2 py-0.5 text-xs"
+                  [class]="
+                    cell.getValue()
+                      ? 'bg-emerald-500/10 text-emerald-600'
+                      : 'bg-amber-500/10 text-amber-600'
+                  "
+                >
+                  {{ cell.getValue() ? 'Active' : 'Inactive' }}
+                </span>
+                } @case ('actions') {
+                <div class="flex items-center gap-3">
+                  <button
+                    hlmBtn
+                    variant="outline"
+                    size="sm"
+                    class="shadow-xs w-24 justify-center"
+                    (click)="toggleActive(row.original)"
+                    [disabled]="togglingActive().has(row.original.userId)"
+                  >
+                    {{ row.original.isActive ? 'Deactivate' : 'Activate' }}
+                  </button>
+                  <hlm-dialog>
+                    <button
+                      brnDialogTrigger
+                      hlmBtn
+                      variant="outline"
+                      size="sm"
+                      class="shadow-xs"
+                      (click)="openEdit(row.original)"
+                    >
+                      Edit
+                    </button>
+                    <hlm-dialog-content *brnDialogContent="let ctx" class="w-[720px] max-w-[720px]">
+                      <hlm-dialog-header>
+                        <h3 brnDialogTitle hlm class="text-lg">Edit user</h3>
+                        <p brnDialogDescription hlm class="text-sm text-muted-foreground">
+                          Update email and CSV Sync role for this representative
+                        </p>
+                      </hlm-dialog-header>
+                      <div class="border-b border-border my-3"></div>
+                      <div class="space-y-4 mt-1">
+                        <div>
+                          <label class="text-sm font-medium text-foreground">Email</label>
+                          <input
+                            hlmInput
+                            [ngModel]="editEmail()"
+                            (ngModelChange)="editEmail.set($event)"
+                            type="email"
+                            placeholder="name@example.com"
+                            class="mt-1 w-full"
+                          />
+                        </div>
+                        <div>
+                          <div class="text-sm font-medium text-foreground mb-2">CSV Sync Role</div>
+                          <label class="flex items-center gap-2">
+                            <hlm-checkbox
+                              [ngModel]="editIsCsvSync()"
+                              (ngModelChange)="editIsCsvSync.set($event)"
+                            ></hlm-checkbox>
+                            <span class="text-sm">Enable CSV Sync</span>
+                          </label>
+                          <p class="text-xs text-muted-foreground mt-2">
+                            Admin role cannot be modified through this interface
+                          </p>
+                        </div>
+                      </div>
+                      <div class="border-t border-border mt-4"></div>
+                      <hlm-dialog-footer>
+                        <button
+                          hlmBtn
+                          variant="outline"
+                          brnDialogClose
+                          [disabled]="editSubmitting()"
+                        >
+                          Cancel
+                        </button>
+                        <button hlmBtn (click)="submitEdit()" [disabled]="!canSubmitEdit()">
+                          Save changes
+                        </button>
+                      </hlm-dialog-footer>
+                    </hlm-dialog-content>
+                  </hlm-dialog>
+                  <hlm-dialog>
+                    <button
+                      brnDialogTrigger
+                      hlmBtn
+                      variant="destructive"
+                      size="sm"
+                      class="shadow-xs"
+                      (click)="openDelete(row.original)"
+                    >
+                      Delete
+                    </button>
+                    <hlm-dialog-content *brnDialogContent="let ctx" class="w-[560px] max-w-[560px]">
+                      <hlm-dialog-header class="text-center">
+                        <div class="flex justify-center mb-2">
+                          <div
+                            class="h-10 w-10 rounded-full bg-red-100 text-red-600 flex items-center justify-center"
+                          >
+                            !
+                          </div>
+                        </div>
+                        <h3 brnDialogTitle hlm class="text-lg">Delete User</h3>
+                        <p brnDialogDescription hlm class="text-sm text-muted-foreground">
+                          Are you sure you want to delete user {{ deleteEmail() }}? This action
+                          cannot be undone.
+                        </p>
+                      </hlm-dialog-header>
+                      <hlm-dialog-footer class="justify-center gap-3">
+                        <button hlmBtn variant="outline" brnDialogClose [disabled]="deleting()">
+                          Cancel
+                        </button>
+                        <button
+                          hlmBtn
+                          variant="destructive"
+                          (click)="submitDelete()"
+                          [disabled]="deleting()"
+                        >
+                          Delete
+                        </button>
+                      </hlm-dialog-footer>
+                    </hlm-dialog-content>
+                  </hlm-dialog>
+                </div>
+                } @default {
+                <span>{{ cell.getValue() ?? '-' }}</span>
+                } }
+              </td>
+              }
+            </tr>
+            } } @else {
+            <tr hlmTr>
+              <td
+                hlmTd
+                class="px-6 py-12 text-center"
+                [attr.colspan]="table.getAllColumns().length"
+              >
+                <div class="flex flex-col items-center gap-2">
+                  <div
+                    class="h-12 w-12 rounded-full bg-muted text-muted-foreground flex items-center justify-center"
+                  >
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M5.121 17.804A13.937 13.937 0 0112 15c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
+                    </svg>
+                  </div>
+                  <div class="text-sm text-muted-foreground">No users found</div>
+                  <div class="text-xs text-muted-foreground">Try adjusting search or filters</div>
+                  <button
+                    hlmBtn
+                    variant="outline"
+                    size="sm"
+                    class="mt-2"
+                    (click)="
+                      searchTerm.set('');
+                      isAdmin.set(null);
+                      isCSVSync.set(null);
+                      isActive.set(null);
+                      pageNumber.set(1);
+                      loadUsers()
+                    "
+                  >
+                    Clear filters
+                  </button>
+                </div>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="mt-0 bg-card rounded-b-lg border border-border border-t p-4 shadow-sm">
+      <div class="flex flex-col justify-between sm:flex-row sm:items-center gap-4">
+        @if (totalUsers() > 0) {
+        <div class="flex items-center gap-4">
+          <span class="text-sm text-muted-foreground">
+            Showing {{ pageNumber() * pageSize() - pageSize() + 1 }} to
+            {{ Math.min(pageNumber() * pageSize(), totalUsers()) }} of {{ totalUsers() }} users
+          </span>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="flex items-center gap-3">
+            <span class="text-sm text-muted-foreground">Show:</span>
+            <brn-select
+              class="inline-block"
+              [ngModel]="pageSize()"
+              (ngModelChange)="onPageSizeChange($event)"
+            >
+              <hlm-select-trigger class="w-20 inline-flex h-8 text-sm">
+                <hlm-select-value />
+              </hlm-select-trigger>
+              <hlm-select-content>
+                @for (size of availablePageSizes; track size) {
+                <hlm-option [value]="size">{{ size }}</hlm-option>
+                }
+              </hlm-select-content>
+            </brn-select>
+          </div>
+          <button
+            hlmBtn
+            variant="outline"
+            size="sm"
+            [disabled]="!canPreviousPage()"
+            (click)="previousPage()"
+            class="h-8 px-3"
+          >
+            Previous
+          </button>
+          <span class="text-sm text-muted-foreground px-2"
+            >Page {{ pageNumber() }} of {{ pageCount() }}</span
+          >
+          <button
+            hlmBtn
+            variant="outline"
+            size="sm"
+            [disabled]="!canNextPage()"
+            (click)="nextPage()"
+            class="h-8 px-3"
+          >
+            Next
+          </button>
+        </div>
+        } @else {
+        <div class="flex h-full w-full items-center justify-center py-8">
+          <div class="text-muted-foreground text-sm">No results</div>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>

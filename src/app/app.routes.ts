@@ -11,6 +11,9 @@ import { SuccessfullSubmissionComponent } from './features/accreditation-form/pa
 import { InternalApplicationDetailsComponent } from './features/dashboard/internal/pages/internal-application-details/internal-application-details.component';
 import { MicrosoftCallbackComponent } from './features/auth/pages/auth-callback/microsoft-callback.component';
 import { getDisplayNameFromRouteId } from './features/accreditation-form/models/partnership-sources.model';
+import { AdminDashboardMainComponent } from './features/dashboard/admin-dashboard/pages/main/admin-dashboard-main.component';
+import { AuditDashboardMainComponent } from './features/dashboard/audit-dashboard/pages/main/audit-dashboard-main.component';
+import { AuditDetailsComponent } from './features/dashboard/audit-dashboard/pages/audit-details/audit-details.component';
 
 export const routes: Routes = [
   {
@@ -70,6 +73,21 @@ export const routes: Routes = [
     title: 'Internal Application Details',
     path: 'dashboard/internal/application-details/:id',
     component: InternalApplicationDetailsComponent,
+  },
+  {
+    title: 'Admin Dashboard',
+    path: 'dashboard/admin/overview',
+    component: AdminDashboardMainComponent,
+  },
+  {
+    title: 'Audit Dashboard',
+    path: 'dashboard/audit/overview',
+    component: AuditDashboardMainComponent,
+  },
+  {
+    title: 'Audit Details',
+    path: 'dashboard/audit/details/:id',
+    component: AuditDetailsComponent,
   },
   {
     path: '**',
