@@ -14,6 +14,8 @@ import { getDisplayNameFromRouteId } from './features/accreditation-form/models/
 import { AdminDashboardMainComponent } from './features/dashboard/admin-dashboard/pages/main/admin-dashboard-main.component';
 import { AuditDashboardMainComponent } from './features/dashboard/audit-dashboard/pages/main/audit-dashboard-main.component';
 import { AuditDetailsComponent } from './features/dashboard/audit-dashboard/pages/audit-details/audit-details.component';
+import { AdminAuthGuard } from './core/guards/admin-auth.guard';
+import { InternalAuthGuard } from './core/guards/internal-auth.guard';
 
 export const routes: Routes = [
   {
@@ -24,7 +26,7 @@ export const routes: Routes = [
   },
   {
     title: (route) =>
-      `Business Information Form – ${getDisplayNameFromRouteId(route.paramMap.get('id'))}`,
+      `Business Information Form - ${getDisplayNameFromRouteId(route.paramMap.get('id'))}`,
     path: 'business-registration/:id',
     component: AccreditationFormComponent,
     canActivate: [partnershipSourceGuard],
@@ -55,11 +57,6 @@ export const routes: Routes = [
     component: MicrosoftCallbackComponent,
   },
   {
-    title: 'Page Not Found',
-    path: '404',
-    component: NotFoundComponent,
-  },
-  {
     title: 'External Overview',
     path: 'dashboard/overview',
     component: ExternalOverviewComponent,
@@ -68,16 +65,19 @@ export const routes: Routes = [
     title: 'Internal Overview',
     path: 'dashboard/internal/overview',
     component: InternalOverviewComponent,
+    canActivate: [InternalAuthGuard],
   },
   {
     title: 'Internal Application Details',
     path: 'dashboard/internal/application-details/:id',
     component: InternalApplicationDetailsComponent,
+    canActivate: [InternalAuthGuard],
   },
   {
     title: 'Admin Dashboard',
     path: 'dashboard/admin/overview',
     component: AdminDashboardMainComponent,
+    canActivate: [AdminAuthGuard],
   },
   {
     title: 'Audit Dashboard',
@@ -88,6 +88,11 @@ export const routes: Routes = [
     title: 'Audit Details',
     path: 'dashboard/audit/details/:id',
     component: AuditDetailsComponent,
+  },
+  {
+    title: 'Page Not Found',
+    path: '404',
+    component: NotFoundComponent,
   },
   {
     path: '**',

@@ -14,6 +14,7 @@ interface DecodedToken {
   email: string;
   role: string;
   specialAccess?: string;
+  isAdmin?: string;
   nbf: number;
   exp: number;
   iat: number;
@@ -52,6 +53,12 @@ export class AuthService {
     if (!token) return null;
     const decoded = this.decodeJwtToken(token);
     return decoded?.role || null;
+  });
+  readonly isAdmin = computed(() => {
+    const token = this.tokenSignal();
+    if (!token) return null;
+    const decoded = this.decodeJwtToken(token);
+    return decoded?.isAdmin || null;
   });
   readonly userName = computed(() => {
     const email = this.userEmail();

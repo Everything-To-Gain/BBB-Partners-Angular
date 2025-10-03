@@ -23,6 +23,8 @@ export interface PaginationParams {
 })
 export class AdminDashboardService {
   private apiUrl = environment.apiUrl;
+  private middlewareServerUrl = environment.middlewareServerUrl;
+  private middlewareServerApiKey = environment.middlewareServerApiKey;
   private http = inject(HttpClient);
 
   getAdminDashboardUsers(
@@ -74,5 +76,19 @@ export class AdminDashboardService {
     request: AdminDashboardUpdateUserRequest
   ): Observable<ApiResponse<void>> {
     return this.http.patch<ApiResponse<void>>(`${this.apiUrl}/user/admin-dashboard/${id}`, request);
+  }
+
+  sendTrafficFile(email: string): Observable<ApiResponse<void>> {
+    const body = [email];
+    return this.http.post<ApiResponse<void>>(
+      `${this.middlewareServerUrl}/csv-sync/traffic-file`,
+      body,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'X-API-KEY': this.middlewareServerApiKey,
+        },
+      }
+    );
   }
 }

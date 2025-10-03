@@ -70,7 +70,26 @@
             <h2 class="text-xl font-semibold leading-tight">Audit Logs</h2>
             <p class="text-sm text-muted-foreground">Track system activities and user actions</p>
           </div>
-          <div class="text-sm text-muted-foreground self-center">{{ totalLogs() }} logs</div>
+          <div class="flex items-center gap-3 self-center">
+            <div class="text-sm text-muted-foreground">{{ totalLogs() }} logs</div>
+            <button
+              hlmBtn
+              variant="outline"
+              size="sm"
+              (click)="
+                selectedUser.set(null);
+                selectedStatus.set(null);
+                selectedEntity.set(null);
+                selectedVersion.set(null);
+                dateFrom.set('');
+                dateTo.set('');
+                pageNumber.set(1);
+                loadAuditLogs()
+              "
+            >
+              Clear filters
+            </button>
+          </div>
         </div>
         <!-- Filters -->
         <div class="space-y-3">
@@ -170,26 +189,6 @@
                 (ngModelChange)="dateTo.set($event); onFilterChange()"
               />
             </div>
-          </div>
-
-          <div class="flex justify-end">
-            <button
-              hlmBtn
-              variant="outline"
-              size="sm"
-              (click)="
-                selectedUser.set(null);
-                selectedStatus.set(null);
-                selectedEntity.set(null);
-                selectedVersion.set(null);
-                dateFrom.set('');
-                dateTo.set('');
-                pageNumber.set(1);
-                loadAuditLogs()
-              "
-            >
-              Clear filters
-            </button>
           </div>
         </div>
       </div>

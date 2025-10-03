@@ -105,6 +105,8 @@ export class AdminDashboardMainComponent implements OnInit {
 
   // Toggle active state loading set
   togglingActive = signal<Set<string>>(new Set());
+  // Sync-to-traffic loading set (by email)
+  syncingTraffic = signal<Set<string>>(new Set());
 
   ngOnInit(): void {
     this.setupSearchDebouncing();
@@ -329,6 +331,33 @@ export class AdminDashboardMainComponent implements OnInit {
       .subscribe(() => {
         this.loadUsers();
         toast.success('User updated successfully');
+      });
+  }
+
+  // Traffic file sync helpers
+  isSyncing(email?: string | null): boolean {
+    if (!email) return false;
+    return this.syncingTraffic().has(email);
+  }
+
+  onSyncTraffic(email?: string | null): void {
+    if (!email || this.isSyncing(email)) return;
+    const set = new Set(this.syncingTraffic());
+    set.add(email);
+    this.syncingTraffic.set(set);
+    this.adminService
+      .sendTrafficFile(email)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => {
+          const n = new Set(this.syncingTraffic());
+          n.delete(email);
+          this.syncingTraffic.set(n);
+        })
+      )
+      .subscribe({
+        next: () => toast.success('Sync queued successfully'),
+        error: (err) => toast.error('Failed to sync: ' + (err?.error?.detail || 'Unknown error')),
       });
   }
 }
