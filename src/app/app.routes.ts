@@ -83,11 +83,13 @@ export const routes: Routes = [
     title: 'Audit Dashboard',
     path: 'dashboard/audit/overview',
     component: AuditDashboardMainComponent,
+    canActivate: [AdminAuthGuard],
   },
   {
     title: 'Audit Details',
     path: 'dashboard/audit/details/:id',
     component: AuditDetailsComponent,
+    canActivate: [AdminAuthGuard],
   },
   {
     title: 'Page Not Found',
