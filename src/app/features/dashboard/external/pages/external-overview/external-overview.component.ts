@@ -13,10 +13,19 @@ import { ExternalApplicationResponse } from '../../models/external-application.m
 import { ApplicationStatus } from '../../models/external-application.model';
 import { AuthService } from '../../../../auth/services/auth.service';
 import { debounceTime, distinctUntilChanged, finalize, Subject } from 'rxjs';
+import { DashboardHeaderComponent } from '../../../../../shared/components/dashboard-header/dashboard-header.component';
 
 @Component({
   selector: 'app-external-overview',
-  imports: [HlmTableImports, HlmButton, HlmInput, BrnSelectImports, HlmSelectImports, FormsModule],
+  imports: [
+    HlmTableImports,
+    HlmButton,
+    HlmInput,
+    BrnSelectImports,
+    HlmSelectImports,
+    FormsModule,
+    DashboardHeaderComponent,
+  ],
   templateUrl: './external-overview.component.html',
 })
 export class ExternalOverviewComponent implements OnInit {
@@ -26,6 +35,10 @@ export class ExternalOverviewComponent implements OnInit {
 
   // Make Math available in template
   Math = Math;
+
+  get isAdmin(): boolean {
+    return this.authService.isAdmin() === 'true';
+  }
 
   columns: ColumnDef<ExternalApplicationResponse>[] = [
     {
@@ -194,7 +207,16 @@ export class ExternalOverviewComponent implements OnInit {
     return Array(this.pageSize()).fill(0);
   }
 
-  // --- auth getters
+  get partnershipSourceDisplayName() {
+    const role = this.userRole;
+    if (!role) return '';
+    return role
+      .replace(/([A-Z])/g, ' $1')
+      .trim()
+      .toLowerCase()
+      .replace(/\b\w/g, (l: string) => l.toUpperCase());
+  }
+
   get userName() {
     return this.authService.userName();
   }
@@ -203,30 +225,6 @@ export class ExternalOverviewComponent implements OnInit {
   }
   get userRole() {
     return this.authService.userRole();
-  }
-
-  get partnershipSourceDisplayName() {
-    const role = this.userRole;
-    if (!role) return '';
-
-    // Convert PascalCase to readable format
-    return role
-      .replace(/([A-Z])/g, ' $1')
-      .trim()
-      .toLowerCase()
-      .replace(/\b\w/g, (l: string) => l.toUpperCase());
-  }
-
-  get formattedUserRole() {
-    const role = this.userRole;
-    if (!role) return 'User';
-
-    // Convert PascalCase to readable format
-    return role
-      .replace(/([A-Z])/g, ' $1')
-      .trim()
-      .toLowerCase()
-      .replace(/\b\w/g, (l: string) => l.toUpperCase());
   }
 
   logout(): void {

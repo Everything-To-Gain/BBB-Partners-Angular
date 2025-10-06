@@ -12,6 +12,6 @@ export class InternalAuthGuard implements CanActivate {
   canActivate(): boolean | UrlTree {
     const isInternal = this.auth.userRole() === 'Internal';
     if (isInternal) return true;
-    return this.router.parseUrl('/404');
+    return this.router.parseUrl('/login');
   }
 }

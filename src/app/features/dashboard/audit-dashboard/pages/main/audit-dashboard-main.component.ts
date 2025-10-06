@@ -15,6 +15,7 @@ import { BrnDialogImports } from '@spartan-ng/brain/dialog';
 import { AuthService } from '../../../../auth/services/auth.service';
 import { Router } from '@angular/router';
 import { HlmInput } from '@spartan-ng/helm/input';
+import { DashboardHeaderComponent } from '../../../../../shared/components/dashboard-header/dashboard-header.component';
 
 @Component({
   selector: 'app-audit-dashboard-main',
@@ -28,6 +29,7 @@ import { HlmInput } from '@spartan-ng/helm/input';
     HlmDialogImports,
     HlmButton,
     HlmInput,
+    DashboardHeaderComponent,
   ],
 })
 export class AuditDashboardMainComponent implements OnInit {
@@ -86,6 +88,22 @@ export class AuditDashboardMainComponent implements OnInit {
   // Available page sizes
   availablePageSizes = [5, 10, 20, 50];
 
+  // Header helpers
+  get gmtOffsetLabel(): string {
+    const totalMinutes = -new Date().getTimezoneOffset(); // minutes ahead of UTC
+    const sign = totalMinutes >= 0 ? '+' : '-';
+    const absMin = Math.abs(totalMinutes);
+    const hours = Math.floor(absMin / 60);
+    const minutes = absMin % 60;
+    return minutes
+      ? `GMT${sign}${hours}:${minutes.toString().padStart(2, '0')}`
+      : `GMT${sign}${hours}`;
+  }
+
+  get timestampHeader(): string {
+    return `Timestamp (${this.gmtOffsetLabel})`;
+  }
+
   ngOnInit(): void {
     this.loadFilterOptions();
     this.loadAuditLogs();
@@ -129,7 +147,6 @@ export class AuditDashboardMainComponent implements OnInit {
         finalize(() => this.isLoading.set(false))
       )
       .subscribe((response) => {
-        console.log(response);
         this.auditLogs.set(response.data?.items || []);
         this.totalLogs.set(response.data?.count || 0);
       });

@@ -11,8 +11,7 @@ export class AdminAuthGuard implements CanActivate {
 
   canActivate(): boolean | UrlTree {
     const isAdmin = this.auth.isAdmin();
-    console.log('isAdmin', isAdmin);
     if (isAdmin) return true;
-    return this.router.parseUrl('/404');
+    return this.router.parseUrl('/login');
   }
 }

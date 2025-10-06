@@ -14,11 +14,22 @@ import { BrnSelectImports } from '@spartan-ng/brain/select';
 import { HlmSelectImports } from '@spartan-ng/helm/select';
 import { FormsModule } from '@angular/forms';
 import { toast } from 'ngx-sonner';
+import { DashboardHeaderComponent } from '../../../../../shared/components/dashboard-header/dashboard-header.component';
 
 @Component({
   selector: 'app-internal-overview',
   templateUrl: './internal-overview.component.html',
-  imports: [HlmTableImports, HlmButton, HlmInput, BrnSelectImports, HlmSelectImports, FormsModule],
+  imports: [
+    HlmTableImports,
+    HlmButton,
+    HlmInput,
+    BrnSelectImports,
+    HlmSelectImports,
+    FormsModule,
+    DashboardHeaderComponent,
+  ],
+  // Add header component import
+  standalone: true,
 })
 export class InternalOverviewComponent implements OnInit {
   private internalService = inject(InternalService);
@@ -266,6 +277,10 @@ export class InternalOverviewComponent implements OnInit {
   }
   get specialAccess() {
     return this.authService.specialAccess();
+  }
+  get isAdmin(): boolean {
+    const v = this.authService.isAdmin();
+    return v === 'true';
   }
 
   logout(): void {

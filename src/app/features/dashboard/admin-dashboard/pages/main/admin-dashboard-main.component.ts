@@ -17,6 +17,7 @@ import { HlmCheckbox } from '@spartan-ng/helm/checkbox';
 import { AuthService } from '../../../../auth/services/auth.service';
 import { toast } from 'ngx-sonner';
 import { Router } from '@angular/router';
+import { DashboardHeaderComponent } from '../../../../../shared/components/dashboard-header/dashboard-header.component';
 
 @Component({
   selector: 'app-admin-dashboard-main',
@@ -31,6 +32,7 @@ import { Router } from '@angular/router';
     BrnDialogImports,
     HlmDialogImports,
     HlmCheckbox,
+    DashboardHeaderComponent,
   ],
 })
 export class AdminDashboardMainComponent implements OnInit {
