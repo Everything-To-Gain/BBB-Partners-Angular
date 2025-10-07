@@ -1,24 +1,28 @@
 import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { getCoreRowModel, ColumnDef } from '@tanstack/table-core';
 import { createAngularTable } from '@tanstack/angular-table';
-import { InternalService, PaginationParams } from '../../services/internal.service';
-import { InternalApplicationResponse } from '../../models/internal-application.model';
-import { ApplicationStatus } from '../../../external/models/external-application.model';
-import { AuthService } from '../../../../auth/services/auth.service';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { debounceTime, distinctUntilChanged, finalize, Subject } from 'rxjs';
 import { HlmTableImports } from '@spartan-ng/helm/table';
 import { HlmButton } from '@spartan-ng/helm/button';
 import { HlmInput } from '@spartan-ng/helm/input';
 import { BrnSelectImports } from '@spartan-ng/brain/select';
 import { HlmSelectImports } from '@spartan-ng/helm/select';
-import { FormsModule } from '@angular/forms';
-import { toast } from 'ngx-sonner';
+import { PaginationParams } from '../../../external/services/external.service';
+import { ExternalApplicationResponse } from '../../../external/models/external-application.model';
+import { ApplicationStatus } from '../../../external/models/external-application.model';
+import { AuthService } from '../../../../auth/services/auth.service';
+import { debounceTime, distinctUntilChanged, finalize, Subject } from 'rxjs';
 import { DashboardHeaderComponent } from '../../../../../shared/components/dashboard-header/dashboard-header.component';
+import { InternalService } from '../../services/internal.service';
+import {
+  PARTNERSHIP_SOURCE,
+  PartnershipSource,
+  getPartnershipDisplayName,
+} from '../../../../accreditation-form/models/partnership-sources.model';
 
 @Component({
-  selector: 'app-internal-overview',
-  templateUrl: './internal-overview.component.html',
+  selector: 'app-external-admins',
   imports: [
     HlmTableImports,
     HlmButton,
@@ -28,10 +32,10 @@ import { DashboardHeaderComponent } from '../../../../../shared/components/dashb
     FormsModule,
     DashboardHeaderComponent,
   ],
-  // Add header component import
+  templateUrl: './external-admins.component.html',
   standalone: true,
 })
-export class InternalOverviewComponent implements OnInit {
+export class ExternalAdminsComponent implements OnInit {
   private internalService = inject(InternalService);
   private authService = inject(AuthService);
   private router = inject(Router);
@@ -39,84 +43,54 @@ export class InternalOverviewComponent implements OnInit {
   // Make Math available in template
   Math = Math;
 
-  // Base columns without special actions
-  private baseColumns: ColumnDef<InternalApplicationResponse>[] = [
+  get isAdmin(): boolean {
+    return this.authService.isAdmin() === 'true';
+  }
+
+  columns: ColumnDef<ExternalApplicationResponse>[] = [
     {
       accessorKey: 'applicationId',
       header: 'Application ID',
     },
     {
-      accessorKey: 'blueApplicationID',
-      header: 'Blue App ID',
-    },
-    {
-      accessorKey: 'hubSpotApplicationID',
-      header: 'HubSpot App ID',
-    },
-    {
-      accessorKey: 'bid',
-      header: 'BID',
-    },
-    {
-      accessorKey: 'companyRecordID',
-      header: 'Company Record ID',
+      accessorKey: 'companyName',
+      header: 'Company Name',
     },
     {
       accessorKey: 'submittedByEmail',
       header: 'Submitted By',
     },
     {
-      accessorKey: 'applicationStatusInternal',
-      header: 'Internal Status',
-    },
-    {
       accessorKey: 'applicationStatusExternal',
-      header: 'External Status',
+      header: 'Status',
     },
   ];
 
-  // Special actions column
-  private specialActionsColumn: ColumnDef<InternalApplicationResponse> = {
-    id: 'specialActions',
-    header: 'Actions',
-  };
-
-  // Dynamic columns based on special access
-  get columns(): ColumnDef<InternalApplicationResponse>[] {
-    if (this.specialAccess) {
-      return [...this.baseColumns, this.specialActionsColumn];
-    }
-    return this.baseColumns;
-  }
-
   // ✅ state
-  internalApplications = signal<InternalApplicationResponse[]>([]);
+  externalApplications = signal<ExternalApplicationResponse[]>([]);
 
   // ✅ search & pagination
   pageNumber = signal(1);
   pageSize = signal(10);
   totalItems = signal(0);
   searchTerm = signal('');
-  selectedInternalStatus = signal<number | null>(null);
   selectedExternalStatus = signal<number | null>(null);
+  selectedPartnershipSource = signal<number | null>(null);
   availablePageSizes = [5, 10, 20, 50];
   isLoading = signal(false);
-  availableInternalStatuses = signal<ApplicationStatus[]>([]);
-  availableExternalStatuses = signal<ApplicationStatus[]>([]);
-  sendingFormData = signal<Set<string>>(new Set());
+  availableStatuses = signal<ApplicationStatus[]>([]);
+  partnershipSources = signal<{ id: number; name: string }[]>([]);
 
   // ✅ TanStack table (createTable API)
-  table = createAngularTable<InternalApplicationResponse>(() => ({
+  table = createAngularTable<ExternalApplicationResponse>(() => ({
     columns: this.columns,
     getCoreRowModel: getCoreRowModel(),
-    data: this.internalApplications(),
+    data: this.externalApplications(),
     renderFallbackValue: null,
   }));
 
   // --- Computed values
-
   pageCount = computed(() => Math.ceil(this.totalItems() / this.pageSize()));
-
   canPreviousPage = computed(() => this.pageNumber() > 1);
   canNextPage = computed(() => this.pageNumber() < this.pageCount());
 
@@ -126,6 +100,7 @@ export class InternalOverviewComponent implements OnInit {
   ngOnInit(): void {
     this.setupSearchDebouncing();
     this.loadStatuses();
+    this.loadPartnershipSources();
     this.loadData();
   }
 
@@ -143,18 +118,21 @@ export class InternalOverviewComponent implements OnInit {
       pageNumber: this.pageNumber(),
       pageSize: this.pageSize(),
       searchTerm: this.searchTerm() || undefined,
-      internalStatus: this.selectedInternalStatus() || undefined,
-      externalStatus: this.selectedExternalStatus() || undefined,
+      externalStatus: this.selectedExternalStatus() ?? undefined,
+      partnershipSource: this.selectedPartnershipSource() ?? undefined,
     };
 
     this.internalService
-      .getInternalApplications(params)
+      .getExternalAdmins(params)
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: (res) => {
+          console.log('API Response:', res);
           const items = res.data?.items ?? [];
           const count = res.data?.count ?? 0;
-          this.internalApplications.set(items);
+          console.log('Items:', items);
+          console.log('Count:', count);
+          this.externalApplications.set(items);
           this.totalItems.set(count);
         },
         error: (err) => {
@@ -189,40 +167,27 @@ export class InternalOverviewComponent implements OnInit {
     this.loadData();
   }
 
-  onInternalStatusChange(statusId: number | null): void {
-    this.selectedInternalStatus.set(statusId);
+  onStatusChange(statusId: number | null): void {
+    this.selectedExternalStatus.set(statusId);
     this.pageNumber.set(1);
     this.loadData();
   }
 
-  onExternalStatusChange(statusId: number | null): void {
-    this.selectedExternalStatus.set(statusId);
+  onPartnershipSourceChange(sourceId: number | null): void {
+    this.selectedPartnershipSource.set(sourceId);
     this.pageNumber.set(1);
     this.loadData();
   }
 
   clearAllFilters(): void {
     this.searchTerm.set('');
-    this.selectedInternalStatus.set(null);
     this.selectedExternalStatus.set(null);
+    this.selectedPartnershipSource.set(null);
     this.pageNumber.set(1);
     this.loadData();
   }
 
   private loadStatuses(): void {
-    this.internalService.getApplicationInternalStatus().subscribe({
-      next: (res) => {
-        const formattedStatuses = (res.data || []).map((status) => ({
-          ...status,
-          id: status.id + 1, // Add 1 to make UI 1-based
-          name: this.formatStatusName(status.name),
-        }));
-        this.availableInternalStatuses.set(formattedStatuses);
-      },
-      error: (err) => {
-        console.error('Error loading statuses:', err);
-      },
-    });
     this.internalService.getApplicationExternalStatus().subscribe({
       next: (res) => {
         const formattedStatuses = (res.data || []).map((status) => ({
@@ -230,12 +195,20 @@ export class InternalOverviewComponent implements OnInit {
           id: status.id + 1, // Add 1 to make UI 1-based
           name: this.formatStatusName(status.name),
         }));
-        this.availableExternalStatuses.set(formattedStatuses);
+        this.availableStatuses.set(formattedStatuses);
       },
       error: (err) => {
         console.error('Error loading statuses:', err);
       },
     });
+  }
+
+  private loadPartnershipSources(): void {
+    const sources = Object.entries(PARTNERSHIP_SOURCE).map(([key, value]) => ({
+      id: value,
+      name: getPartnershipDisplayName(key as PartnershipSource),
+    }));
+    this.partnershipSources.set(sources);
   }
 
   private formatStatusName(name: string): string {
@@ -255,17 +228,8 @@ export class InternalOverviewComponent implements OnInit {
     return this.formatStatusForDisplay(cellValue as string | null);
   }
 
-  getSelectedInternalStatusName(): string {
-    const status = this.availableInternalStatuses().find(
-      (s) => s.id === this.selectedInternalStatus()
-    );
-    return status?.name || 'Unknown';
-  }
-
-  getSelectedExternalStatusName(): string {
-    const status = this.availableExternalStatuses().find(
-      (s) => s.id === this.selectedExternalStatus()
-    );
+  getSelectedStatusName(): string {
+    const status = this.availableStatuses().find((s) => s.id === this.selectedExternalStatus());
     return status?.name || 'Unknown';
   }
 
@@ -273,54 +237,13 @@ export class InternalOverviewComponent implements OnInit {
     return Array(this.pageSize()).fill(0);
   }
 
-  // --- auth getters
-  get specialAccess() {
-    return this.authService.specialAccess();
-  }
-
-  navigateToDetails(applicationId: unknown): void {
-    const id = applicationId as string;
-    if (id) {
-      this.router.navigate(['/dashboard/internal/application-details', id]);
-    }
-  }
-
-  // Special access action - send form data
-  onSpecialAction(applicationId: unknown): void {
-    const id = applicationId as string;
-    if (!id) {
-      console.error('No application ID provided');
-      return;
-    }
-
-    // Add to loading set
-    this.sendingFormData.update((set) => new Set(set).add(id));
-
-    this.internalService
-      .sendFormData(id)
-      .pipe(
-        finalize(() => {
-          this.sendingFormData.update((set) => {
-            const newSet = new Set(set);
-            newSet.delete(id);
-            return newSet;
-          });
-        })
-      )
-      .subscribe({
-        next: (response) => {
-          console.log('Form data sent successfully:', response);
-          toast.success('Form data sent successfully');
-        },
-        error: (error) => {
-          console.error('Error sending form data:', error);
-          toast.error('Error sending form data');
-        },
-      });
-  }
-
-  // Helper method to check if form data is being sent for a specific application
-  isSendingFormData(applicationId: string): boolean {
-    return this.sendingFormData().has(applicationId);
+  get partnershipSourceDisplayName() {
+    const role = this.authService.userRole();
+    if (!role) return '';
+    return role
+      .replace(/([A-Z])/g, ' $1')
+      .trim()
+      .toLowerCase()
+      .replace(/\b\w/g, (l: string) => l.toUpperCase());
   }
 }

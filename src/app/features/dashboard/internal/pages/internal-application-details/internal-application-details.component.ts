@@ -5,11 +5,12 @@ import { AuthService } from '../../../../auth/services/auth.service';
 import { ApplicationDetails } from '../../models/internal-application.model';
 import { HlmCardImports } from '@spartan-ng/helm/card';
 import { HlmButton } from '@spartan-ng/helm/button';
+import { DashboardHeaderComponent } from '../../../../../shared/components/dashboard-header/dashboard-header.component';
 
 @Component({
   selector: 'app-internal-application-details',
   templateUrl: './internal-application-details.component.html',
-  imports: [HlmCardImports, HlmButton],
+  imports: [HlmCardImports, HlmButton, DashboardHeaderComponent],
 })
 export class InternalApplicationDetailsComponent implements OnInit {
   private route = inject(ActivatedRoute);
@@ -20,6 +21,10 @@ export class InternalApplicationDetailsComponent implements OnInit {
   applicationDetails = signal<ApplicationDetails | null>(null);
   isLoading = signal(false);
   applicationId = signal<string | null>(null);
+
+  // Collapsible sections state
+  expandedSections = signal<Set<string>>(new Set());
+  allExpanded = signal(false);
 
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
@@ -73,5 +78,45 @@ export class InternalApplicationDetailsComponent implements OnInit {
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);
+  }
+
+  // Collapsible section methods
+  toggleSection(sectionId: string): void {
+    const current = this.expandedSections();
+    const newSet = new Set(current);
+    if (newSet.has(sectionId)) {
+      newSet.delete(sectionId);
+    } else {
+      newSet.add(sectionId);
+    }
+    this.expandedSections.set(newSet);
+  }
+
+  isSectionExpanded(sectionId: string): boolean {
+    return this.expandedSections().has(sectionId);
+  }
+
+  toggleAllSections(): void {
+    const allExpanded = this.allExpanded();
+    this.allExpanded.set(!allExpanded);
+
+    if (allExpanded) {
+      // Collapse all
+      this.expandedSections.set(new Set());
+    } else {
+      // Expand all
+      const allSections = [
+        'business-info',
+        'contact-info',
+        'business-operations',
+        'financial-info',
+        'application-details',
+        'licenses',
+        'social-media',
+        'additional-info',
+        'submission-info',
+      ];
+      this.expandedSections.set(new Set(allSections));
+    }
   }
 }

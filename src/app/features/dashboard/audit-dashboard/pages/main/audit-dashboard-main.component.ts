@@ -109,24 +109,6 @@ export class AuditDashboardMainComponent implements OnInit {
     this.loadAuditLogs();
   }
 
-  // Header bindings
-  get userName(): string | null {
-    return this.authService.userName();
-  }
-
-  get userEmail(): string | null {
-    return this.authService.userEmail();
-  }
-
-  get userRole(): string | null {
-    return this.authService.userRole();
-  }
-
-  logout(): void {
-    this.authService.logout();
-    this.router.navigate(['/login']);
-  }
-
   loadAuditLogs(): void {
     this.isLoading.set(true);
     const params: AuditPaginationRequest = {

@@ -12,6 +12,7 @@ export interface PaginationParams {
   pageSize: number;
   searchTerm?: string;
   externalStatus?: number;
+  partnershipSource?: number;
 }
 
 @Injectable({

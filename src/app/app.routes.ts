@@ -6,6 +6,7 @@ import { partnershipSourceGuard } from './core/guards/partnership-source.guard';
 import { AuthCallbackComponent } from './features/auth/pages/auth-callback/google-callback.component';
 import { NotFoundComponent } from './core/pages/not-found/not-found.component';
 import { InternalOverviewComponent } from './features/dashboard/internal/pages/internal-overview/internal-overview.component';
+import { ExternalAdminsComponent } from './features/dashboard/internal/pages/external-admins/external-admins.component';
 import { ExternalOverviewComponent } from './features/dashboard/external/pages/external-overview/external-overview.component';
 import { SuccessfullSubmissionComponent } from './features/accreditation-form/pages/successfull-submission/successfull-submission.component';
 import { InternalApplicationDetailsComponent } from './features/dashboard/internal/pages/internal-application-details/internal-application-details.component';
@@ -14,8 +15,10 @@ import { getDisplayNameFromRouteId } from './features/accreditation-form/models/
 import { AdminDashboardMainComponent } from './features/dashboard/admin-dashboard/pages/main/admin-dashboard-main.component';
 import { AuditDashboardMainComponent } from './features/dashboard/audit-dashboard/pages/main/audit-dashboard-main.component';
 import { AuditDetailsComponent } from './features/dashboard/audit-dashboard/pages/audit-details/audit-details.component';
+import { ContractorsComponent } from './features/dashboard/internal/pages/contractors/contractors.component';
 import { AdminAuthGuard } from './core/guards/admin-auth.guard';
 import { InternalAuthGuard } from './core/guards/internal-auth.guard';
+import { redirectIfAuthenticated } from './core/guards/redirect-if-authenticated.guard';
 
 export const routes: Routes = [
   {
@@ -45,6 +48,7 @@ export const routes: Routes = [
     title: 'Login',
     path: 'login',
     component: LoginComponent,
+    canActivate: [redirectIfAuthenticated],
   },
   {
     title: 'Google Callback',
@@ -68,6 +72,12 @@ export const routes: Routes = [
     canActivate: [InternalAuthGuard],
   },
   {
+    title: 'External Admins',
+    path: 'dashboard/external/overview',
+    component: ExternalAdminsComponent,
+    canActivate: [InternalAuthGuard],
+  },
+  {
     title: 'Internal Application Details',
     path: 'dashboard/internal/application-details/:id',
     component: InternalApplicationDetailsComponent,
@@ -83,13 +93,19 @@ export const routes: Routes = [
     title: 'Audit Dashboard',
     path: 'dashboard/audit/overview',
     component: AuditDashboardMainComponent,
-    canActivate: [AdminAuthGuard],
+    canActivate: [InternalAuthGuard],
   },
   {
     title: 'Audit Details',
     path: 'dashboard/audit/details/:id',
     component: AuditDetailsComponent,
-    canActivate: [AdminAuthGuard],
+    canActivate: [InternalAuthGuard],
+  },
+  {
+    title: 'Contractors',
+    path: 'dashboard/internal/contractors',
+    component: ContractorsComponent,
+    canActivate: [InternalAuthGuard],
   },
   {
     title: 'Page Not Found',

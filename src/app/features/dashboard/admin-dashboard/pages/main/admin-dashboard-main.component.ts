@@ -60,7 +60,7 @@ export class AdminDashboardMainComponent implements OnInit {
     { accessorKey: 'isAdmin', header: 'Admin' },
     { accessorKey: 'isCSVSync', header: 'CSV Sync' },
     { accessorKey: 'isActive', header: 'Status' },
-    { id: 'actions', header: 'Actions' },
+    { id: 'actions', header: 'Actions', size: 400 },
   ];
 
   // TanStack table instance
@@ -113,24 +113,6 @@ export class AdminDashboardMainComponent implements OnInit {
   ngOnInit(): void {
     this.setupSearchDebouncing();
     this.loadUsers();
-  }
-
-  // Header bindings (match internal overview header API)
-  get userName(): string | null {
-    return this.authService.userName();
-  }
-
-  get userEmail(): string | null {
-    return this.authService.userEmail();
-  }
-
-  get userRole(): string | null {
-    return this.authService.userRole();
-  }
-
-  logout(): void {
-    this.authService.logout();
-    this.router.navigate(['/login']);
   }
 
   loadUsers(): void {
@@ -361,5 +343,14 @@ export class AdminDashboardMainComponent implements OnInit {
         next: () => toast.success('Sync queued successfully'),
         error: (err) => toast.error('Failed to sync: ' + (err?.error?.detail || 'Unknown error')),
       });
+  }
+
+  clearAllFilters(): void {
+    this.searchTerm.set('');
+    this.isAdmin.set(null);
+    this.isCSVSync.set(null);
+    this.isActive.set(null);
+    this.pageNumber.set(1);
+    this.loadUsers();
   }
 }

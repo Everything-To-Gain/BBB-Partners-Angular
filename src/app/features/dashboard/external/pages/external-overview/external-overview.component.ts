@@ -208,27 +208,12 @@ export class ExternalOverviewComponent implements OnInit {
   }
 
   get partnershipSourceDisplayName() {
-    const role = this.userRole;
+    const role = this.authService.userRole();
     if (!role) return '';
     return role
       .replace(/([A-Z])/g, ' $1')
       .trim()
       .toLowerCase()
       .replace(/\b\w/g, (l: string) => l.toUpperCase());
-  }
-
-  get userName() {
-    return this.authService.userName();
-  }
-  get userEmail() {
-    return this.authService.userEmail();
-  }
-  get userRole() {
-    return this.authService.userRole();
-  }
-
-  logout(): void {
-    this.authService.logout();
-    this.router.navigate(['/login']);
   }
 }
