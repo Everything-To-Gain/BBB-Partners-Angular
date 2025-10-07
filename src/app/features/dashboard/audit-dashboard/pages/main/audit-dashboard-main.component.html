@@ -11,12 +11,7 @@
         class="bg-gradient-to-r from-card/80 to-card/60 backdrop-blur-sm rounded-2xl border border-border/50 p-6 shadow-lg relative"
       >
         <!-- Background decoration -->
-        <div
-          class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primary/5 to-accent/5 rounded-full -translate-y-16 translate-x-16"
-        ></div>
-        <div
-          class="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-accent/5 to-primary/5 rounded-full translate-y-12 -translate-x-12"
-        ></div>
+
         <div class="relative z-10 mb-6 flex items-start justify-between">
           <div class="space-y-1">
             <h2
@@ -58,6 +53,7 @@
                 selectedVersion.set(null);
                 dateFrom.set('');
                 dateTo.set('');
+                searchTerm.set('');
                 pageNumber.set(1);
                 loadAuditLogs()
               "
@@ -278,6 +274,63 @@
               />
             </div>
           </div>
+
+          <!-- Search Field -->
+          <div class="mt-6">
+            <label class="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+              <svg
+                class="w-4 h-4 text-primary"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"
+                ></path>
+              </svg>
+              Search by ID
+            </label>
+            <div class="relative group">
+              <svg
+                class="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground/60 group-focus-within:text-primary transition-colors duration-200"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"
+                ></path>
+              </svg>
+              <input
+                hlmInput
+                type="number"
+                placeholder="Enter ID number..."
+                (input)="onSearchChange($event)"
+                class="pl-12 pr-12 w-full bg-background/50 border-border/60 focus:border-primary/50 focus:ring-primary/20 rounded-xl transition-all duration-200"
+              />
+              @if (searchTerm()) {
+              <button
+                (click)="clearSearch()"
+                class="absolute right-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground/60 hover:text-primary transition-colors duration-200"
+              >
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  ></path>
+                </svg>
+              </button>
+              }
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -287,11 +340,8 @@
       class="bg-gradient-to-r from-card/90 to-card/80 backdrop-blur-sm rounded-2xl border border-border/50 w-full shadow-xl relative max-w-full"
     >
       <!-- Table decoration -->
-      <div
-        class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-accent to-primary"
-      ></div>
 
-      <div class="w-full overflow-x-auto">
+      <div class="w-full overflow-x-auto rounded-xl border border-border/50 overflow-hidden">
         <table hlmTable class="w-full min-w-max">
           <thead
             hlmTHead
@@ -392,6 +442,10 @@
                       ? 'bg-gradient-to-r from-success/15 to-success/10 text-success border border-success/30'
                       : cell.getValue() === 'FAILED'
                       ? 'bg-gradient-to-r from-destructive/15 to-destructive/10 text-destructive border border-destructive/30'
+                      : cell.getValue() === 'FAILURE'
+                      ? 'bg-gradient-to-r from-orange-500/15 to-orange-500/10 text-orange-600 border border-orange-500/30'
+                      : cell.getValue() === 'ERROR'
+                      ? 'bg-gradient-to-r from-red-500/15 to-red-500/10 text-red-600 border border-red-500/30'
                       : 'bg-gradient-to-r from-warning/15 to-warning/10 text-warning border border-warning/30'
                   "
                 >
@@ -471,12 +525,6 @@
       class="mt-6 bg-gradient-to-r from-card/80 to-card/60 backdrop-blur-sm rounded-2xl border border-border/50 p-6 shadow-lg relative"
     >
       <!-- Background decoration -->
-      <div
-        class="absolute top-0 left-0 w-24 h-24 bg-gradient-to-br from-primary/5 to-accent/5 rounded-full -translate-y-12 -translate-x-12"
-      ></div>
-      <div
-        class="absolute bottom-0 right-0 w-32 h-32 bg-gradient-to-tr from-accent/5 to-primary/5 rounded-full translate-y-16 translate-x-16"
-      ></div>
 
       <div class="relative z-10 flex flex-col justify-between sm:flex-row sm:items-center gap-4">
         @if (totalLogs() > 0) {

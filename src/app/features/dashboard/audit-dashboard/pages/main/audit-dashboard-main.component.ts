@@ -52,6 +52,7 @@ export class AuditDashboardMainComponent implements OnInit {
   selectedVersion = signal<string | null>(null);
   dateFrom = signal<string>('');
   dateTo = signal<string>('');
+  searchTerm = signal<string>('');
 
   // Filter options
   users = signal<string[]>([]);
@@ -120,6 +121,7 @@ export class AuditDashboardMainComponent implements OnInit {
       userVersion: this.selectedVersion() || undefined,
       dateFrom: this.dateFrom() || undefined,
       dateTo: this.dateTo() || undefined,
+      searchTerm: this.searchTerm() || undefined,
     };
 
     this.auditService
@@ -154,6 +156,19 @@ export class AuditDashboardMainComponent implements OnInit {
   }
 
   onFilterChange(): void {
+    this.pageNumber.set(1);
+    this.loadAuditLogs();
+  }
+
+  onSearchChange(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    this.searchTerm.set(target.value);
+    this.pageNumber.set(1);
+    this.loadAuditLogs();
+  }
+
+  clearSearch(): void {
+    this.searchTerm.set('');
     this.pageNumber.set(1);
     this.loadAuditLogs();
   }
