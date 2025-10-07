@@ -1,4 +1,5 @@
 @import '@angular/cdk/overlay-prebuilt.css';
+@import 'highlight.js/styles/atom-one-dark.css';
 
 /* Global styles */
 @tailwind base;
