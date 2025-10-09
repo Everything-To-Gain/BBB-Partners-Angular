@@ -449,7 +449,13 @@
                       : 'bg-gradient-to-r from-warning/15 to-warning/10 text-warning border border-warning/30'
                   "
                 >
-                  {{ cell.getValue() }}
+                  {{
+                    cell.getValue() === 'ERROR'
+                      ? 'SERVER ERROR'
+                      : cell.getValue() === 'FAILURE'
+                      ? 'HUBSPOT FAILURE'
+                      : cell.getValue()
+                  }}
                 </span>
                 } @case ('actions') {
                 <div class="flex items-center gap-2">
@@ -650,7 +656,15 @@
         </div>
         <div>
           <label class="text-sm font-medium text-foreground">Status</label>
-          <p class="text-sm text-muted-foreground mt-1">{{ selectedLog()?.status }}</p>
+          <p class="text-sm text-muted-foreground mt-1">
+            {{
+              selectedLog()?.status === 'ERROR'
+                ? 'SERVER ERROR'
+                : selectedLog()?.status === 'FAILURE'
+                ? 'HUBSPOT FAILURE'
+                : selectedLog()?.status
+            }}
+          </p>
         </div>
         <div>
           <label class="text-sm font-medium text-foreground">Timestamp</label>
