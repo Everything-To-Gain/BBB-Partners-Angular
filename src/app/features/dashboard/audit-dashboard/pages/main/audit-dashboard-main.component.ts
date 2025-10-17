@@ -1,7 +1,7 @@
 import { Component, inject, signal, computed, OnInit, DestroyRef } from '@angular/core';
 import { AuditPaginationRequest, AuditService } from '../../services/audit.service';
 import { AuditLog } from '../../models/audit.model';
-import { finalize } from 'rxjs';
+import { finalize, forkJoin } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ColumnDef, getCoreRowModel } from '@tanstack/table-core';
 import { createAngularTable } from '@tanstack/angular-table';
@@ -13,7 +13,7 @@ import { FormsModule } from '@angular/forms';
 import { HlmDialogImports } from '@spartan-ng/helm/dialog';
 import { BrnDialogImports } from '@spartan-ng/brain/dialog';
 import { AuthService } from '../../../../auth/services/auth.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { HlmInput } from '@spartan-ng/helm/input';
 import { DashboardHeaderComponent } from '../../../../../shared/components/dashboard-header/dashboard-header.component';
 
@@ -37,6 +37,7 @@ export class AuditDashboardMainComponent implements OnInit {
   private authService = inject(AuthService);
   private destroyRef = inject(DestroyRef);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   // Data signals
   auditLogs = signal<AuditLog[]>([]);
@@ -137,26 +138,33 @@ export class AuditDashboardMainComponent implements OnInit {
   }
 
   private loadFilterOptions(): void {
-    this.auditService
-      .getUsers()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((res) => this.users.set(res.data || []));
-    this.auditService
-      .getStatuses()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((res) => this.statuses.set(res.data || []));
-    this.auditService
-      .getEntities()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((res) => this.entities.set(res.data || []));
-    this.auditService
-      .getUserVersions()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((res) => this.versions.set(res.data || []));
+    // Load all filter options in parallel and wait for all to complete
+    const users$ = this.auditService.getUsers().pipe(takeUntilDestroyed(this.destroyRef));
+    const statuses$ = this.auditService.getStatuses().pipe(takeUntilDestroyed(this.destroyRef));
+    const entities$ = this.auditService.getEntities().pipe(takeUntilDestroyed(this.destroyRef));
+    const versions$ = this.auditService.getUserVersions().pipe(takeUntilDestroyed(this.destroyRef));
+
+    // Use forkJoin to wait for all requests to complete
+    forkJoin({
+      users: users$,
+      statuses: statuses$,
+      entities: entities$,
+      versions: versions$,
+    }).subscribe((results) => {
+      // Set all filter options
+      this.users.set(results.users.data || []);
+      this.statuses.set(results.statuses.data || []);
+      this.entities.set(results.entities.data || []);
+      this.versions.set(results.versions.data || []);
+
+      // Now that all options are loaded, apply query parameters
+      this.initializeFiltersFromQueryParams();
+    });
   }
 
   onFilterChange(): void {
     this.pageNumber.set(1);
+    this.updateQueryParams();
     this.loadAuditLogs();
   }
 
@@ -164,24 +172,42 @@ export class AuditDashboardMainComponent implements OnInit {
     const target = event.target as HTMLInputElement;
     this.searchTerm.set(target.value);
     this.pageNumber.set(1);
+    this.updateQueryParams();
     this.loadAuditLogs();
   }
 
   clearSearch(): void {
     this.searchTerm.set('');
     this.pageNumber.set(1);
+    this.updateQueryParams();
+    this.loadAuditLogs();
+  }
+
+  clearAllFilters(): void {
+    this.selectedUser.set(null);
+    this.selectedStatus.set(null);
+    this.selectedEntity.set(null);
+    this.selectedVersion.set(null);
+    this.dateFrom.set('');
+    this.dateTo.set('');
+    this.searchTerm.set('');
+    this.pageNumber.set(1);
+    this.pageSize.set(10);
+    this.updateQueryParams();
     this.loadAuditLogs();
   }
 
   onPageSizeChange(newSize: number): void {
     this.pageSize.set(newSize);
     this.pageNumber.set(1);
+    this.updateQueryParams();
     this.loadAuditLogs();
   }
 
   nextPage(): void {
     if (this.canNextPage()) {
       this.pageNumber.update((p) => p + 1);
+      this.updateQueryParams();
       this.loadAuditLogs();
     }
   }
@@ -189,6 +215,7 @@ export class AuditDashboardMainComponent implements OnInit {
   previousPage(): void {
     if (this.canPreviousPage()) {
       this.pageNumber.update((p) => p - 1);
+      this.updateQueryParams();
       this.loadAuditLogs();
     }
   }
@@ -198,7 +225,8 @@ export class AuditDashboardMainComponent implements OnInit {
   }
 
   openDetails(log: AuditLog): void {
-    this.router.navigate(['/dashboard/audit/details', log.id]);
+    // Open in new tab
+    window.open(`/dashboard/audit/details/${log.id}`, '_blank', 'noopener,noreferrer');
   }
 
   formatTimestamp(timestamp: any): string {
@@ -212,5 +240,47 @@ export class AuditDashboardMainComponent implements OnInit {
   copyText(text?: string | null): void {
     if (!text) return;
     navigator.clipboard?.writeText(text).catch(() => {});
+  }
+
+  // Query parameter handling methods
+  private initializeFiltersFromQueryParams(): void {
+    this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
+      // Set filters from query parameters
+      this.selectedUser.set(params['user'] || null);
+      this.selectedStatus.set(params['status'] || null);
+      this.selectedEntity.set(params['entity'] || null);
+      this.selectedVersion.set(params['version'] || null);
+      this.dateFrom.set(params['dateFrom'] || '');
+      this.dateTo.set(params['dateTo'] || '');
+      this.searchTerm.set(params['search'] || '');
+      this.pageNumber.set(parseInt(params['page']) || 1);
+      this.pageSize.set(parseInt(params['pageSize']) || 10);
+
+      // Load audit logs with the applied filters
+      this.loadAuditLogs();
+    });
+  }
+
+  private updateQueryParams(): void {
+    const queryParams: any = {};
+
+    // Only add non-default values to query params
+    if (this.selectedUser()) queryParams['user'] = this.selectedUser();
+    if (this.selectedStatus()) queryParams['status'] = this.selectedStatus();
+    if (this.selectedEntity()) queryParams['entity'] = this.selectedEntity();
+    if (this.selectedVersion()) queryParams['version'] = this.selectedVersion();
+    if (this.dateFrom()) queryParams['dateFrom'] = this.dateFrom();
+    if (this.dateTo()) queryParams['dateTo'] = this.dateTo();
+    if (this.searchTerm()) queryParams['search'] = this.searchTerm();
+    if (this.pageNumber() > 1) queryParams['page'] = this.pageNumber();
+    if (this.pageSize() !== 10) queryParams['pageSize'] = this.pageSize();
+
+    // Update URL without triggering navigation
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams,
+      queryParamsHandling: 'replace',
+      replaceUrl: true,
+    });
   }
 }

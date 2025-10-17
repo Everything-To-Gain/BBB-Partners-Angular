@@ -46,17 +46,7 @@
               hlmBtn
               variant="outline"
               size="sm"
-              (click)="
-                selectedUser.set(null);
-                selectedStatus.set(null);
-                selectedEntity.set(null);
-                selectedVersion.set(null);
-                dateFrom.set('');
-                dateTo.set('');
-                searchTerm.set('');
-                pageNumber.set(1);
-                loadAuditLogs()
-              "
+              (click)="clearAllFilters()"
               class="text-muted-foreground/80 hover:text-foreground border-muted-foreground/40 hover:border-destructive/40 hover:bg-destructive/5 px-4 py-2 rounded-xl font-medium transition-all duration-200 flex items-center gap-2"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
