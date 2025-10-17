@@ -28,6 +28,25 @@ export class AuditDetailsComponent implements OnInit {
     const json = typeof meta === 'string' ? meta : JSON.stringify(meta, null, 2);
     return hljs.highlight(json, { language: 'json' }).value;
   });
+
+  screenshotUrl = computed(() => {
+    const meta = this.auditDetails()?.metadata;
+    if (!meta) return null;
+
+    // Handle both string and object metadata
+    let metadataObj: any;
+    if (typeof meta === 'string') {
+      try {
+        metadataObj = JSON.parse(meta);
+      } catch {
+        return null;
+      }
+    } else {
+      metadataObj = meta;
+    }
+
+    return metadataObj?.screenshotUrl || null;
+  });
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
       const id = params['id'];

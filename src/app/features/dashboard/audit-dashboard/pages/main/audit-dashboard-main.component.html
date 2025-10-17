@@ -449,7 +449,7 @@
                 </span>
                 } @case ('actions') {
                 <div class="flex items-center gap-2">
-                  <button
+                  <a
                     hlmBtn
                     variant="outline"
                     size="sm"
@@ -457,7 +457,7 @@
                     (click)="openDetails(row.original)"
                   >
                     View
-                  </button>
+                  </a>
                 </div>
                 } @default {
                 <span class="text-foreground/80">{{ cell.getValue() ?? '-' }}</span>
