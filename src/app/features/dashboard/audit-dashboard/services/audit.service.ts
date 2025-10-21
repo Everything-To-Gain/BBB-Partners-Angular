@@ -70,4 +70,8 @@ export class AuditService {
   getEntities(): Observable<ApiResponse<string[]>> {
     return this.http.get<ApiResponse<string[]>>(`${this.apiUrl}/Audit/entities`);
   }
+
+  getActions(): Observable<ApiResponse<string[]>> {
+    return this.http.get<ApiResponse<string[]>>(`${this.apiUrl}/Audit/actions`);
+  }
 }

@@ -50,6 +50,7 @@ export class AuditDashboardMainComponent implements OnInit {
   selectedUser = signal<string | null>(null);
   selectedStatus = signal<string | null>(null);
   selectedEntity = signal<string | null>(null);
+  selectedAction = signal<string | null>(null);
   selectedVersion = signal<string | null>(null);
   dateFrom = signal<string>('');
   dateTo = signal<string>('');
@@ -59,6 +60,7 @@ export class AuditDashboardMainComponent implements OnInit {
   users = signal<string[]>([]);
   statuses = signal<string[]>([]);
   entities = signal<string[]>([]);
+  actions = signal<string[]>([]);
   versions = signal<string[]>([]);
 
   // Table configuration
@@ -119,6 +121,7 @@ export class AuditDashboardMainComponent implements OnInit {
       user: this.selectedUser() || undefined,
       status: this.selectedStatus() || undefined,
       entity: this.selectedEntity() || undefined,
+      action: this.selectedAction() || undefined,
       userVersion: this.selectedVersion() || undefined,
       dateFrom: this.dateFrom() || undefined,
       dateTo: this.dateTo() || undefined,
@@ -142,6 +145,7 @@ export class AuditDashboardMainComponent implements OnInit {
     const users$ = this.auditService.getUsers().pipe(takeUntilDestroyed(this.destroyRef));
     const statuses$ = this.auditService.getStatuses().pipe(takeUntilDestroyed(this.destroyRef));
     const entities$ = this.auditService.getEntities().pipe(takeUntilDestroyed(this.destroyRef));
+    const actions$ = this.auditService.getActions().pipe(takeUntilDestroyed(this.destroyRef));
     const versions$ = this.auditService.getUserVersions().pipe(takeUntilDestroyed(this.destroyRef));
 
     // Use forkJoin to wait for all requests to complete
@@ -149,12 +153,14 @@ export class AuditDashboardMainComponent implements OnInit {
       users: users$,
       statuses: statuses$,
       entities: entities$,
+      actions: actions$,
       versions: versions$,
     }).subscribe((results) => {
       // Set all filter options
       this.users.set(results.users.data || []);
       this.statuses.set(results.statuses.data || []);
       this.entities.set(results.entities.data || []);
+      this.actions.set(results.actions.data || []);
       this.versions.set(results.versions.data || []);
 
       // Now that all options are loaded, apply query parameters
@@ -165,7 +171,7 @@ export class AuditDashboardMainComponent implements OnInit {
   onFilterChange(): void {
     this.pageNumber.set(1);
     this.updateQueryParams();
-    this.loadAuditLogs();
+    // loadAuditLogs() will be called by initializeFiltersFromQueryParams() when URL updates
   }
 
   onSearchChange(event: Event): void {
@@ -173,20 +179,21 @@ export class AuditDashboardMainComponent implements OnInit {
     this.searchTerm.set(target.value);
     this.pageNumber.set(1);
     this.updateQueryParams();
-    this.loadAuditLogs();
+    // loadAuditLogs() will be called by initializeFiltersFromQueryParams() when URL updates
   }
 
   clearSearch(): void {
     this.searchTerm.set('');
     this.pageNumber.set(1);
     this.updateQueryParams();
-    this.loadAuditLogs();
+    // loadAuditLogs() will be called by initializeFiltersFromQueryParams() when URL updates
   }
 
   clearAllFilters(): void {
     this.selectedUser.set(null);
     this.selectedStatus.set(null);
     this.selectedEntity.set(null);
+    this.selectedAction.set(null);
     this.selectedVersion.set(null);
     this.dateFrom.set('');
     this.dateTo.set('');
@@ -194,21 +201,21 @@ export class AuditDashboardMainComponent implements OnInit {
     this.pageNumber.set(1);
     this.pageSize.set(10);
     this.updateQueryParams();
-    this.loadAuditLogs();
+    // loadAuditLogs() will be called by initializeFiltersFromQueryParams() when URL updates
   }
 
   onPageSizeChange(newSize: number): void {
     this.pageSize.set(newSize);
     this.pageNumber.set(1);
     this.updateQueryParams();
-    this.loadAuditLogs();
+    // loadAuditLogs() will be called by initializeFiltersFromQueryParams() when URL updates
   }
 
   nextPage(): void {
     if (this.canNextPage()) {
       this.pageNumber.update((p) => p + 1);
       this.updateQueryParams();
-      this.loadAuditLogs();
+      // loadAuditLogs() will be called by initializeFiltersFromQueryParams() when URL updates
     }
   }
 
@@ -216,7 +223,7 @@ export class AuditDashboardMainComponent implements OnInit {
     if (this.canPreviousPage()) {
       this.pageNumber.update((p) => p - 1);
       this.updateQueryParams();
-      this.loadAuditLogs();
+      // loadAuditLogs() will be called by initializeFiltersFromQueryParams() when URL updates
     }
   }
 
@@ -249,6 +256,7 @@ export class AuditDashboardMainComponent implements OnInit {
       this.selectedUser.set(params['user'] || null);
       this.selectedStatus.set(params['status'] || null);
       this.selectedEntity.set(params['entity'] || null);
+      this.selectedAction.set(params['action'] || null);
       this.selectedVersion.set(params['version'] || null);
       this.dateFrom.set(params['dateFrom'] || '');
       this.dateTo.set(params['dateTo'] || '');
@@ -268,6 +276,7 @@ export class AuditDashboardMainComponent implements OnInit {
     if (this.selectedUser()) queryParams['user'] = this.selectedUser();
     if (this.selectedStatus()) queryParams['status'] = this.selectedStatus();
     if (this.selectedEntity()) queryParams['entity'] = this.selectedEntity();
+    if (this.selectedAction()) queryParams['action'] = this.selectedAction();
     if (this.selectedVersion()) queryParams['version'] = this.selectedVersion();
     if (this.dateFrom()) queryParams['dateFrom'] = this.dateFrom();
     if (this.dateTo()) queryParams['dateTo'] = this.dateTo();
