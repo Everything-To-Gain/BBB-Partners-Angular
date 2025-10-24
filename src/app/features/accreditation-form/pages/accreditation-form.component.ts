@@ -28,6 +28,7 @@ import { AgreementSectionComponent } from '../components/agreement-section/agree
 import { HlmButton } from '@spartan-ng/helm/button';
 import { toast } from 'ngx-sonner';
 import { AccreditationFormService } from '../services/accreditation-form.service';
+import { ThemeService } from '../../../core/services/theme.service';
 import { finalize } from 'rxjs';
 import {
   PartnershipSource,
@@ -68,6 +69,7 @@ export class AccreditationFormComponent implements OnInit {
   private accreditationFormService = inject(AccreditationFormService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private themeService = inject(ThemeService);
   progress = signal(25);
   currentStep = signal(1);
   isSubmitting = signal(false);
@@ -820,5 +822,14 @@ export class AccreditationFormComponent implements OnInit {
 
   removeLicense(index: number): void {
     this.licenses.removeAt(index);
+  }
+
+  // Theme methods
+  get isDark() {
+    return this.themeService.isDark();
+  }
+
+  toggleTheme(): void {
+    this.themeService.toggleTheme();
   }
 }

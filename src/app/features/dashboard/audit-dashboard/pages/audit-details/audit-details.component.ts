@@ -5,6 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { AuditService } from '../../services/audit.service';
 import { AuditLog } from '../../models/audit.model';
 import { AuthService } from '../../../../auth/services/auth.service';
+import { DashboardHeaderComponent } from '../../../../../shared/components/dashboard-header/dashboard-header.component';
 import hljs from 'highlight.js/lib/core';
 import jsonLang from 'highlight.js/lib/languages/json';
 import 'highlight.js/styles/atom-one-dark.css';
@@ -14,7 +15,7 @@ hljs.registerLanguage('json', jsonLang);
 @Component({
   selector: 'app-audit-details',
   templateUrl: './audit-details.component.html',
-  imports: [RouterLink, HlmButton],
+  imports: [RouterLink, HlmButton, DashboardHeaderComponent],
 })
 export class AuditDetailsComponent implements OnInit {
   private route = inject(ActivatedRoute);
@@ -65,23 +66,5 @@ export class AuditDetailsComponent implements OnInit {
         console.error('Error loading audit details:', error);
       },
     });
-  }
-
-  // Header consistency helpers
-  get userName(): string | null {
-    return this.authService.userName();
-  }
-
-  get userEmail(): string | null {
-    return this.authService.userEmail();
-  }
-
-  get userRole(): string | null {
-    return this.authService.userRole();
-  }
-
-  logout(): void {
-    this.authService.logout();
-    this.router.navigate(['/login']);
   }
 }

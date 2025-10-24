@@ -39,6 +39,9 @@
   --success: 157deg 100% 29%; /* bbb-green-base */
   --success-foreground: 0deg 0% 100%;
 
+  --warning: 45deg 100% 50%; /* Yellow warning color */
+  --warning-foreground: 0deg 0% 0%;
+
   --border: 60deg 1% 89%; /* bbb-gray-45 */
   --input: 60deg 1% 89%; /* bbb-gray-45 */
   --ring: 191deg 100% 30%; /* bbb-blue-medium */
@@ -49,36 +52,46 @@
 :root.dark {
   color-scheme: dark;
 
-  --background: 218deg 100% 21%; /* bbb-blue-dark */
-  --foreground: 0deg 0% 100%;
+  /* Slightly lighter dark backgrounds */
+  --background: 220deg 15% 9%; /* Dark blue-gray - a bit lighter */
+  --foreground: 0deg 0% 93%; /* Bright white text for contrast */
 
-  --card: 218deg 100% 21%; /* bbb-blue-dark */
-  --card-foreground: 0deg 0% 100%;
+  --card: 220deg 15% 11%; /* Slightly lighter cards */
+  --card-foreground: 0deg 0% 93%;
 
-  --popover: 218deg 100% 21%; /* bbb-blue-dark */
-  --popover-foreground: 0deg 0% 100%;
+  --popover: 220deg 15% 10%; /* Slightly lighter popover background */
+  --popover-foreground: 0deg 0% 93%;
 
-  --primary: 189deg 100% 42%; /* bbb-blue-light */
+  /* BBB brand colors with good contrast */
+  --primary: 195deg 100% 38%; /* BBB blue for visibility */
   --primary-foreground: 0deg 0% 100%;
 
-  --secondary: 240deg 3% 34%; /* bbb-gray-70 */
-  --secondary-foreground: 0deg 0% 100%;
+  /* Slightly lighter secondary */
+  --secondary: 220deg 12% 15%; /* Dark secondary */
+  --secondary-foreground: 0deg 0% 88%;
 
-  --muted: 180deg 2% 61%; /* bbb-gray-60 */
-  --muted-foreground: 0deg 0% 100%;
+  /* Slightly lighter muted elements */
+  --muted: 220deg 10% 13%; /* Dark muted background */
+  --muted-foreground: 0deg 0% 72%; /* Good text contrast */
 
-  --accent: 194deg 66% 38%; /* bbb-blue-medium-87 */
-  --accent-foreground: 0deg 0% 100%;
+  /* Accent color for visibility */
+  --accent: 189deg 100% 52%; /* Bright BBB blue for accents */
+  --accent-foreground: 0deg 0% 0%; /* Black text for better contrast on bright blue */
 
-  --destructive: 347deg 93% 39%; /* bbb-red-light */
+  /* Improved destructive colors for better contrast in dark mode */
+  --destructive: 347deg 93% 45%; /* Slightly lighter red for better contrast */
   --destructive-foreground: 0deg 0% 100%;
 
   --success: 157deg 100% 29%; /* bbb-green-base */
   --success-foreground: 0deg 0% 100%;
 
-  --border: 240deg 3% 34%; /* bbb-gray-70 */
-  --input: 240deg 3% 34%; /* bbb-gray-70 */
-  --ring: 189deg 100% 42%; /* bbb-blue-light */
+  --warning: 45deg 100% 50%; /* Yellow warning color */
+  --warning-foreground: 0deg 0% 0%;
+
+  /* Improved borders and inputs for better contrast */
+  --border: 220deg 12% 25%; /* Lighter borders for better visibility */
+  --input: 220deg 12% 20%; /* Lighter input background for better contrast */
+  --ring: 195deg 100% 38%; /* Focus rings for visibility */
 }
 
 @layer base {
@@ -94,4 +107,41 @@
 input::placeholder,
 textarea::placeholder {
   color: hsl(0deg 0% 80%) !important; /* Pure light gray */
+}
+
+/* Command item hover states for dark mode */
+.dark [data-selected] {
+  background-color: hsl(var(--accent)) !important;
+  color: hsl(var(--accent-foreground)) !important;
+}
+
+.dark [data-selected='true'] {
+  background-color: hsl(var(--accent)) !important;
+  color: hsl(var(--accent-foreground)) !important;
+}
+
+/* Fix button hover text color in dark mode */
+.dark button:hover {
+  color: hsl(var(--foreground)) !important;
+}
+
+.dark [hlmBtn]:hover {
+  color: hsl(var(--foreground)) !important;
+}
+
+/* Improve destructive button contrast in dark mode */
+.dark .bg-gradient-to-r.from-destructive\/10.to-destructive\/5 {
+  background: linear-gradient(
+    to right,
+    hsl(var(--destructive) / 0.15),
+    hsl(var(--destructive) / 0.08)
+  ) !important;
+}
+
+.dark .bg-gradient-to-r.from-destructive\/15.to-destructive\/10 {
+  background: linear-gradient(
+    to right,
+    hsl(var(--destructive) / 0.2),
+    hsl(var(--destructive) / 0.12)
+  ) !important;
 }

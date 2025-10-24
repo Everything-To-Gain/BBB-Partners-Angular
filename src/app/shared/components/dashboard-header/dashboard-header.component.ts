@@ -2,6 +2,7 @@ import { Component, input, output, inject, signal, HostListener } from '@angular
 import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { HlmButton } from '@spartan-ng/helm/button';
 import { AuthService } from '../../../features/auth/services/auth.service';
+import { ThemeService } from '../../../core/services/theme.service';
 
 @Component({
   selector: 'app-dashboard-header',
@@ -15,10 +16,16 @@ export class DashboardHeaderComponent {
 
   private authService = inject(AuthService);
   private router = inject(Router);
+  private themeService = inject(ThemeService);
 
   // Dropdown state
   isDropdownOpen = signal(false);
   isUserMenuOpen = signal(false);
+
+  // Theme state
+  get isDark() {
+    return this.themeService.isDark();
+  }
 
   // Auth getters
   get userName() {
@@ -82,5 +89,9 @@ export class DashboardHeaderComponent {
     if (!userMenu && this.isUserMenuOpen()) {
       this.closeUserMenu();
     }
+  }
+
+  toggleTheme(): void {
+    this.themeService.toggleTheme();
   }
 }
