@@ -99,4 +99,9 @@ export class InternalService {
       { params: httpParams }
     );
   }
+  getTOBName(cbbbId: string) {
+    return this.http.get<ApiResponse<string>>(
+      `${this.apiUrl}/visualdata/type-of-business/${cbbbId}`
+    );
+  }
 }

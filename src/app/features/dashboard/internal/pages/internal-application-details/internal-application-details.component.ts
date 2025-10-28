@@ -21,6 +21,8 @@ export class InternalApplicationDetailsComponent implements OnInit {
   applicationDetails = signal<ApplicationDetails | null>(null);
   isLoading = signal(false);
   applicationId = signal<string | null>(null);
+  tobName = signal<string | null>(null);
+  isLoadingTOB = signal(false);
 
   // Collapsible sections state
   expandedSections = signal<Set<string>>(new Set());
@@ -42,12 +44,35 @@ export class InternalApplicationDetailsComponent implements OnInit {
       next: (response) => {
         if (response.success && response.data) {
           this.applicationDetails.set(response.data);
+
+          // Fetch TOB name if businessType is available
+          if (response.data.businessType) {
+            this.loadTOBName(response.data.businessType);
+          }
         }
         this.isLoading.set(false);
       },
       error: (error) => {
         console.error('Error loading application details:', error);
         this.isLoading.set(false);
+      },
+    });
+  }
+
+  private loadTOBName(businessType: string): void {
+    this.isLoadingTOB.set(true);
+    this.internalService.getTOBName(businessType).subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          this.tobName.set(response.data);
+        }
+        this.isLoadingTOB.set(false);
+      },
+      error: (error) => {
+        console.error('Error loading TOB name:', error);
+        // Set a fallback value if the request fails
+        this.tobName.set('Type of Business not available');
+        this.isLoadingTOB.set(false);
       },
     });
   }
