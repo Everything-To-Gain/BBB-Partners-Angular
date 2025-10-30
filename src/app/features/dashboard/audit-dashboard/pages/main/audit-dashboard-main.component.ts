@@ -1,4 +1,13 @@
-import { Component, inject, signal, computed, OnInit, DestroyRef } from '@angular/core';
+import {
+  Component,
+  inject,
+  signal,
+  computed,
+  OnInit,
+  DestroyRef,
+  ViewChild,
+  ElementRef,
+} from '@angular/core';
 import { AuditPaginationRequest, AuditService } from '../../services/audit.service';
 import { AuditLog } from '../../models/audit.model';
 import { finalize, forkJoin } from 'rxjs';
@@ -16,6 +25,14 @@ import { AuthService } from '../../../../auth/services/auth.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { HlmInput } from '@spartan-ng/helm/input';
 import { DashboardHeaderComponent } from '../../../../../shared/components/dashboard-header/dashboard-header.component';
+import { HlmCommandImports } from '@spartan-ng/helm/command';
+import { BrnCommandImports } from '@spartan-ng/brain/command';
+import { BrnPopover, BrnPopoverContent, BrnPopoverTrigger } from '@spartan-ng/brain/popover';
+import { HlmPopoverContent } from '@spartan-ng/helm/popover';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { lucideChevronsUpDown, lucideSearch, lucideCheck } from '@ng-icons/lucide';
+import { HlmIcon } from '@spartan-ng/helm/icon';
+import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 
 @Component({
   selector: 'app-audit-dashboard-main',
@@ -30,7 +47,16 @@ import { DashboardHeaderComponent } from '../../../../../shared/components/dashb
     HlmButton,
     HlmInput,
     DashboardHeaderComponent,
+    HlmCommandImports,
+    BrnCommandImports,
+    BrnPopover,
+    BrnPopoverTrigger,
+    HlmPopoverContent,
+    BrnPopoverContent,
+    NgIcon,
+    HlmIcon,
   ],
+  providers: [provideIcons({ lucideChevronsUpDown, lucideSearch, lucideCheck })],
 })
 export class AuditDashboardMainComponent implements OnInit {
   private auditService = inject(AuditService);
@@ -62,6 +88,14 @@ export class AuditDashboardMainComponent implements OnInit {
   entities = signal<string[]>([]);
   actions = signal<string[]>([]);
   versions = signal<string[]>([]);
+
+  // User filter search functionality
+  filteredUsers = signal<string[]>([]);
+  userSearchTerm = signal<string>('');
+  userPopoverState = signal<'closed' | 'open'>('closed');
+  private userSearchSubject = new Subject<string>();
+
+  @ViewChild('userFilterTrigger', { static: false }) userFilterTrigger!: ElementRef;
 
   // Table configuration
   columns: ColumnDef<AuditLog>[] = [
@@ -106,6 +140,20 @@ export class AuditDashboardMainComponent implements OnInit {
 
   get timestampHeader(): string {
     return `Timestamp (${this.gmtOffsetLabel})`;
+  }
+
+  constructor() {
+    // Set up debounced search for users
+    this.userSearchSubject
+      .pipe(
+        debounceTime(300), // Wait 300ms after user stops typing
+        distinctUntilChanged(), // Only emit if value actually changed
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe((searchTerm) => {
+        this.userSearchTerm.set(searchTerm);
+        this.filterUsers(searchTerm);
+      });
   }
 
   ngOnInit(): void {
@@ -162,6 +210,9 @@ export class AuditDashboardMainComponent implements OnInit {
       this.entities.set(results.entities.data || []);
       this.actions.set(results.actions.data || []);
       this.versions.set(results.versions.data || []);
+
+      // Initialize filtered users
+      this.filteredUsers.set(results.users.data || []);
 
       // Now that all options are loaded, apply query parameters
       this.initializeFiltersFromQueryParams();
@@ -247,6 +298,44 @@ export class AuditDashboardMainComponent implements OnInit {
   copyText(text?: string | null): void {
     if (!text) return;
     navigator.clipboard?.writeText(text).catch(() => {});
+  }
+
+  // User filter methods
+  onUserPopoverStateChange(state: 'open' | 'closed'): void {
+    this.userPopoverState.set(state);
+    if (state === 'open') {
+      // Initialize filtered users when opening
+      this.filteredUsers.set(this.users());
+    }
+  }
+
+  onUserSearch(value: string): void {
+    this.userSearchSubject.next(value);
+  }
+
+  onUserSelected(user: string | null): void {
+    this.selectedUser.set(user);
+    this.userPopoverState.set('closed');
+    this.onFilterChange();
+  }
+
+  private filterUsers(searchTerm: string): void {
+    if (!searchTerm.trim()) {
+      this.filteredUsers.set(this.users());
+    } else {
+      const filtered = this.users().filter((user) =>
+        user.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      this.filteredUsers.set(filtered);
+    }
+  }
+
+  getSelectedUserName(): string {
+    return this.selectedUser() || 'All users';
+  }
+
+  getTriggerWidth(): number {
+    return this.userFilterTrigger?.nativeElement?.offsetWidth || 300;
   }
 
   // Query parameter handling methods

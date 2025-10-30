@@ -82,23 +82,82 @@
                 </svg>
                 User
               </label>
-              <brn-select
-                class="block"
-                [ngModel]="selectedUser()"
-                (ngModelChange)="selectedUser.set($event); onFilterChange()"
+              <brn-popover
+                [state]="userPopoverState()"
+                (stateChanged)="onUserPopoverStateChange($event)"
+                sideOffset="5"
+                class="w-full"
               >
-                <hlm-select-trigger
-                  class="w-full inline-flex h-10 text-sm bg-background/50 border-border/60 focus:border-primary/50 focus:ring-primary/20 rounded-xl transition-all duration-200"
+                <button
+                  #userFilterTrigger
+                  type="button"
+                  class="w-full justify-between font-normal h-10 text-sm bg-background/50 border-border/60 focus:border-primary/50 focus:ring-primary/20 rounded-xl transition-all duration-200 inline-flex items-center px-3 py-2"
+                  id="user-filter"
+                  variant="outline"
+                  brnPopoverTrigger
+                  (click)="userPopoverState.set('open')"
+                  hlmBtn
                 >
-                  <hlm-select-value placeholder="All users" />
-                </hlm-select-trigger>
-                <hlm-select-content
-                  class="max-h-60 rounded-xl border-border/60 bg-card/95 backdrop-blur-sm"
+                  {{ getSelectedUserName() }}
+                  <ng-icon hlm size="sm" name="lucideChevronsUpDown" class="opacity-50" />
+                </button>
+                <hlm-command
+                  *brnPopoverContent="let ctx"
+                  hlmPopoverContent
+                  class="p-0 [&_button:hover]:!text-black"
+                  [style.width.px]="getTriggerWidth()"
                 >
-                  <hlm-option [value]="null">All users</hlm-option>
-                  @for (u of users(); track u) { <hlm-option [value]="u">{{ u }}</hlm-option> }
-                </hlm-select-content>
-              </brn-select>
+                  <hlm-command-search>
+                    <ng-icon hlm name="lucideSearch" />
+                    <input
+                      placeholder="Search users..."
+                      class="placeholder:text-muted-foreground flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                      (input)="onUserSearch($event.target.value)"
+                    />
+                  </hlm-command-search>
+                  <div *brnCommandEmpty hlmCommandEmpty>No users found.</div>
+                  <hlm-command-list>
+                    <hlm-command-group>
+                      <button
+                        type="button"
+                        hlm-command-item
+                        value=""
+                        (selected)="onUserSelected(null)"
+                        class="hover:!text-black"
+                        style="--hover-text-color: black"
+                      >
+                        <span>All users</span>
+                        <ng-icon
+                          hlm
+                          class="ml-auto"
+                          [class.opacity-0]="selectedUser() !== null"
+                          name="lucideCheck"
+                          hlmCommandIcon
+                        />
+                      </button>
+                      @for (user of filteredUsers(); track user) {
+                      <button
+                        type="button"
+                        hlm-command-item
+                        [value]="user"
+                        (selected)="onUserSelected(user)"
+                        class="hover:!text-black"
+                        style="--hover-text-color: black"
+                      >
+                        <span>{{ user }}</span>
+                        <ng-icon
+                          hlm
+                          class="ml-auto"
+                          [class.opacity-0]="selectedUser() !== user"
+                          name="lucideCheck"
+                          hlmCommandIcon
+                        />
+                      </button>
+                      }
+                    </hlm-command-group>
+                  </hlm-command-list>
+                </hlm-command>
+              </brn-popover>
             </div>
 
             <!-- Status -->
