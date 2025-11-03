@@ -6,6 +6,7 @@ export interface InternalApplicationResponse {
   companyRecordID?: string | null;
   submittedByEmail?: string | null;
   applicationStatusInternal?: string | null;
+  createdAt?: string | null;
 }
 
 export interface License {
@@ -73,4 +74,5 @@ export interface ApplicationDetails {
   submittedByTitle: string;
   submittedByEmail: string;
   partnershipSource: string;
+  createdAt: string;
 }

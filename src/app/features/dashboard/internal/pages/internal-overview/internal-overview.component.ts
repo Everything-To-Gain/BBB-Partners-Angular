@@ -73,6 +73,10 @@ export class InternalOverviewComponent implements OnInit {
       accessorKey: 'applicationStatusExternal',
       header: 'External Status',
     },
+    {
+      accessorKey: 'createdAt',
+      header: 'Created At',
+    },
   ];
 
   // Special actions column
@@ -322,5 +326,15 @@ export class InternalOverviewComponent implements OnInit {
   // Helper method to check if form data is being sent for a specific application
   isSendingFormData(applicationId: string): boolean {
     return this.sendingFormData().has(applicationId);
+  }
+
+  // Format date for display
+  formatDate(dateString: unknown): string {
+    if (!dateString) return 'N/A';
+    try {
+      return new Date(dateString as string).toLocaleString();
+    } catch {
+      return 'N/A';
+    }
   }
 }

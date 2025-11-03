@@ -85,6 +85,16 @@ export class InternalApplicationDetailsComponent implements OnInit {
       .join(' ');
   }
 
+  // Format date for display
+  formatDate(dateString: string | null | undefined): string {
+    if (!dateString) return 'N/A';
+    try {
+      return new Date(dateString).toLocaleString();
+    } catch {
+      return 'N/A';
+    }
+  }
+
   goBack(): void {
     this.router.navigate(['/dashboard/internal/overview']);
   }
