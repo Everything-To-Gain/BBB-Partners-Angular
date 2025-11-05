@@ -343,6 +343,7 @@ export class AccreditationFormComponent implements OnInit {
     businessServiceArea: new FormControl('', [Validators.required]),
     ein: new FormControl(''),
     businessType: new FormControl('', [Validators.required]),
+    secondaryBusinessTypes: new FormControl([]),
     businessEntityType: new FormControl('', [Validators.required]),
     businessStartDate: new FormControl(null, [Validators.required]),
 

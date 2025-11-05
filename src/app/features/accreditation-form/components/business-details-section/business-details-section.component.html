@@ -46,11 +46,12 @@
             class="w-full"
           >
             <button
+              #businessTypeTrigger
               type="button"
               [class]="
-                'w-full justify-between font-normal ' +
+                'w-full justify-between font-normal text-sm bg-background/50 border-border/60 focus:border-primary/50 focus:ring-primary/20  transition-all duration-200 inline-flex items-center px-3 py-2' +
                 (form().get('businessType')?.invalid && form().get('businessType')?.touched
-                  ? '!border-destructive !border-1'
+                  ? ' !border-destructive !border-1'
                   : '')
               "
               id="edit-profile"
@@ -62,7 +63,12 @@
               {{ currentTob() ? currentTob()?.name : 'Select Type of Business...' }}
               <ng-icon hlm size="sm" name="lucideChevronsUpDown" class="opacity-50" />
             </button>
-            <hlm-command *brnPopoverContent="let ctx" hlmPopoverContent class="w-full p-0">
+            <hlm-command
+              *brnPopoverContent="let ctx"
+              hlmPopoverContent
+              class="p-0 [&_button:hover]:!text-black"
+              [style.width.px]="getBusinessTypeTriggerWidth()"
+            >
               <hlm-command-search>
                 <ng-icon hlm name="lucideSearch" />
                 <input
@@ -80,6 +86,8 @@
                     hlm-command-item
                     [value]="tob.cbbbId"
                     (selected)="commandSelected(tob)"
+                    class="hover:!text-black"
+                    style="--hover-text-color: black"
                   >
                     <span>{{ tob.name }}</span>
                     <ng-icon
@@ -99,6 +107,90 @@
           <hlm-error class="mt-2">Type of business is required</hlm-error>
           }
         </div>
+      </div>
+
+      <div>
+        <label hlmLabel class="mb-2">Secondary Business Types</label>
+        <brn-popover
+          [state]="secondaryState()"
+          (stateChanged)="secondaryStateChanged($event)"
+          sideOffset="5"
+          class="w-full"
+        >
+          <button
+            #secondaryBusinessTypeTrigger
+            type="button"
+            class="w-full justify-between font-normal text-sm bg-background/50 border-border/60 focus:border-primary/50 focus:ring-primary/20 transition-all duration-200 inline-flex items-center px-3 py-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            variant="outline"
+            brnPopoverTrigger
+            (click)="secondaryState.set('open')"
+            hlmBtn
+            [disabled]="!isBusinessTypeSelected()"
+          >
+            {{ getSecondaryTobsDisplayText() }}
+            <ng-icon hlm size="sm" name="lucideChevronsUpDown" class="opacity-50" />
+          </button>
+          <hlm-command
+            *brnPopoverContent="let ctx"
+            hlmPopoverContent
+            class="p-0 [&_button:hover]:!text-black"
+            [style.width.px]="getSecondaryBusinessTypeTriggerWidth()"
+          >
+            <hlm-command-search>
+              <ng-icon hlm name="lucideSearch" />
+              <input
+                placeholder="Search Type of Business..."
+                class="placeholder:text-muted-foreground flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                [value]="secondarySearchValue()"
+                (input)="secondaryCommandSearch($event.target.value)"
+              />
+            </hlm-command-search>
+            <div *brnCommandEmpty hlmCommandEmpty>No results found.</div>
+            <hlm-command-list>
+              <hlm-command-group>
+                @for (tob of getSecondaryTobItems(); track tob.cbbbId) {
+                <button
+                  type="button"
+                  hlm-command-item
+                  [value]="tob.cbbbId"
+                  (selected)="secondaryCommandSelected(tob)"
+                  class="hover:!text-black"
+                  style="--hover-text-color: black"
+                >
+                  <span>{{ tob.name }}</span>
+                  <ng-icon
+                    hlm
+                    class="ml-auto"
+                    [class.opacity-0]="!isSecondaryTobSelected(tob.cbbbId)"
+                    name="lucideCheck"
+                    hlmCommandIcon
+                  />
+                </button>
+                }
+              </hlm-command-group>
+            </hlm-command-list>
+          </hlm-command>
+        </brn-popover>
+
+        @if (selectedSecondaryTobs().length > 0) {
+        <div class="mt-3 flex flex-wrap gap-2">
+          @for (tob of selectedSecondaryTobs(); track tob.cbbbId) {
+          <span
+            class="inline-flex items-center gap-1.5 rounded-full bg-primary/10 text-primary px-3 py-1.5 text-xs font-medium border border-primary/20"
+          >
+            <span>{{ tob.name }}</span>
+            <button
+              type="button"
+              class="ml-0.5 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full hover:bg-primary/20 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1"
+              (click)="removeSecondaryTob(tob)"
+              [attr.aria-label]="'Remove ' + tob.name"
+            >
+              <ng-icon hlm name="lucideX" size="sm" />
+            </button>
+          </span>
+          }
+        </div>
+        }
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
