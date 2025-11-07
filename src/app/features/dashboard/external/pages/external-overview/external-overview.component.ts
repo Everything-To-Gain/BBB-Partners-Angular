@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed, OnInit } from '@angular/core';
+import { Component, inject, signal, computed, OnInit, OnDestroy, Renderer2 } from '@angular/core';
 import { getCoreRowModel, ColumnDef } from '@tanstack/table-core';
 import { createAngularTable } from '@tanstack/angular-table';
 import { FormsModule } from '@angular/forms';
@@ -28,10 +28,12 @@ import { DashboardHeaderComponent } from '../../../../../shared/components/dashb
   ],
   templateUrl: './external-overview.component.html',
 })
-export class ExternalOverviewComponent implements OnInit {
+export class ExternalOverviewComponent implements OnInit, OnDestroy {
   private externalService = inject(ExternalService);
   private authService = inject(AuthService);
   private router = inject(Router);
+
+  constructor(private renderer: Renderer2) {}
 
   // Make Math available in template
   Math = Math;
@@ -89,6 +91,8 @@ export class ExternalOverviewComponent implements OnInit {
   private searchSubject = new Subject<string>();
 
   ngOnInit(): void {
+    // Load HubSpot script
+    this.loadHubSpotScript();
     this.setupSearchDebouncing();
     this.loadStatuses();
     this.loadData();
@@ -215,5 +219,29 @@ export class ExternalOverviewComponent implements OnInit {
       .trim()
       .toLowerCase()
       .replace(/\b\w/g, (l: string) => l.toUpperCase());
+  }
+
+  private loadHubSpotScript(): void {
+    // Check if script already exists to avoid duplicates
+    const existingScript = document.getElementById('hs-script-loader');
+    if (existingScript) {
+      return;
+    }
+
+    const script = this.renderer.createElement('script');
+    script.type = 'text/javascript';
+    script.src = '//js.hs-scripts.com/7007771.js';
+    script.async = true;
+    script.defer = true;
+    script.id = 'hs-script-loader';
+    this.renderer.appendChild(document.body, script);
+  }
+
+  ngOnDestroy(): void {
+    // Remove HubSpot script when component unloads
+    const existingScript = document.getElementById('hs-script-loader');
+    if (existingScript) {
+      existingScript.remove();
+    }
   }
 }
