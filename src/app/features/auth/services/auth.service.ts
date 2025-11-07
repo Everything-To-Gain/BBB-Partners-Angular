@@ -79,7 +79,6 @@ export class AuthService {
   constructor() {
     // Initialize auth data from localStorage on service creation
     this.initializeAuthFromStorage();
-    console.log(this.googleRedirectUri);
   }
 
   // Initialize authentication data from localStorage
