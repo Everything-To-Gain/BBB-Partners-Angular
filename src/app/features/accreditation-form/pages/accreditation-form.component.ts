@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit, OnDestroy, Renderer2 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { HlmIcon } from '@spartan-ng/helm/icon';
@@ -65,7 +65,7 @@ import {
   ],
   templateUrl: './accreditation-form.component.html',
 })
-export class AccreditationFormComponent implements OnInit {
+export class AccreditationFormComponent implements OnInit, OnDestroy {
   private accreditationFormService = inject(AccreditationFormService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
@@ -80,6 +80,8 @@ export class AccreditationFormComponent implements OnInit {
     { id: 3, title: 'Business Details', icon: 'lucideFileText' },
     { id: 4, title: 'Agreement', icon: 'lucideAward' },
   ];
+
+  constructor(private renderer: Renderer2) {}
 
   getPartnerDisplayName(): string {
     return this.partnershipSource ? getPartnershipDisplayName(this.partnershipSource) : 'Partner';
@@ -215,6 +217,9 @@ export class AccreditationFormComponent implements OnInit {
   }
 
   ngOnInit() {
+    // Load HubSpot script
+    this.loadHubSpotScript();
+
     // Get partnership source from route parameter
     const id = this.route.snapshot.paramMap.get('id');
     const pascalCaseId = id ? convertToPascalCase(id) : null;
@@ -832,5 +837,29 @@ export class AccreditationFormComponent implements OnInit {
 
   toggleTheme(): void {
     this.themeService.toggleTheme();
+  }
+
+  private loadHubSpotScript(): void {
+    // Check if script already exists to avoid duplicates
+    const existingScript = document.getElementById('hs-script-loader');
+    if (existingScript) {
+      return;
+    }
+
+    const script = this.renderer.createElement('script');
+    script.type = 'text/javascript';
+    script.src = '//js.hs-scripts.com/7007771.js';
+    script.async = true;
+    script.defer = true;
+    script.id = 'hs-script-loader';
+    this.renderer.appendChild(document.body, script);
+  }
+
+  ngOnDestroy(): void {
+    // Remove HubSpot script when component unloads
+    const existingScript = document.getElementById('hs-script-loader');
+    if (existingScript) {
+      existingScript.remove();
+    }
   }
 }
