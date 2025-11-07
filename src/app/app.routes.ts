@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { AccreditationFormComponent } from './features/accreditation-form/pages/accreditation-form.component';
+import { AlphaFormComponent } from './features/alpha-form/pages/alpha-form/alpha-form.component';
 import { TrackApplicationComponent } from './features/track-application/pages/track-application.component';
 import { LoginComponent } from './features/auth/pages/login/login.component';
 import { partnershipSourceGuard } from './core/guards/partnership-source.guard';
@@ -33,6 +34,11 @@ export const routes: Routes = [
     path: 'business-registration/:id',
     component: AccreditationFormComponent,
     canActivate: [partnershipSourceGuard],
+  },
+  {
+    title: 'Business Information Form - Alpha',
+    path: 'alpha-form',
+    component: AlphaFormComponent,
   },
   {
     title: 'Track Application',

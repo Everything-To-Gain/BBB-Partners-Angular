@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  frontUrl: 'https://betteryourbusiness.co',
+  frontUrl: 'https://dashboard.betteryourbusiness.co',
   apiUrl: 'https://bbb-partnership-api.playdough.co/api',
   middlewareServerUrl: 'https://bbb-sync.playdough.co/api',
   middlewareServerApiKey:
