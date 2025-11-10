@@ -41,6 +41,25 @@ export class DashboardHeaderComponent {
     return this.authService.isAdmin() === 'true';
   }
 
+  get isNotInternal(): boolean {
+    const role = this.userRole;
+    return role !== null && role !== 'Internal';
+  }
+
+  get contractorFormUrl(): string {
+    const role = this.userRole;
+
+    // Map role to partnership source and generate form URL
+    if (role === 'ContractorsOfColorado') {
+      return '/business-registration/contractors-of-colorado';
+    } else if (role === 'RealEstateDealMakers') {
+      return '/business-registration/real-estate-deal-makers';
+    }
+
+    // Fallback to contractor-form route if role doesn't match
+    return '/dashboard/contractor-form';
+  }
+
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);

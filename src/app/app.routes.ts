@@ -19,6 +19,7 @@ import { AuditDetailsComponent } from './features/dashboard/audit-dashboard/page
 import { ContractorsComponent } from './features/dashboard/internal/pages/contractors/contractors.component';
 import { AdminAuthGuard } from './core/guards/admin-auth.guard';
 import { InternalAuthGuard } from './core/guards/internal-auth.guard';
+import { AuthGuard } from './core/guards/auth.guard';
 import { redirectIfAuthenticated } from './core/guards/redirect-if-authenticated.guard';
 
 export const routes: Routes = [
@@ -33,7 +34,7 @@ export const routes: Routes = [
       `Business Information Form - ${getDisplayNameFromRouteId(route.paramMap.get('id'))}`,
     path: 'business-registration/:id',
     component: AccreditationFormComponent,
-    canActivate: [partnershipSourceGuard],
+    canActivate: [partnershipSourceGuard, AuthGuard],
   },
   {
     title: 'Business Information Form - Alpha',
@@ -70,6 +71,7 @@ export const routes: Routes = [
     title: 'External Overview',
     path: 'dashboard/overview',
     component: ExternalOverviewComponent,
+    canActivate: [AuthGuard],
   },
   {
     title: 'Internal Overview',
